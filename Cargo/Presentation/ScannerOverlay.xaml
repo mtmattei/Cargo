@@ -1,0 +1,205 @@
+<UserControl x:Class="Cargo.Presentation.ScannerOverlay"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:Cargo.Presentation"
+             xmlns:controls="using:Cargo.Controls"
+             xmlns:shapes="using:Microsoft.UI.Xaml.Shapes">
+
+  <Grid Background="{StaticResource ScrimBrush}">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="360" />
+    </Grid.ColumnDefinitions>
+
+    <!-- ── Inspection stage ─────────────────────────────────────── -->
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="*" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+      <Grid.Background>
+        <RadialGradientBrush Center="0.5,0.6" GradientOrigin="0.5,0.6" RadiusX="0.8" RadiusY="0.9">
+          <GradientStop Offset="0" Color="#FF132A2B" />
+          <GradientStop Offset="1" Color="#FF0B1112" />
+        </RadialGradientBrush>
+      </Grid.Background>
+
+      <controls:GridPaper Grid.RowSpan="3" Opacity="0.5" />
+      <controls:ContainerScanner x:Name="Scanner3D" Grid.Row="1" />
+
+      <Grid Padding="28,24" ColumnSpacing="20">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <StackPanel Spacing="8">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Ellipse Width="7" Height="7" Fill="{StaticResource TealBrightBrush}" VerticalAlignment="Center" />
+            <TextBlock Text="{x:Bind ScanMode, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}" FontSize="11"
+                       Foreground="{StaticResource TealBrightBrush}" />
+          </StackPanel>
+          <TextBlock Text="{x:Bind ContainerId, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}" FontSize="24"
+                     Foreground="{StaticResource PaperBrush}" />
+          <TextBlock Text="{x:Bind ContainerMeta, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12.5"
+                     Foreground="{StaticResource TextOnDarkMutedBrush}" />
+        </StackPanel>
+        <Button Grid.Column="1" Style="{StaticResource GhostButton}" Content="×" Click="OnClose"
+                VerticalAlignment="Top" Width="34" Height="34" CornerRadius="17" Padding="0" FontSize="18"
+                Background="{StaticResource HairlineOnDarkBrush}" Foreground="{StaticResource PaperBrush}"
+                BorderBrush="{StaticResource HairlineOnDarkBrush}" />
+      </Grid>
+
+      <Grid Grid.Row="2" Padding="28,0,20,24" ColumnSpacing="20">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+          <ItemsControl ItemsSource="{x:Bind Views, Mode=OneWay}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="6" /></ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="local:ScanViewOption">
+                <Button Style="{StaticResource BareButton}" Click="OnViewClick" Tag="{x:Bind Label}">
+                  <Border Background="{x:Bind Background}" BorderBrush="{StaticResource HairlineOnDarkBrush}"
+                          BorderThickness="1" CornerRadius="8" Padding="12,7">
+                    <TextBlock Text="{x:Bind Label}" FontFamily="{StaticResource BodyMediumFont}" FontSize="12"
+                               Foreground="{StaticResource PaperBrush}" />
+                  </Border>
+                </Button>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+
+          <Rectangle Width="1" Height="20" Fill="{StaticResource HairlineOnDarkBrush}" Margin="6,0" />
+
+          <Button Style="{StaticResource BareButton}" Click="OnToggleXray">
+            <Border Background="{x:Bind XrayBackground, Mode=OneWay}" BorderBrush="{x:Bind XrayBorder, Mode=OneWay}"
+                    BorderThickness="1" CornerRadius="8" Padding="14,7">
+              <StackPanel Orientation="Horizontal" Spacing="7">
+                <shapes:Path Data="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"
+                             Stroke="{x:Bind XrayForeground, Mode=OneWay}" StrokeThickness="2"
+                             Width="13" Height="13" Stretch="Uniform" VerticalAlignment="Center" />
+                <TextBlock Text="X-ray" FontFamily="{StaticResource BodyMediumFont}" FontSize="12"
+                           Foreground="{x:Bind XrayForeground, Mode=OneWay}" />
+              </StackPanel>
+            </Border>
+          </Button>
+
+          <TextBlock Text="Drag to rotate" Style="{StaticResource CaptionText}" FontSize="11.5"
+                     Foreground="{StaticResource TextOnDarkMutedBrush}" VerticalAlignment="Center" Margin="10,0,0,0" />
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+          <Button Style="{StaticResource GhostButton}" Content="−" Click="OnZoomOut" Width="32" Height="32"
+                  CornerRadius="9" Padding="0" Background="{StaticResource HairlineOnDarkBrush}"
+                  Foreground="{StaticResource PaperBrush}" BorderBrush="{StaticResource HairlineOnDarkBrush}" />
+          <Button Style="{StaticResource GhostButton}" Content="+" Click="OnZoomIn" Width="32" Height="32"
+                  CornerRadius="9" Padding="0" Background="{StaticResource HairlineOnDarkBrush}"
+                  Foreground="{StaticResource PaperBrush}" BorderBrush="{StaticResource HairlineOnDarkBrush}" />
+          <Button Style="{StaticResource GhostButton}" Content="Reset view" Click="OnResetView" Height="32"
+                  CornerRadius="9" Padding="12,0" Background="{StaticResource HairlineOnDarkBrush}"
+                  Foreground="{StaticResource PaperBrush}" BorderBrush="{StaticResource HairlineOnDarkBrush}" />
+        </StackPanel>
+      </Grid>
+    </Grid>
+
+    <!-- ── Scan result ──────────────────────────────────────────── -->
+    <ScrollViewer Grid.Column="1" Background="{StaticResource InkDeepBrush}" Padding="24,26"
+                  VerticalScrollBarVisibility="Auto">
+      <StackPanel Spacing="18">
+        <StackPanel Spacing="8">
+          <TextBlock Text="SCAN RESULT" FontFamily="{StaticResource MonoMediumFont}" FontSize="11"
+                     Foreground="{StaticResource TealBrightBrush}" />
+          <StackPanel Orientation="Horizontal" Spacing="10">
+            <Ellipse Width="10" Height="10" Fill="{x:Bind VerdictTone, Mode=OneWay}" VerticalAlignment="Center" />
+            <TextBlock Text="{x:Bind Verdict, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}" FontSize="18"
+                       Foreground="{StaticResource PaperBrush}" />
+          </StackPanel>
+          <TextBlock Text="{x:Bind VerdictNote, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12.5"
+                     Foreground="{StaticResource TextOnDarkMutedBrush}" TextWrapping="Wrap" LineHeight="19" />
+        </StackPanel>
+
+        <Border Height="1" Background="{StaticResource HairlineOnDarkBrush}" />
+        <StackPanel Spacing="12">
+          <TextBlock Text="DENSITY MAP" FontFamily="{StaticResource MonoMediumFont}" FontSize="11"
+                     Foreground="{StaticResource TealBrightBrush}" />
+          <ItemsControl x:Name="DensityBar" Height="10" />
+          <ItemsControl ItemsSource="{x:Bind Density, Mode=OneWay}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate><StackPanel Spacing="8" /></ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="local:CompositionSlice">
+                <Grid>
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Rectangle Width="9" Height="9" RadiusX="2" RadiusY="2" Fill="{x:Bind Fill}" VerticalAlignment="Center" />
+                    <TextBlock Text="{x:Bind Label}" Style="{StaticResource BodyText}"
+                               Foreground="{StaticResource PaperBrush}" />
+                  </StackPanel>
+                  <TextBlock Text="{x:Bind Count}" Style="{StaticResource CaptionText}"
+                             Foreground="{StaticResource TextOnDarkMutedBrush}" HorizontalAlignment="Right" />
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+
+        <Border Height="1" Background="{StaticResource HairlineOnDarkBrush}" />
+        <StackPanel Spacing="12">
+          <TextBlock Text="{x:Bind ManifestHeading, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}"
+                     FontSize="11" Foreground="{StaticResource TealBrightBrush}" />
+          <ItemsControl ItemsSource="{x:Bind Manifest, Mode=OneWay}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate><StackPanel Spacing="9" /></ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="local:ManifestRow">
+                <Grid ColumnSpacing="10">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                  </Grid.ColumnDefinitions>
+                  <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2" Fill="{x:Bind Tone}" VerticalAlignment="Center" />
+                  <TextBlock Grid.Column="1" Text="{x:Bind Name}" Style="{StaticResource BodyText}"
+                             Foreground="{StaticResource PaperBrush}" TextWrapping="Wrap" />
+                  <TextBlock Grid.Column="2" Text="{x:Bind Flag}" FontFamily="{StaticResource MonoMediumFont}"
+                             FontSize="11.5" Foreground="{x:Bind FlagTone}" />
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+
+        <Border Height="1" Background="{StaticResource HairlineOnDarkBrush}" />
+        <ItemsControl ItemsSource="{x:Bind ScanFacts, Mode=OneWay}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate><StackPanel /></ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="local:Fact">
+              <Grid Padding="0,9" BorderBrush="{StaticResource HairlineOnDarkBrush}" BorderThickness="0,0,0,1">
+                <TextBlock Text="{x:Bind Key}" Style="{StaticResource BodyText}"
+                           Foreground="{StaticResource TextOnDarkMutedBrush}" />
+                <TextBlock Text="{x:Bind Value}" FontFamily="{StaticResource MonoMediumFont}" FontSize="12.5"
+                           Foreground="{StaticResource PaperBrush}" HorizontalAlignment="Right" />
+              </Grid>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <Button Style="{StaticResource GhostButton}" Content="Close" Click="OnClose" Width="150"
+                  Background="Transparent" Foreground="{StaticResource PaperBrush}"
+                  BorderBrush="{StaticResource HairlineOnDarkBrush}" />
+          <Button Style="{StaticResource AccentButton}" Content="{x:Bind ScanAction, Mode=OneWay}" Width="150"
+                  Click="OnOpenInspection" />
+        </StackPanel>
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

@@ -1,0 +1,253 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:utu="using:Uno.Toolkit.UI"
+                    xmlns:controls="using:Cargo.Controls">
+
+  <!-- ============================================================
+       Type ramp
+       Display type is Bricolage Grotesque; UI text Archivo; every
+       figure that has to line up in a column is IBM Plex Mono.
+       ============================================================ -->
+
+  <Style x:Key="GreetingText" TargetType="TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+    <Setter Property="FontSize" Value="44" />
+    <Setter Property="LineHeight" Value="46" />
+    <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+    <Setter Property="TextLineBounds" Value="TrimToCapHeight" />
+  </Style>
+
+  <Style x:Key="PageTitleText" TargetType="TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+    <Setter Property="FontSize" Value="40" />
+    <Setter Property="LineHeight" Value="42" />
+    <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+    <Setter Property="TextLineBounds" Value="TrimToCapHeight" />
+  </Style>
+
+  <Style x:Key="EyebrowText" TargetType="TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource MonoMediumFont}" />
+    <Setter Property="FontSize" Value="11" />
+    <Setter Property="Foreground" Value="{StaticResource TealBrush}" />
+  </Style>
+
+  <Style x:Key="CardTitleText" TargetType="TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+    <Setter Property="FontSize" Value="15" />
+    <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+  </Style>
+
+  <Style x:Key="PanelTitleText" TargetType="TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource BodyStrongFont}" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+  </Style>
+
+  <Style x:Key="BodyText" TargetType="TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+    <Setter Property="FontSize" Value="12.5" />
+    <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+  </Style>
+
+  <Style x:Key="BodyStrongText" TargetType="TextBlock" BasedOn="{StaticResource BodyText}">
+    <Setter Property="FontFamily" Value="{StaticResource BodyMediumFont}" />
+  </Style>
+
+  <Style x:Key="CaptionText" TargetType="TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+    <Setter Property="FontSize" Value="11.5" />
+    <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+  </Style>
+
+  <Style x:Key="MicroText" TargetType="TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+    <Setter Property="FontSize" Value="11" />
+    <Setter Property="Foreground" Value="{StaticResource TextFaintBrush}" />
+  </Style>
+
+  <Style x:Key="MetricText" TargetType="TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+    <Setter Property="FontSize" Value="32" />
+    <Setter Property="LineHeight" Value="32" />
+    <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+    <Setter Property="TextLineBounds" Value="TrimToCapHeight" />
+  </Style>
+
+  <Style x:Key="MonoText" TargetType="TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource MonoFont}" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+  </Style>
+
+  <Style x:Key="MonoStrongText" TargetType="TextBlock" BasedOn="{StaticResource MonoText}">
+    <Setter Property="FontFamily" Value="{StaticResource MonoMediumFont}" />
+  </Style>
+
+  <!-- ============================================================
+       Card — white panel, hairline edge, one soft ground shadow.
+       Shadows are declared inside the template so every instance
+       gets its own ShadowCollection (a shared one silently drops).
+       ============================================================ -->
+  <Style TargetType="controls:Card">
+    <Setter Property="Padding" Value="20,18" />
+    <Setter Property="CornerRadius" Value="18" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="controls:Card">
+          <utu:ShadowContainer>
+            <utu:ShadowContainer.Shadows>
+              <utu:ShadowCollection>
+                <utu:Shadow OffsetY="12" BlurRadius="26" Spread="-14" Opacity="0.20" Color="{StaticResource InkColor}" />
+              </utu:ShadowCollection>
+            </utu:ShadowContainer.Shadows>
+            <Border Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{TemplateBinding CornerRadius}"
+                    Padding="{TemplateBinding Padding}">
+              <ContentPresenter Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+            </Border>
+          </utu:ShadowContainer>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+    <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
+    <Setter Property="BorderBrush" Value="{StaticResource HairlineBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+  </Style>
+
+  <!-- Flat panel: the overview uses a 2px ink rule instead of a box -->
+  <Style x:Key="RuledPanel" TargetType="Border">
+    <Setter Property="BorderBrush" Value="{StaticResource InkBrush}" />
+    <Setter Property="BorderThickness" Value="0,2,0,0" />
+    <Setter Property="Padding" Value="0,18,22,14" />
+  </Style>
+
+  <!-- ============================================================
+       Buttons
+       ============================================================ -->
+
+  <Style x:Key="PrimaryButton" TargetType="Button">
+    <Setter Property="Background" Value="{StaticResource InkBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource PaperBrush}" />
+    <Setter Property="FontFamily" Value="{StaticResource BodyMediumFont}" />
+    <Setter Property="FontSize" Value="12.5" />
+    <Setter Property="Padding" Value="14,10" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="UseSystemFocusVisuals" Value="True" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Button">
+          <Border x:Name="Root"
+                  Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}"
+                  CornerRadius="{TemplateBinding CornerRadius}"
+                  Padding="{TemplateBinding Padding}">
+            <Border.RenderTransform>
+              <ScaleTransform x:Name="Squish" CenterX="0.5" CenterY="0.5" />
+            </Border.RenderTransform>
+            <ContentPresenter Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalAlignment="Center" />
+            <VisualStateManager.VisualStateGroups>
+              <VisualStateGroup x:Name="CommonStates">
+                <VisualState x:Name="Normal" />
+                <VisualState x:Name="PointerOver">
+                  <VisualState.Setters>
+                    <Setter Target="Root.Opacity" Value="0.88" />
+                  </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Pressed">
+                  <VisualState.Setters>
+                    <Setter Target="Root.Opacity" Value="0.78" />
+                  </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Disabled">
+                  <VisualState.Setters>
+                    <Setter Target="Root.Opacity" Value="0.4" />
+                  </VisualState.Setters>
+                </VisualState>
+              </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="GhostButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+    <Setter Property="Background" Value="{StaticResource SurfaceSunkBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+    <Setter Property="BorderBrush" Value="{StaticResource HairlineStrongBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+  </Style>
+
+  <Style x:Key="AccentButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+    <Setter Property="Background" Value="{StaticResource TealBrightBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource InkDeepBrush}" />
+    <Setter Property="FontFamily" Value="{StaticResource BodyStrongFont}" />
+  </Style>
+
+  <!-- Transparent hit target: rows, cards, map furniture -->
+  <Style x:Key="BareButton" TargetType="Button">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+    <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+    <Setter Property="UseSystemFocusVisuals" Value="True" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Button">
+          <Grid x:Name="Root" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+            <ContentPresenter Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+            <VisualStateManager.VisualStateGroups>
+              <VisualStateGroup x:Name="CommonStates">
+                <VisualState x:Name="Normal" />
+                <VisualState x:Name="PointerOver">
+                  <VisualState.Setters>
+                    <Setter Target="Root.Opacity" Value="0.82" />
+                  </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Pressed">
+                  <VisualState.Setters>
+                    <Setter Target="Root.Opacity" Value="0.7" />
+                  </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Disabled" />
+              </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+          </Grid>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- Selectable list rows keep their own chrome, so the bare template
+       just needs to not paint anything over it -->
+  <Style x:Key="RowButton" TargetType="Button" BasedOn="{StaticResource BareButton}">
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+  </Style>
+
+  <!-- Slider used by the docking timeline scrubber -->
+  <Style x:Key="ScrubSlider" TargetType="Slider">
+    <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+    <Setter Property="Background" Value="{StaticResource SurfaceSunkAltBrush}" />
+    <Setter Property="IsThumbToolTipEnabled" Value="False" />
+  </Style>
+
+</ResourceDictionary>

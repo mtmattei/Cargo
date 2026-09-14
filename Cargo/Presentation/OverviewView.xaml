@@ -1,0 +1,248 @@
+<UserControl x:Class="Cargo.Presentation.OverviewView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:Cargo.Presentation"
+             xmlns:controls="using:Cargo.Controls">
+
+  <Grid Padding="40,28,40,48" MinWidth="1000" MaxWidth="1520" HorizontalAlignment="Stretch" RowSpacing="28">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <!-- ── Masthead ─────────────────────────────────────────────── -->
+    <Grid Grid.Row="0" BorderBrush="{StaticResource HairlineStrongBrush}" BorderThickness="0,0,0,1"
+          Padding="0,0,0,18" ColumnSpacing="24">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
+
+      <StackPanel VerticalAlignment="Bottom" Spacing="8">
+        <TextBlock Style="{StaticResource GreetingText}">
+          <Run Text="Good evening, " /><Run Text="Operations." Foreground="{StaticResource TealBrush}" />
+        </TextBlock>
+        <TextBlock Text="{x:Bind Subtitle}" Style="{StaticResource CaptionText}" FontSize="14" />
+      </StackPanel>
+
+      <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="26" VerticalAlignment="Bottom">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <TextBlock Text="3" Style="{StaticResource MetricText}" />
+          <TextBlock Text="alongside" Style="{StaticResource CaptionText}" FontSize="12.5" VerticalAlignment="Bottom" Margin="0,0,0,3" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <TextBlock Text="2" Style="{StaticResource MetricText}" Foreground="{StaticResource AmberBrush}" />
+          <TextBlock Text="inbound" Style="{StaticResource CaptionText}" FontSize="12.5" VerticalAlignment="Bottom" Margin="0,0,0,3" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <TextBlock Text="{x:Bind MovesNow, Mode=OneWay}" Style="{StaticResource MetricText}" Foreground="{StaticResource TealBrush}" />
+          <TextBlock Text="moves / h" Style="{StaticResource CaptionText}" FontSize="12.5" VerticalAlignment="Bottom" Margin="0,0,0,3" />
+        </StackPanel>
+        <Button Style="{StaticResource BareButton}" Command="{x:Bind State.GoCommand}" CommandParameter="fleet"
+                ToolTipService.ToolTip="Open Fleet &amp; Waterways">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <TextBlock Text="2" Style="{StaticResource MetricText}" Foreground="{StaticResource OrangeBrush}" />
+            <TextBlock Text="orders late" Style="{StaticResource CaptionText}" FontSize="12.5" VerticalAlignment="Bottom" Margin="0,0,0,3" />
+          </StackPanel>
+        </Button>
+        <Button Style="{StaticResource BareButton}" Command="{x:Bind State.OpenSecurityCommand}"
+                ToolTipService.ToolTip="Open Security">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <TextBlock Text="1" Style="{StaticResource MetricText}" Foreground="{StaticResource OrangeBrush}" />
+            <TextBlock Text="hold · 0 incidents" Style="{StaticResource CaptionText}" FontSize="12.5" VerticalAlignment="Bottom" Margin="0,0,0,3" />
+          </StackPanel>
+        </Button>
+      </StackPanel>
+    </Grid>
+
+    <!-- ── Row 1: movements + what's next ───────────────────────── -->
+    <Grid Grid.Row="1" ColumnSpacing="40">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="300" />
+      </Grid.ColumnDefinitions>
+
+      <Border Style="{StaticResource RuledPanel}">
+        <StackPanel Spacing="4">
+          <Grid ColumnSpacing="18">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal" Spacing="18" VerticalAlignment="Center">
+              <TextBlock Text="Vessel movements" Style="{StaticResource CardTitleText}" />
+              <StackPanel Orientation="Horizontal" Spacing="14">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                  <Ellipse Width="7" Height="7" Fill="{StaticResource TealBrush}" VerticalAlignment="Center" />
+                  <TextBlock Text="Arrivals" Style="{StaticResource CaptionText}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                  <Ellipse Width="7" Height="7" Fill="{StaticResource SeaGreenBrush}" VerticalAlignment="Center" />
+                  <TextBlock Text="Departures" Style="{StaticResource CaptionText}" />
+                </StackPanel>
+              </StackPanel>
+            </StackPanel>
+            <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+              <TextBlock Text="Arrivals above the line · Departures below" Style="{StaticResource CaptionText}"
+                         Foreground="{StaticResource TextFaintBrush}" TextAlignment="Right" />
+              <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right" Margin="0,2,0,0">
+                <Ellipse Width="6" Height="6" Fill="{StaticResource AlertBrush}" VerticalAlignment="Center" />
+                <TextBlock Style="{StaticResource CaptionText}" Foreground="{StaticResource TextFaintBrush}">
+                  <Run Text="Live · " /><Run Text="{x:Bind State.Now, Mode=OneWay}" />
+                </TextBlock>
+              </StackPanel>
+            </StackPanel>
+          </Grid>
+          <ContentControl x:Name="MovementsHost" HorizontalContentAlignment="Stretch" Margin="0,6,0,0" />
+        </StackPanel>
+      </Border>
+
+      <Border Grid.Column="1" Style="{StaticResource RuledPanel}" Padding="0,18,20,14">
+        <StackPanel Spacing="14">
+          <TextBlock Text="Next up" Style="{StaticResource PanelTitleText}" />
+          <ItemsControl ItemsSource="{x:Bind NextUp, Mode=OneWay}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate><StackPanel Spacing="14" /></ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="local:NextUpItem">
+                <Button Style="{StaticResource RowButton}" Command="{x:Bind Open}" CommandParameter="{x:Bind Id}">
+                  <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="92" />
+                      <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Image Source="{x:Bind Silhouette}" Width="92" Height="28" Stretch="Uniform"
+                           VerticalAlignment="Center" />
+                    <StackPanel Grid.Column="1" Spacing="3">
+                      <Grid ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition Width="*" />
+                          <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" Spacing="7">
+                          <Ellipse Width="6" Height="6" Fill="{x:Bind Tone}" VerticalAlignment="Center" />
+                          <TextBlock Text="{x:Bind Name}" Style="{StaticResource BodyStrongText}"
+                                     TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                        <TextBlock Grid.Column="1" Text="{x:Bind Countdown, Mode=OneWay}"
+                                   FontFamily="{StaticResource MonoMediumFont}" FontSize="11.5"
+                                   Foreground="{x:Bind Tone}" />
+                      </Grid>
+                      <TextBlock Text="{x:Bind Detail}" Style="{StaticResource CaptionText}" />
+                    </StackPanel>
+                  </Grid>
+                </Button>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </Border>
+    </Grid>
+
+    <!-- ── Row 2: throughput, flow, weather ─────────────────────── -->
+    <Grid Grid.Row="2" ColumnSpacing="40">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
+
+      <Border Style="{StaticResource RuledPanel}" Padding="0,18,20,14">
+        <StackPanel>
+          <TextBlock Text="Container volume" Style="{StaticResource CardTitleText}" />
+          <TextBlock Text="Moves this hour · one block = 20" Style="{StaticResource CaptionText}" Margin="0,8,0,0" />
+          <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4,0,0">
+            <TextBlock Text="{x:Bind MovesNow, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}" FontSize="26" />
+            <TextBlock Text="↑ 12% vs yesterday" FontFamily="{StaticResource BodyMediumFont}" FontSize="12"
+                       Foreground="{StaticResource SeaGreenBrush}" VerticalAlignment="Bottom" Margin="0,0,0,4" />
+          </StackPanel>
+          <ContentControl x:Name="VolumeHost" HorizontalContentAlignment="Stretch" Margin="0,8,0,0" />
+        </StackPanel>
+      </Border>
+
+      <Border Grid.Column="1" Style="{StaticResource RuledPanel}" Padding="0,18,20,14">
+        <StackPanel>
+          <Grid>
+            <TextBlock Text="Cargo flow" Style="{StaticResource CardTitleText}" />
+            <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Right" VerticalAlignment="Center">
+              <StackPanel Orientation="Horizontal" Spacing="5">
+                <Ellipse Width="6" Height="6" Fill="{StaticResource TealBrush}" VerticalAlignment="Center" />
+                <TextBlock Text="Entering" Style="{StaticResource CaptionText}" />
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Spacing="5">
+                <Ellipse Width="6" Height="6" Fill="{StaticResource AmberBrush}" VerticalAlignment="Center" />
+                <TextBlock Text="Leaving" Style="{StaticResource CaptionText}" />
+              </StackPanel>
+            </StackPanel>
+          </Grid>
+          <ContentControl x:Name="FlowHost" HorizontalContentAlignment="Stretch" Margin="0,14,0,0" />
+        </StackPanel>
+      </Border>
+
+      <Border Grid.Column="2" Grid.ColumnSpan="2" Style="{StaticResource RuledPanel}" Padding="0,18,20,14">
+        <StackPanel>
+          <Grid>
+            <TextBlock Text="Sea &amp; weather" Style="{StaticResource CardTitleText}" />
+            <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource CaptionText}"
+                       Foreground="{StaticResource TextFaintBrush}">
+              <Run Text="Outer harbour · " /><Run Text="{x:Bind State.Now, Mode=OneWay}" />
+            </TextBlock>
+          </Grid>
+
+          <Grid Margin="0,12,0,0" ColumnSpacing="22" RowSpacing="8">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto" />
+              <ColumnDefinition Width="Auto" />
+              <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Orientation="Horizontal" Spacing="7">
+              <TextBlock Text="Wind" Style="{StaticResource MicroText}" VerticalAlignment="Bottom" />
+              <TextBlock Text="14 kn SW · gusts 21" Style="{StaticResource BodyStrongText}" VerticalAlignment="Bottom" />
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="7">
+              <TextBlock Text="Swell" Style="{StaticResource MicroText}" VerticalAlignment="Bottom" />
+              <TextBlock Text="0.6 m · 7 s · W" Style="{StaticResource BodyStrongText}" VerticalAlignment="Bottom" />
+            </StackPanel>
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="7">
+              <TextBlock Text="Current" Style="{StaticResource MicroText}" VerticalAlignment="Bottom" />
+              <TextBlock Text="1.1 kn flood" Style="{StaticResource BodyStrongText}" VerticalAlignment="Bottom" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="7">
+              <TextBlock Text="Visibility" Style="{StaticResource MicroText}" VerticalAlignment="Bottom" />
+              <TextBlock Text="10 km · no fog" Style="{StaticResource BodyStrongText}" VerticalAlignment="Bottom" />
+            </StackPanel>
+            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="7">
+              <TextBlock Text="Channel depth" Style="{StaticResource MicroText}" VerticalAlignment="Bottom" />
+              <TextBlock Text="16.9 m at HW" Style="{StaticResource BodyStrongText}" VerticalAlignment="Bottom" />
+            </StackPanel>
+            <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" Spacing="7">
+              <TextBlock Text="Pilotage" Style="{StaticResource MicroText}" VerticalAlignment="Bottom" />
+              <TextBlock Text="Open · no restrictions" Style="{StaticResource BodyStrongText}"
+                         Foreground="{StaticResource SeaGreenBrush}" VerticalAlignment="Bottom" />
+            </StackPanel>
+          </Grid>
+
+          <Grid Margin="0,14,0,0">
+            <TextBlock Text="Tide · Westhaven Sound" Style="{StaticResource CaptionText}" />
+            <TextBlock Text="HW 23:10 · +2.1 m" Style="{StaticResource CaptionText}" HorizontalAlignment="Right" />
+          </Grid>
+          <ContentControl x:Name="TideHost" Height="78" HorizontalContentAlignment="Stretch" Margin="0,6,0,0" />
+          <Grid Margin="0,2,0,0">
+            <TextBlock Text="18:00" Style="{StaticResource MicroText}" HorizontalAlignment="Left" />
+            <TextBlock Text="00:00" Style="{StaticResource MicroText}" HorizontalAlignment="Center" />
+            <TextBlock Text="06:00" Style="{StaticResource MicroText}" HorizontalAlignment="Right" />
+          </Grid>
+        </StackPanel>
+      </Border>
+    </Grid>
+  </Grid>
+</UserControl>

@@ -1,0 +1,10 @@
+{
+  "background_color": "#ffffff",
+  "description": "Cargo",
+  "display": "standalone",
+  "name": "Cargo",
+  "short_name": "Cargo",
+  "start_url": "/index.html",
+  "theme_color": "#ffffff",
+  "scope": "/"
+}
