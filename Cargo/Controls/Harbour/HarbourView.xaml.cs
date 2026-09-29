@@ -227,15 +227,18 @@ public sealed partial class HarbourView : UserControl
             var (x, y) = camera.Project(vessel.Mast);
 
             // A vessel out of frame loses its tag rather than pinning it to an edge it is not near.
-            // xaml-lint: allow codebehind responsive - per-frame projection culling; there is no XAML surface for the camera
+            // xaml-lint: allow responsive - per-frame projection culling, not a breakpoint
             var inFrame = x > 0 && x < ActualWidth && y > 40 && y < ActualHeight - 56;
+            // xaml-lint: allow codebehind - per-frame projection culling; there is no XAML surface for the camera
             host.Visibility = inFrame ? Visibility.Visible : Visibility.Collapsed;
             if (!inFrame)
             {
                 continue;
             }
 
+            // xaml-lint: allow responsive - the tag's own measured size, used to place it on its leader
             var width = host.ActualWidth > 0 ? host.ActualWidth : 160;
+            // xaml-lint: allow responsive - the tag's own measured size, used to place it on its leader
             var height = host.ActualHeight > 0 ? host.ActualHeight : 36;
             var left = Math.Clamp(x - width / 2, 10, Math.Max(10, ActualWidth - width - 10));
             var top = Math.Max(52, y - Lead - height);
