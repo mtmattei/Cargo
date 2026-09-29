@@ -1,0 +1,1105 @@
+<title>North Quay Twin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Bricolage+Grotesque:opsz,wght@12..96,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: perspective operations model on top (neutral geometry, colour only for status), berth list + selected vessel below. */
+:root {
+  --bg: #F3F3F1;
+  --surface: #FBFBFA;
+  --ink: #121617;
+  --muted: #5E6569;
+  --line: rgba(18, 22, 23, .08);
+  --line-strong: rgba(18, 22, 23, .18);
+  --accent: #1E8F7A;
+  --accent-ink: #146B5B;
+  --accent-soft: rgba(30, 143, 122, .16);
+  --on-accent: #FFFFFF;
+  --alert: #B23F3F;
+  --alert-soft: rgba(178, 63, 63, .12);
+  --stage: #E7E9E8;
+  --tag: #FBFBFA;
+  --tag-line: rgba(18, 22, 23, .22);
+  --shadow: 0 1px 2px rgba(18, 22, 23, .06), 0 4px 14px rgba(18, 22, 23, .06);
+  --display: 'Bricolage Grotesque', 'Archivo', system-ui, sans-serif;
+  --body: 'Archivo', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0C1012; --surface: #13191B; --ink: #E4E9E9; --muted: #9AA5A8;
+    --line: rgba(228, 233, 233, .08); --line-strong: rgba(228, 233, 233, .18);
+    --accent: #3FC3A0; --accent-ink: #72D9BC; --accent-soft: rgba(63, 195, 160, .16); --on-accent: #06201A;
+    --alert: #E07A70; --alert-soft: rgba(224, 122, 112, .16);
+    --stage: #111618; --tag: #182023; --tag-line: rgba(228, 233, 233, .24);
+    --shadow: 0 1px 2px rgba(0, 0, 0, .45), 0 4px 14px rgba(0, 0, 0, .35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0C1012; --surface: #13191B; --ink: #E4E9E9; --muted: #9AA5A8;
+  --line: rgba(228, 233, 233, .08); --line-strong: rgba(228, 233, 233, .18);
+  --accent: #3FC3A0; --accent-ink: #72D9BC; --accent-soft: rgba(63, 195, 160, .16); --on-accent: #06201A;
+  --alert: #E07A70; --alert-soft: rgba(224, 122, 112, .16);
+  --stage: #111618; --tag: #182023; --tag-line: rgba(228, 233, 233, .24);
+  --shadow: 0 1px 2px rgba(0, 0, 0, .45), 0 4px 14px rgba(0, 0, 0, .35);
+  color-scheme: dark;
+}
+
+body { background: var(--bg); color: var(--ink); font: 15px/1.45 var(--body); }
+.wrap { max-width: 1240px; margin: 0 auto; padding-inline: clamp(16px, 3vw, 32px); padding-block: 24px 40px; display: grid; gap: 16px; }
+
+header.top { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px 24px; flex-wrap: wrap; }
+h1 { font: 600 clamp(28px, 4vw, 38px)/1.05 var(--display); letter-spacing: -.02em; margin: 0; text-wrap: balance; }
+.sub { margin: 6px 0 0; color: var(--muted); }
+.sub .clock { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--ink); }
+.tag-concept { font: 500 12px/1 var(--body); padding: 7px 10px; border-radius: 6px; border: 1px solid var(--line-strong); color: var(--muted); white-space: nowrap; }
+
+.stage { position: relative; border-radius: 12px; overflow: hidden; background: var(--stage); height: clamp(420px, 66vh, 740px); box-shadow: inset 0 0 0 1px var(--line); }
+#scene { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+#scene.dragging { cursor: grabbing; }
+#scene.hovering { cursor: pointer; }
+.stage:has(#scene:focus-visible) { box-shadow: inset 0 0 0 2px var(--accent); }
+#scene:focus { outline: none; }
+#labels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+
+.plate { position: absolute; left: 0; top: 0; font: 500 10.5px/1 var(--mono); padding: 3px 4px; border-radius: 3px; background: var(--tag); color: var(--ink); box-shadow: inset 0 0 0 1px var(--tag-line); will-change: transform; }
+.plate.needs { background: var(--accent); color: var(--on-accent); box-shadow: none; }
+.plate.restricted { color: var(--alert); box-shadow: inset 0 0 0 1px var(--alert); }
+
+.dtag { all: unset; position: absolute; left: 0; top: 0; pointer-events: auto; box-sizing: border-box; display: grid; gap: 1px; padding: 4px 7px 5px; border-radius: 4px; background: var(--tag); box-shadow: inset 0 0 0 1px var(--tag-line); font: 500 11px/1.25 var(--mono); letter-spacing: .02em; color: var(--ink); white-space: nowrap; cursor: pointer; will-change: transform; }
+.dtag b { font-weight: 500; text-transform: uppercase; }
+.dtag small { font: 400 11px/1.25 var(--mono); color: var(--muted); }
+.dtag.needs { background: var(--accent); color: var(--on-accent); box-shadow: none; }
+.dtag.needs small { color: inherit; opacity: .88; }
+.dtag.sel { box-shadow: inset 0 0 0 2px var(--ink); }
+.dtag.needs.sel { box-shadow: 0 0 0 2px var(--ink); }
+.dtag:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.hud { position: absolute; display: flex; gap: 8px; align-items: center; }
+.hud.tl { top: 12px; left: 12px; right: 12px; justify-content: space-between; flex-wrap: wrap; pointer-events: none; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 7px 10px; border-radius: 8px; background: var(--surface); box-shadow: var(--shadow); font-size: 12px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.sw.needs { background: var(--accent); }
+.sw.sel { box-shadow: inset 0 0 0 2px var(--ink); }
+.sw.restricted { background: var(--alert-soft); box-shadow: inset 0 0 0 1px var(--alert); }
+.sw.depth { height: 2px; width: 14px; background: var(--muted); opacity: .6; }
+.hint { font-size: 12px; color: var(--muted); padding: 7px 10px; border-radius: 8px; background: var(--surface); box-shadow: var(--shadow); transition: opacity .3s ease; }
+.hint.gone { opacity: 0; }
+.hud.bl { left: 12px; bottom: 12px; }
+.hud.br { right: 12px; bottom: 12px; }
+.seg { display: flex; padding: 3px; border-radius: 9px; background: var(--surface); box-shadow: var(--shadow); }
+.seg button { all: unset; cursor: pointer; padding: 8px 11px; border-radius: 6px; font: 500 13px/1 var(--body); color: var(--muted); white-space: nowrap; }
+.seg button:hover { color: var(--ink); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.iconbtn { all: unset; cursor: pointer; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 8px; background: var(--surface); box-shadow: var(--shadow); color: var(--ink); font: 500 17px/1 var(--body); }
+.scalebar { display: grid; gap: 3px; padding: 7px 10px 6px; border-radius: 8px; background: var(--surface); box-shadow: var(--shadow); font: 500 11px/1 var(--mono); color: var(--muted); }
+.scalebar i { display: block; height: 5px; border: 1.5px solid var(--ink); border-top: 0; width: 100px; }
+.compass { width: 34px; height: 34px; border-radius: 8px; background: var(--surface); box-shadow: var(--shadow); display: grid; place-items: center; }
+.compass svg { width: 24px; height: 24px; }
+.seg button:focus-visible, .iconbtn:focus-visible, .row:focus-visible, .ghost:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.below { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.panel { background: var(--surface); border-radius: 12px; box-shadow: var(--shadow); border: 1px solid var(--line); min-width: 0; }
+.panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 16px 18px 8px; }
+h2 { font: 600 17px/1.2 var(--body); margin: 0; }
+.count { color: var(--muted); font-size: 13px; }
+ol.rows { list-style: none; margin: 0; padding: 0 8px 8px; }
+ol.rows li + li { border-top: 1px solid var(--line); }
+.row { all: unset; box-sizing: border-box; width: 100%; display: grid; grid-template-columns: auto minmax(0, 1fr) auto 12px; gap: 12px; align-items: center; padding: 10px; border-radius: 8px; cursor: pointer; }
+.row:hover { background: var(--line); }
+.row[aria-current="true"] { box-shadow: inset 0 0 0 2px var(--ink); }
+.row.needs { background: var(--accent-soft); }
+.bplate { width: 34px; height: 30px; border-radius: 5px; display: grid; place-items: center; font: 500 13px/1 var(--mono); background: var(--bg); color: var(--ink); border: 1px solid var(--line-strong); }
+.row.needs .bplate { background: var(--accent); color: var(--on-accent); border-color: transparent; }
+.row.restricted .bplate { color: var(--alert); border-color: var(--alert); }
+.txt { min-width: 0; display: grid; gap: 1px; }
+.state { font: 600 11px/1.2 var(--body); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.row.needs .state { color: var(--accent-ink); }
+.row.restricted .state { color: var(--alert); }
+.name { font: 600 15px/1.25 var(--body); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row.free .name { font-weight: 500; color: var(--muted); }
+.meta { font-size: 13px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.when { font: 500 14px/1 var(--mono); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.row.needs .when { color: var(--accent-ink); }
+.chev { color: var(--muted); font-size: 16px; line-height: 1; }
+
+.dbody { padding: 4px 18px 18px; display: grid; gap: 12px; }
+.big { margin: 0; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.big b { font: 600 32px/1 var(--display); letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+.big small { color: var(--muted); font-size: 14px; }
+.detail.needs .big b { color: var(--accent-ink); }
+.dnote { margin: 0; color: var(--muted); font-size: 14px; }
+.loadbar { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.loadbar span { display: block; height: 100%; background: var(--ink); }
+.detail.needs .loadbar span { background: var(--accent); }
+.loadlabel { margin: 6px 0 0; font-size: 12px; color: var(--muted); }
+.facts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; margin: 0; }
+.facts div { min-width: 0; }
+.facts dt { font-size: 12px; color: var(--muted); }
+.facts dd { margin: 2px 0 0; font: 500 15px/1.2 var(--mono); font-variant-numeric: tabular-nums; }
+.facts dd.tight { color: var(--accent-ink); }
+.ghost { all: unset; cursor: pointer; justify-self: start; padding: 9px 14px; border-radius: 8px; border: 1px solid var(--line-strong); font: 500 13px/1 var(--body); color: var(--ink); }
+.ghost:hover { background: var(--line); }
+
+.note { margin: 0; font-size: 13px; color: var(--muted); max-width: 72ch; }
+
+@media (max-width: 820px) {
+  .below { grid-template-columns: 1fr; }
+  .hint { display: none; }
+}
+@media (max-width: 560px) {
+  .legend { font-size: 11px; gap: 4px 10px; }
+  .seg button { padding: 8px 8px; font-size: 12px; }
+  .hud.br .compass { display: none; }
+  .hud.br { flex-direction: column-reverse; align-items: flex-end; }
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>North Quay</h1>
+      <p class="sub">Westhaven · live berth status · <span class="clock">20:58</span></p>
+    </div>
+    <span class="tag-concept">Concept B4 · miniature</span>
+  </header>
+
+  <section class="stage" aria-label="3D model of North Quay">
+    <canvas id="scene" tabindex="0" aria-label="3D model of North Quay. Arrow keys rotate and tilt, plus and minus zoom, zero resets. The berth list below has the same information."></canvas>
+    <div id="labels" aria-hidden="true"></div>
+    <div class="hud tl">
+      <div class="legend" aria-hidden="true">
+        <span><i class="sw needs"></i>Needs you</span>
+        <span><i class="sw sel"></i>Selected</span>
+        <span><i class="sw restricted"></i>Restricted</span>
+        <span><i class="sw depth"></i>Depth contour (m)</span>
+      </div>
+      <div class="hint" id="hint">Drag to orbit · scroll to zoom</div>
+    </div>
+    <div class="hud bl">
+      <div class="seg" role="group" aria-label="Camera">
+        <button type="button" data-view="overview" aria-pressed="true">Overview</button>
+        <button type="button" data-view="sea" aria-pressed="false">From sea</button>
+        <button type="button" data-view="land" aria-pressed="false">From land</button>
+        <button type="button" data-view="plan" aria-pressed="false">Plan</button>
+      </div>
+    </div>
+    <div class="hud br">
+      <div class="scalebar" aria-hidden="true"><i id="scale-bar"></i><span id="scale-label">200 m</span></div>
+      <div class="compass" aria-hidden="true">
+        <svg viewBox="-13 -13 26 26" id="needle"><path d="M0 -10 L3.6 1 L0 -1 L-3.6 1 Z" fill="var(--alert)"/><path d="M0 10 L3.6 -1 L0 1 L-3.6 -1 Z" fill="var(--line-strong)"/></svg>
+      </div>
+      <button type="button" class="iconbtn" id="zout" aria-label="Zoom out">−</button>
+      <button type="button" class="iconbtn" id="zin" aria-label="Zoom in">+</button>
+    </div>
+  </section>
+
+  <section class="below">
+    <div class="panel">
+      <div class="panel-head"><h2>Berth status</h2><span class="count">8 berths · 1 anchorage</span></div>
+      <ol class="rows" id="rows"></ol>
+    </div>
+    <aside class="panel detail" id="detail" aria-live="polite">
+      <div class="panel-head"><h2 id="d-name">Nordic Star</h2><span class="count" id="d-where">Berth 07</span></div>
+      <div class="dbody">
+        <span class="state" id="d-state">Arriving</span>
+        <p class="big"><b id="d-big">42 min</b><small id="d-bigsub">ETA 21:40</small></p>
+        <p class="dnote" id="d-note">Pilot aboard · tugs Orca and Kestrel</p>
+        <div id="d-load">
+          <div class="loadbar"><span id="d-bar" style="width:90%"></span></div>
+          <p class="loadlabel" id="d-barlabel">Cargo aboard 90%</p>
+        </div>
+        <dl class="facts" id="d-facts"></dl>
+        <button type="button" class="ghost" id="d-focus">Show on map</button>
+      </div>
+    </aside>
+  </section>
+
+  <p class="note">Example data from the Westhaven Dispatch demo. Everything is at true scale (1 unit = 3.9 m): 40 ft containers, 52 m quay cranes on a 30 m rail gauge, a 5.5 m quay. Saturated colour is reserved for status; depths and the fairway are drawn the way a nautical chart draws them.</p>
+</div>
+
+<script>
+(() => {
+'use strict';
+const RM = matchMedia('(prefers-reduced-motion: reduce)');
+const rad = d => d * Math.PI / 180;
+const root = document.documentElement;
+const cv = document.getElementById('scene');
+const mainCtx = cv.getContext('2d');
+const stat = document.createElement('canvas'), statCtx = stat.getContext('2d');
+let ctx = mainCtx;
+const labelsEl = document.getElementById('labels');
+
+// ── World at true scale: 1 unit ≈ 3.9 m ─────────────────────────
+// 40 ft box 3.13 × 0.63 × 0.66 · quay 5.5 m above water · STS crane boom at ~52 m · 30 m rail gauge
+const M_PER_UNIT = 3.9;
+const X0 = -900, X1 = 900, Y0 = -260, SY1 = 620, QZ = 1.4;
+const CL = 3.13, CW = 0.63, CH = 0.66, BAY = 3.3, ROW = 0.7;
+const Lraw = [-0.55, 0.4, 0.72], Ll = Math.hypot(...Lraw), L = Lraw.map(v => v / Ll);
+const SHX = -L[0] / L[2], SHY = -L[1] / L[2];
+const F = 1000;
+
+const PAL = {
+  // high-key studio light: near-white concrete, low face contrast, shadows that go blue-violet instead of grey
+  light: { stage: '#EDF0F1', land: '#E5E5E1', apron: '#DDDDD8', pad: '#DADAD4', road: '#CDCEC9', mark: '#F7F7F4', paint: 'rgba(255,255,255,.9)', sign: 'rgba(70,78,84,.75)', rail: '#9398A0', safety: '#D2BC82', quaySide: '#B3B6B7', seaNear: '#A8CAD6', seaFar: '#C9DDE4', pocket: 'rgba(40,70,100,.07)', contour: 'rgba(40,72,100,.3)', sounding: 'rgba(30,56,80,.62)', fairway: 'rgba(30,56,80,.42)', haze: '#EDF0F1', hazeA: .7, wake: '255,255,255', wakeA: .7, glint: '255,250,238', glintA: .35, shSea: '48,62,120', shLand: '58,66,122', shA: .22, dim: 1, tint: [150, 164, 204], leader: 'rgba(18,22,23,.5)', tree: '#8FAE86', treeHi: '#A9C49F' },
+  dark:  { stage: '#0F1417', land: '#2B3033', apron: '#272C2F', pad: '#25292C', road: '#202427', mark: '#3B4245', paint: 'rgba(210,220,225,.35)', sign: 'rgba(200,210,215,.4)', rail: '#50575B', safety: '#6B6043', quaySide: '#1C2023', seaNear: '#162A33', seaFar: '#1A272D', pocket: 'rgba(150,190,210,.05)', contour: 'rgba(150,188,205,.22)', sounding: 'rgba(160,195,210,.55)', fairway: 'rgba(160,195,210,.38)', haze: '#0F1417', hazeA: .5, wake: '190,220,232', wakeA: .22, glint: '110,145,165', glintA: .18, shSea: '0,4,16', shLand: '0,0,10', shA: .5, dim: .76, tint: [30, 40, 60], leader: 'rgba(228,233,233,.5)', tree: '#3F5140', treeHi: '#4E6350' }
+};
+let pal = PAL.light, css = {}, themeVer = 0;
+const isDark = () => { const t = root.getAttribute('data-theme'); return t ? t === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches; };
+
+const hexCache = new Map();
+function rgb(h) { let v = hexCache.get(h); if (v) return v; const s = h.replace('#', ''); v = [parseInt(s.slice(0, 2), 16), parseInt(s.slice(2, 4), 16), parseInt(s.slice(4, 6), 16)]; hexCache.set(h, v); return v; }
+const shadeCache = new Map();
+function shade(hex, lf) {
+  const k = hex + '|' + Math.round(lf * 100);
+  let v = shadeCache.get(k); if (v) return v;
+  const c = rgb(hex), t = Math.max(0, 1 - lf) * 0.4, d = pal.dim;
+  const ch = i => Math.max(0, Math.min(255, Math.round((c[i] * (1 - t) + pal.tint[i] * t) * Math.min(lf, 1.04) * d)));
+  v = `rgb(${ch(0)},${ch(1)},${ch(2)})`; shadeCache.set(k, v); return v;
+}
+// the thin bright line a model's top edges catch under soft light
+const hiCache = new Map();
+function edgeLight(hex) {
+  let v = hiCache.get(hex + pal.dim); if (v) return v;
+  const c = rgb(hex), k = .42, d = pal.dim;
+  v = `rgb(${Math.round((c[0] + (255 - c[0]) * k) * d)},${Math.round((c[1] + (255 - c[1]) * k) * d)},${Math.round((c[2] + (255 - c[2]) * k) * d)})`;
+  hiCache.set(hex + pal.dim, v); return v;
+}
+const lightOf = n => 0.66 + 0.4 * Math.max(0, n[0] * L[0] + n[1] * L[1] + n[2] * L[2]);
+
+// ── Geometry helpers ────────────────────────────────────────────
+const allFaces = [];
+function face(pts, n, col, thin) { const f = { pts, n, col, lf: lightOf(n), css: '', hi: '', top: n[2] > .99, thin: !!thin }; allFaces.push(f); return f; }
+function area(p) { let a = 0; for (let i = 0; i < p.length; i++) { const q = p[i], r = p[(i + 1) % p.length]; a += q[0] * r[1] - r[0] * q[1]; } return a / 2; }
+function extrude(poly, z0, z1, col, o = {}) {
+  if (area(poly) < 0) poly = poly.slice().reverse();
+  const out = [];
+  if (!o.noSides) for (let i = 0; i < poly.length; i++) {
+    const a = poly[i], b = poly[(i + 1) % poly.length];
+    let nx = b[1] - a[1], ny = -(b[0] - a[0]); const l = Math.hypot(nx, ny) || 1; nx /= l; ny /= l;
+    out.push(face([[a[0], a[1], z0], [b[0], b[1], z0], [b[0], b[1], z1], [a[0], a[1], z1]], [nx, ny, 0], o.sideCol || col, o.thin));
+  }
+  if (!o.noTop) out.push(face(poly.map(p => [p[0], p[1], z1]), [0, 0, 1], o.topCol || col, o.thin));
+  return out;
+}
+function rect(cx, cy, lx, ly, ang = 0) {
+  const c = Math.cos(ang), s = Math.sin(ang), hx = lx / 2, hy = ly / 2;
+  return [[-hx, -hy], [hx, -hy], [hx, hy], [-hx, hy]].map(([u, v]) => [cx + u * c - v * s, cy + u * s + v * c]);
+}
+const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+const cross3 = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+const norm3 = a => { const l = Math.hypot(...a) || 1; return [a[0] / l, a[1] / l, a[2] / l]; };
+// square-section member between two points (stays, bracing)
+function beam(p0, p1, w, col) {
+  const d = norm3(sub(p1, p0));
+  let a = cross3(d, [0, 0, 1]); if (Math.hypot(...a) < 1e-3) a = [1, 0, 0]; a = norm3(a);
+  const b = norm3(cross3(a, d)), h = w / 2, out = [];
+  const off = (p, sa, sb) => [p[0] + a[0] * h * sa + b[0] * h * sb, p[1] + a[1] * h * sa + b[1] * h * sb, p[2] + a[2] * h * sa + b[2] * h * sb];
+  for (const [sa, sb, n] of [[1, 0, a], [-1, 0, a.map(v => -v)], [0, 1, b], [0, -1, b.map(v => -v)]]) {
+    const ta = sa ? [sa, sa] : [-1, 1], tb = sb ? [sb, sb] : [-1, 1];
+    const c1 = off(p0, ta[0], tb[0]), c2 = off(p0, ta[1], tb[1]), c3 = off(p1, ta[1], tb[1]), c4 = off(p1, ta[0], tb[0]);
+    out.push(face([c1, c2, c3, c4], n, col));
+  }
+  return out;
+}
+function hull2(points) {
+  const p = points.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  if (p.length < 3) return p;
+  const cr = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+  const lo = [], up = [];
+  for (const q of p) { while (lo.length >= 2 && cr(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); }
+  for (let i = p.length - 1; i >= 0; i--) { const q = p[i]; while (up.length >= 2 && cr(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); }
+  up.pop(); lo.pop(); return lo.concat(up);
+}
+function clipY(poly, keepLand) {
+  const out = [];
+  for (let i = 0; i < poly.length; i++) {
+    const a = poly[i], b = poly[(i + 1) % poly.length];
+    const ina = keepLand ? a[1] <= 0 : a[1] >= 0, inb = keepLand ? b[1] <= 0 : b[1] >= 0;
+    if (ina) out.push(a);
+    if (ina !== inb) { const t = a[1] / (a[1] - b[1]); out.push([a[0] + (b[0] - a[0]) * t, 0]); }
+  }
+  return out;
+}
+function mulberry(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+// ── Shadows (world space; the sun is fixed to the world) ────────
+const sh = { sea: [], land: [], cSea: [], cLand: [] };
+function cast(poly, zb, zt, plane) {
+  const pz = plane === 'sea' ? 0 : QZ;
+  const a = poly.map(([x, y]) => [x + SHX * (zb - pz), y + SHY * (zb - pz)]);
+  const b = poly.map(([x, y]) => [x + SHX * (zt - pz), y + SHY * (zt - pz)]);
+  const h = clipY(hull2(a.concat(b)), plane === 'land');
+  if (h.length > 2) sh[plane].push(h);
+}
+function contact(poly, plane, grow = .5) {
+  let cx = 0, cy = 0; for (const p of poly) { cx += p[0]; cy += p[1]; } cx /= poly.length; cy /= poly.length;
+  (plane === 'sea' ? sh.cSea : sh.cLand).push(poly.map(([x, y]) => { const dx = x - cx, dy = y - cy, l = Math.hypot(dx, dy) || 1; return [x + dx / l * grow, y + dy / l * grow]; }));
+}
+
+// ── Objects ─────────────────────────────────────────────────────
+const objs = [], uppers = [];
+function obj(anchor, extra = {}, list = objs) { const o = Object.assign({ anchor, base: [], boxes: [], overhead: false }, extra); list.push(o); return o; }
+function addStack(o, c, faces, layer = 0) { o.boxes.push({ c, faces, layer, k: 0 }); }
+
+// liveries, desaturated: blues, rust, orange, magenta, greys, beige, navy. No green, no signal red.
+const CONT = ['#7FA6C4', '#9C6B57', '#C98A4E', '#A0708F', '#D8DADB', '#A4A9AC', '#CDB67E', '#52657A', '#8E5E55'];
+const CONTW = [.17, .13, .08, .06, .14, .12, .1, .12, .08];
+function pickCont(r) { let x = r(), i = 0; while (i < CONTW.length - 1 && x > CONTW[i]) { x -= CONTW[i]; i++; } return CONT[i]; }
+
+// A grid of container stacks. Faces hidden by an equal-or-taller neighbour are never built,
+// so a 400-stack ship costs roughly its tops plus its visible terraces.
+function stackGrid(o, toW, ang, us, vs, z0, H, C) {
+  const ni = us.length, nj = vs.length;
+  for (let i = 0; i < ni; i++) for (let j = 0; j < nj; j++) {
+    const n = H[i][j]; if (!n) continue;
+    const [cx, cy] = toW(us[i], vs[j]);
+    const poly = rect(cx, cy, CL, CW, ang), faces = [];
+    const nb = [j > 0 ? H[i][j - 1] : 0, i < ni - 1 ? H[i + 1][j] : 0, j < nj - 1 ? H[i][j + 1] : 0, i > 0 ? H[i - 1][j] : 0];
+    for (let s = 0; s < 4; s++) {
+      const a = poly[s], b = poly[(s + 1) % 4];
+      let nx = b[1] - a[1], ny = -(b[0] - a[0]); const l = Math.hypot(nx, ny); nx /= l; ny /= l;
+      for (let k = nb[s]; k < n; k++) { const za = z0 + k * CH, zt = za + CH * .95; faces.push(face([[a[0], a[1], za], [b[0], b[1], za], [b[0], b[1], zt], [a[0], a[1], zt]], [nx, ny, 0], C[i][j][k], true)); }
+    }
+    faces.push(face(poly.map(p => [p[0], p[1], z0 + (n - 1) * CH + CH * .95]), [0, 0, 1], C[i][j][n - 1], true));
+    addStack(o, [cx, cy, z0], faces);
+  }
+}
+function colourColumn(r, n) { const c = []; for (let k = 0; k < n; k++) c.push(k && r() < .45 ? c[k - 1] : pickCont(r)); return c; }
+
+// ── Data ────────────────────────────────────────────────────────
+const SHIPS = {
+  kaida:  { id: 'kaida', name: 'Kaida Maru', berth: '01', kind: 'occupied', state: 'Loading', tag: 'LOADING 74% · ETD 23:30', when: '23:30', big: '74%', bigSub: 'loaded · sails 23:30', note: '2 cranes working · 58 moves/h', len: 294, draft: 13.1, depth: 15.2, aboard: 74, x: -350, L: 75, B: 10.3, ang: 0, load: .74, tiers: 6, bridge: 'aft', hull: '#3E5268', funnel: '#CF978E', seed: 3 },
+  aurora: { id: 'aurora', name: 'MSC Aurora', berth: '04', kind: 'occupied', state: 'Discharging', tag: 'DISCH 62% · ETD THU 06:10', when: 'Thu 06:10', big: '62%', bigSub: 'unloaded · departs Thu 06:10', note: '4 cranes working · 1,248 TEU', len: 366, draft: 14.8, depth: 16.0, aboard: 38, x: -50, L: 94, B: 13, ang: Math.PI, load: .38, tiers: 7, bridge: 'fwd', hull: '#2F3A48', funnel: '#D9C084', seed: 7 },
+  baltic: { id: 'baltic', name: 'Baltic Crown', berth: '06', kind: 'occupied', state: 'Departing', tag: 'ETD 21:30 · LASHED', when: '21:30', big: '21:30', bigSub: 'departure · lashing certified', note: 'Clearance issued 20:40', len: 300, draft: 13.6, depth: 15.0, aboard: 95, x: 150, L: 77, B: 11, ang: 0, load: .95, tiers: 6, bridge: 'aft', hull: '#34494B', funnel: '#8FB3CF', seed: 11 },
+  nordic: { id: 'nordic', name: 'Nordic Star', berth: '07', kind: 'needs', state: 'Arriving', tag: 'ETA 21:40 · B07 · UKC 0.5 m', when: '42 min', big: '42 min', bigSub: 'ETA 21:40', note: 'Pilot aboard · tugs Orca and Kestrel', len: 280, draft: 12.9, depth: 13.4, aboard: 90, x: 338, y: 150, L: 72, B: 10.5, load: .9, tiers: 6, bridge: 'aft', hull: '#53708A', funnel: '#A9A2C6', seed: 5 },
+  levant: { id: 'levant', name: 'Levant Express', berth: null, kind: 'anchor', state: 'At anchor', tag: 'ANCHORED · UNASSIGNED', when: 'Thu 02:30', big: 'Unassigned', bigSub: 'arrival window Thu 02:30', note: 'Draft 14.2 m fits berths 01, 04 and 06', len: 334, draft: 14.2, depth: null, aboard: 85, x: -300, y: 262, L: 86, B: 12.3, ang: rad(-8), load: .85, tiers: 7, bridge: 'fwd', hull: '#3A3A3F', funnel: '#D6AE8E', seed: 13 }
+};
+for (const s of Object.values(SHIPS)) if (s.y === undefined) s.y = 1.2 + s.B / 2;
+SHIPS.nordic.ang = Math.atan2(7 - 150, 250 - 338);
+const BERTHS = [
+  { n: '01', x: -350, depth: 15.2, ship: 'kaida' },
+  { n: '02', x: -250, depth: 13.0 },
+  { n: '03', x: -150, depth: 12.0, restricted: 'Fender repair until Thu' },
+  { n: '04', x: -50, depth: 16.0, ship: 'aurora' },
+  { n: '05', x: 50, depth: 14.6 },
+  { n: '06', x: 150, depth: 15.0, ship: 'baltic' },
+  { n: '07', x: 250, depth: 13.4, ship: 'nordic', needs: true },
+  { n: '08', x: 350, depth: 13.0 }
+];
+
+// ── Vessels ─────────────────────────────────────────────────────
+const DECK = '#6F777C', BOOT = '#8A4B42', HOUSE = '#E7E9E9', GLASS = '#2C3438', STEEL = '#5E676D', CAP = '#2F3538';
+const DECKZ = 3.6;
+function buildShip(s) {
+  const c = Math.cos(s.ang), sn = Math.sin(s.ang), r = mulberry(s.seed);
+  const toW = (u, v) => [s.x + u * c - v * sn, s.y + u * sn + v * c];
+  const Lh = s.L / 2, Bh = s.B / 2, bowLen = 18;
+  // transom stern, parallel body, parabolic bow
+  const loc = [[-Lh, -Bh * .86], [-Lh + 1.2, -Bh], [Lh - bowLen, -Bh]];
+  for (let t = 1; t <= 7; t++) { const a = t / 7; loc.push([Lh - bowLen + bowLen * a, -Bh * (1 - a * a)]); }
+  for (let t = 6; t >= 1; t--) { const a = t / 7; loc.push([Lh - bowLen + bowLen * a, Bh * (1 - a * a)]); }
+  loc.push([Lh - bowLen, Bh], [-Lh + 1.2, Bh], [-Lh, Bh * .86]);
+  const ring = loc.map(([u, v]) => toW(u, v));
+  const o = obj([s.x, s.y, 3], { ship: s, ring });
+  o.base.push(...extrude(ring, 0, .45, BOOT, { noTop: true }));
+  o.base.push(...extrude(ring, .45, DECKZ, s.hull, { topCol: DECK }));
+  // forecastle: raised bow deck with a breakwater line
+  const fu = Lh - 10, fa = (fu - (Lh - bowLen)) / bowLen, fv = Bh * (1 - fa * fa);
+  const fc = [[fu, -fv]]; for (let t = 1; t <= 7; t++) { const a = t / 7; const u = Lh - bowLen + bowLen * a; if (u > fu) fc.push([u, -Bh * (1 - a * a)]); }
+  for (let t = 6; t >= 1; t--) { const a = t / 7; const u = Lh - bowLen + bowLen * a; if (u > fu) fc.push([u, Bh * (1 - a * a)]); }
+  fc.push([fu, fv]);
+  addStack(o, toW(fu + 4, 0).concat(DECKZ), extrude(fc.map(([u, v]) => toW(u, v)), DECKZ, DECKZ + .9, s.hull, { topCol: DECK }));
+
+  const uBridge = s.bridge === 'fwd' ? Lh - .33 * s.L : -Lh + 4.5;
+  const aftEnd = s.bridge === 'fwd' ? -Lh + 10.5 : -Lh + 7;
+  // cargo: bays along the hull, rows across the beam, tiers stepped down at the outer rows
+  const us = []; for (let u = aftEnd + BAY / 2; u + BAY / 2 < fu - .6; u += BAY) if (Math.abs(u - uBridge) > 3.4) us.push(u);
+  const nj = Math.floor((s.B - .9) / ROW), vs = []; for (let j = 0; j < nj; j++) vs.push((j - (nj - 1) / 2) * ROW);
+  const Hh = [], Cc = [];
+  let sumT = 0;
+  for (let i = 0; i < us.length; i++) {
+    const emptyBay = s.load < .5 && r() > s.load * 1.5;
+    const bayT = Math.round(s.tiers * (.5 + .5 * s.load) + (r() - .5) * 2);
+    Hh.push([]); Cc.push([]);
+    for (let j = 0; j < nj; j++) {
+      const edge = Math.min(j, nj - 1 - j);
+      let n = emptyBay ? 0 : bayT - (edge === 0 ? 2 : edge === 1 ? 1 : 0) + (r() < .12 ? -1 : 0);
+      n = Math.max(0, Math.min(s.tiers, n));
+      Hh[i].push(n); Cc[i].push(colourColumn(r, n)); sumT += n;
+    }
+  }
+  stackGrid(o, toW, s.ang, us, vs, DECKZ, Hh, Cc);
+  const avgT = sumT / Math.max(1, us.length * nj);
+  // superstructure: bridge house with a glazing band and full-beam wings, mast
+  const [bx, by] = toW(uBridge, 0), bridge = [];
+  bridge.push(...extrude(rect(bx, by, 3, s.B * .78, s.ang), DECKZ, 9.4, HOUSE));
+  bridge.push(...extrude(rect(bx, by, 3.05, s.B * .79, s.ang), 9.4, 10, GLASS));
+  bridge.push(...extrude(rect(...toW(uBridge + .4, 0), 2, s.B + .3, s.ang), 10, 10.5, HOUSE));
+  bridge.push(...extrude(rect(...toW(uBridge - .3, 0), .25, .25, s.ang), 10.5, 13, STEEL));
+  addStack(o, [bx, by, DECKZ], bridge);
+  // engine casing and funnel aft
+  const uF = s.bridge === 'fwd' ? -Lh + 6 : -Lh + 1.6, [fx, fy] = toW(uF, 0), fun = [];
+  if (s.bridge === 'fwd') fun.push(...extrude(rect(fx, fy, 4, s.B * .45, s.ang), DECKZ, 8.2, HOUSE));
+  fun.push(...extrude(rect(fx, fy, 1.6, 2.4, s.ang), s.bridge === 'fwd' ? 8.2 : DECKZ, 9.8, s.funnel));
+  fun.push(...extrude(rect(fx, fy, 1.6, 2.4, s.ang), 9.8, 10.3, CAP));
+  addStack(o, [fx, fy, DECKZ], fun);
+  o.houseTop = [bx, by, 13]; o.deckZ = DECKZ;
+  cast(ring, 0, DECKZ, 'sea');
+  if (us.length) cast(rect(...toW((us[0] + us[us.length - 1]) / 2, 0), us[us.length - 1] - us[0] + CL, s.B - 1, s.ang), 0, DECKZ + avgT * CH, 'sea');
+  cast(rect(bx, by, 3, s.B * .78, s.ang), 0, 10.5, 'sea');
+  contact(ring, 'sea', .5);
+  return o;
+}
+function buildTug(x, y, ang) {
+  const c = Math.cos(ang), sn = Math.sin(ang);
+  const toW = (u, v) => [x + u * c - v * sn, y + u * sn + v * c];
+  const ring = [[-4, -1.3], [2.2, -1.5], [4, 0], [2.2, 1.5], [-4, 1.3]].map(([u, v]) => toW(u, v));
+  const o = obj([x, y, 1]);
+  o.base.push(...extrude(ring, 0, 1.3, '#B07F76', { topCol: DECK }));
+  const f = [];
+  f.push(...extrude(rect(...toW(-.5, 0), 2.6, 1.9, ang), 1.3, 2.6, HOUSE));
+  f.push(...extrude(rect(...toW(-.2, 0), 1.4, 1.7, ang), 2.6, 3.1, GLASS));
+  f.push(...extrude(rect(...toW(-.2, 0), 1.4, 1.7, ang), 3.1, 3.4, HOUSE));
+  f.push(...extrude(rect(...toW(-.4, 0), .15, .15, ang), 3.4, 4.6, STEEL));
+  addStack(o, [x, y, 1.3], f);
+  cast(ring, 0, 1.3, 'sea'); contact(ring, 'sea', .3);
+  return { x, y, ang, L: 8, B: 3 };
+}
+function buildBuoy(x, y, col) {
+  const pts = []; for (let i = 0; i < 8; i++) pts.push([x + Math.cos(i * Math.PI / 4) * .6, y + Math.sin(i * Math.PI / 4) * .6]);
+  const o = obj([x, y, 1]);
+  o.base.push(...extrude(pts, 0, 1.3, col));
+  addStack(o, [x, y, 1.3], extrude(rect(x, y, .25, .25), 1.3, 2.3, STEEL));
+  cast(pts, 0, 1.5, 'sea');
+}
+
+// ── Quay cranes: static legs and bracing; boom, A-frame and trolley drawn live ──
+const CRANE = '#A9C3D6', CRANE_D = '#7F95A6', RTG = '#D4BA6E';
+const cranes = [];
+const YW = -2, YL = -9.7;           // waterside and landside rails, 30 m gauge
+function buildCrane(x, ship, phase, working) {
+  const low = obj([x, (YW + YL) / 2, QZ]);
+  for (const [dx, y] of [[-2.3, YW], [2.3, YW], [-2.3, YL], [2.3, YL]]) {
+    const p = rect(x + dx, y, .7, .7);
+    addStack(low, [x + dx, y, QZ], extrude(p, QZ, QZ + 12, CRANE));
+    cast(p, QZ, QZ + 12, 'land');
+  }
+  for (const y of [YW, YL]) addStack(low, [x, y, QZ], extrude(rect(x, y, 6.2, .8), QZ, QZ + .8, CRANE_D));
+  for (const dx of [-2.3, 2.3]) addStack(low, [x + dx, (YW + YL) / 2, QZ + 6], beam([x + dx, YW, QZ + 2.2], [x + dx, YL, QZ + 9.5], .3, CRANE));
+  const up = obj([x, 0, QZ + 14], { overhead: true }, uppers);
+  for (const dx of [-2.3, 2.3]) addStack(up, [x + dx, (YW + YL) / 2, QZ + 12], extrude(rect(x + dx, (YW + YL) / 2, .8, 8.6), QZ + 12, QZ + 12.9, CRANE), 0);
+  const boom = rect(x, 1.25, 1.3, 34.5);
+  addStack(up, [x, 1.25, QZ + 12.9], extrude(boom, QZ + 12.9, QZ + 13.9, CRANE), 1);
+  addStack(up, [x, -13.5, QZ + 13.9], extrude(rect(x, -13.5, 3.2, 4), QZ + 13.9, QZ + 15.9, HOUSE), 2);
+  for (const dx of [-.8, .8]) addStack(up, [x + dx, -6.5, QZ + 13.9], extrude(rect(x + dx, -6.5, .4, .4), QZ + 13.9, QZ + 20.5, CRANE), 2);
+  for (const dx of [-.6, .6]) {
+    addStack(up, [x + dx, 6, QZ + 17], beam([x + dx, -6.5, QZ + 20.3], [x + dx * .6, 18.2, QZ + 13.9], .22, CRANE), 3);
+    addStack(up, [x + dx, -11, QZ + 18], beam([x + dx, -6.5, QZ + 20.3], [x + dx, -15.3, QZ + 15.9], .28, CRANE), 3);
+  }
+  cast(boom, QZ + 12.9, QZ + 13.9, 'land'); cast(boom, QZ + 12.9, QZ + 13.9, 'sea');
+  cast(rect(x, -13.5, 3.2, 4), QZ + 13.9, QZ + 15.9, 'land');
+  const sy = ship ? SHIPS[ship].y : 6;
+  cranes.push({ x, ship, phase, working, shipY: sy, box: CONT[(Math.abs(Math.round(x)) >> 2) % CONT.length] });
+}
+
+// ── Yard, masts, buildings, parking ─────────────────────────────
+const decals = [];
+function buildYard() {
+  const r = mulberry(42);
+  for (const yc of [-38, -58, -78, -98]) for (const xc of [-375, -225, -75, 75, 225, 375]) {
+    const nb = 20, us = [], vs = [];
+    for (let i = 0; i < nb; i++) us.push((i - (nb - 1) / 2) * BAY);
+    for (let j = 0; j < 6; j++) vs.push((j - 2.5) * ROW);
+    const fill = .35 + r() * .55, H = [], C = [];
+    for (let i = 0; i < nb; i++) {
+      H.push([]); C.push([]);
+      const gap = r() < .08;
+      for (let j = 0; j < 6; j++) { const n = gap ? 0 : Math.max(0, Math.min(5, Math.round(fill * 5 + (r() - .5) * 2.2))); H[i].push(n); C[i].push(colourColumn(r, n)); }
+    }
+    const o = obj([xc, yc, QZ]);
+    stackGrid(o, (u, v) => [xc + u, yc + v], 0, us, vs, QZ, H, C);
+    for (let i = 0; i < nb; i++) { const m = Math.max(...H[i]); if (m) { const p = rect(xc + us[i], yc, CL, 6 * ROW); cast(p, QZ, QZ + m * CH, 'land'); contact(p, 'land', .25); } }
+  }
+  // rubber-tyred gantries straddling a block
+  for (const [xc, yc, bay] of [[-375, -38, 12], [-75, -58, 5], [225, -38, 15], [75, -78, 9], [375, -98, 6]]) {
+    const x = xc + (bay - 9.5) * BAY;
+    for (const dx of [-1.6, 1.6]) for (const y of [yc - 3.2, yc + 3.2]) {
+      const p = rect(x + dx, y, .45, .45), o = obj([x + dx, y, QZ]);
+      addStack(o, [x + dx, y, QZ], extrude(p, QZ, QZ + 5.6, RTG)); cast(p, QZ, QZ + 5.6, 'land');
+    }
+    const up = obj([x, yc, QZ + 6], { overhead: true });
+    for (const dx of [-1.6, 1.6]) { const p = rect(x + dx, yc, .5, 7); addStack(up, [x + dx, yc, QZ + 5.6], extrude(p, QZ + 5.6, QZ + 6.1, RTG), 0); cast(p, QZ + 5.6, QZ + 6.1, 'land'); }
+    for (const y of [yc - 3.2, yc + 3.2]) addStack(up, [x, y, QZ + 6.1], extrude(rect(x, y, 3.8, .5), QZ + 6.1, QZ + 6.5, RTG), 1);
+    addStack(up, [x + 1.6, yc - 1.4, QZ + 4.4], extrude(rect(x + 1.6, yc - 1.4, .8, 1), QZ + 4.4, QZ + 5.4, HOUSE), 2);
+  }
+}
+function buildMast(x, y) {
+  const o = obj([x, y, QZ + 4], { overhead: true });
+  addStack(o, [x, y, QZ], extrude(rect(x, y, .25, .25), QZ, QZ + 9, STEEL), 0);
+  addStack(o, [x, y, QZ + 9], extrude(rect(x, y, 1.4, .45), QZ + 9, QZ + 9.35, '#C9CED1'), 1);
+  cast(rect(x, y, .25, .25), QZ, QZ + 9, 'land');
+}
+function buildBuilding(cx, cy, lx, ly, floors, col, roof) {
+  const p = rect(cx, cy, lx, ly), o = obj([cx, cy, QZ]), f = [];
+  let z = QZ;
+  for (let i = 0; i < floors; i++) {
+    f.push(...extrude(p, z, z + .7, col, { noTop: true }));
+    f.push(...extrude(rect(cx, cy, lx + .06, ly + .06), z + .7, z + 1.15, GLASS, { noTop: true }));
+    z += 1.15;
+  }
+  f.push(...extrude(p, z, z + .5, col, { topCol: roof }));
+  f.push(...extrude(rect(cx - lx * .25, cy, lx * .2, ly * .4), z + .5, z + 1.2, '#B9BEC1'));
+  addStack(o, [cx, cy, QZ], f);
+  cast(p, QZ, z + .5, 'land'); contact(p, 'land', .4);
+}
+function buildShed(cx, cy, lx, ly, h, col, roof) {
+  const p = rect(cx, cy, lx, ly), o = obj([cx, cy, QZ]);
+  addStack(o, [cx, cy, QZ], extrude(p, QZ, QZ + h, col, { topCol: roof }));
+  cast(p, QZ, QZ + h, 'land'); contact(p, 'land', .4);
+}
+function buildParking(x0, y0, rows, cols) {
+  const r = mulberry(77), CARS = ['#D8DADB', '#A4A9AC', '#5E6569', '#2F3538', '#8C9DAA', '#9C6B57', '#E4E4E0'];
+  const o = obj([x0 + cols * .65, y0 - rows * 1.6, QZ]);
+  decals.push({ poly: rect(x0 + cols * .65, y0 - rows * 1.6 + .8, cols * 1.3 + 2, rows * 3.2 + 1), key: 'road' });
+  for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
+    if (r() > .68) continue;
+    const cx = x0 + i * 1.3 + .65, cy = y0 - j * 3.2;
+    addStack(o, [cx, cy, QZ], extrude(rect(cx, cy, .48, 1.15), QZ, QZ + .38, CARS[Math.floor(r() * CARS.length)], { thin: true }));
+  }
+}
+
+// ── Ground ──────────────────────────────────────────────────────
+const ground = {
+  quaySide: face([[X0, 0, 0], [X1, 0, 0], [X1, 0, QZ], [X0, 0, QZ]], [0, 1, 0], 'quaySide'),
+  land: face([[X0, Y0, QZ], [X1, Y0, QZ], [X1, 0, QZ], [X0, 0, QZ]], [0, 0, 1], 'land'),
+  water: [[X0, 0, 0], [X1, 0, 0], [X1, SY1, 0], [X0, SY1, 0]]
+};
+decals.push({ poly: [[X0, -26], [X1, -26], [X1, 0], [X0, 0]], key: 'apron' });
+decals.push({ poly: [[-480, -108], [480, -108], [480, -30], [-480, -30]], key: 'pad' });
+decals.push({ poly: [[X0, -126], [X1, -126], [X1, -116], [X0, -116]], key: 'road' });
+decals.push({ poly: rect(0, -150, 60, 34), key: 'road' });
+for (const y of [YW, YL]) decals.push({ poly: [[X0, y - .12], [X1, y - .12], [X1, y + .12], [X0, y + .12]], key: 'rail' });
+for (let x = X0 + 6; x < X1 - 6; x += 9) { decals.push({ poly: rect(x, -14.5, 4.5, .18), key: 'mark' }); decals.push({ poly: rect(x, -121, 4.5, .18), key: 'mark' }); }
+for (let i = 0; i <= 8; i++) decals.push({ poly: rect(-400 + i * 100, -.9, .35, 1.2), key: 'mark' });
+decals.push({ poly: [[X0, -.45], [X1, -.45], [X1, -.25], [X0, -.25]], key: 'safety' });
+
+function depthAt(x, y) {
+  let d = 10 + 7 * Math.exp(-Math.pow((y - 140) / 70, 2));
+  if (y < 22) d = Math.max(d, 16);
+  d -= Math.max(0, (y - 330) / 32);
+  d -= Math.max(0, (Math.abs(x) - 560) / 40);
+  d += Math.sin(x / 90 + y / 70) * .5;
+  return Math.max(2, d);
+}
+const isobaths = [];
+for (const level of [15, 12, 10, 5]) {
+  const line = [];
+  for (let x = X0; x <= X1; x += 12) {
+    let prev = depthAt(x, 200), found = null;
+    for (let y = 204; y < SY1; y += 4) { const d = depthAt(x, y); if ((prev - level) * (d - level) <= 0) { found = y; break; } prev = d; }
+    if (found !== null) line.push([x, found]); else if (line.length > 1) isobaths.push({ level, pts: line.splice(0) }); else line.length = 0;
+  }
+  if (line.length > 1) isobaths.push({ level, pts: line });
+}
+const soundings = []; {
+  const r = mulberry(21), clear = [[300, 110, 70], [-300, 262, 60]];
+  for (let gx = X0 + 70; gx < X1 - 40; gx += 95) for (let gy = 60; gy < SY1 - 30; gy += 70) {
+    const x = gx + (r() - .5) * 40, y = gy + (r() - .5) * 30;
+    if (clear.some(([cx, cy, rr]) => Math.hypot(x - cx, y - cy) < rr)) continue;
+    soundings.push([x, y, depthAt(x, y)]);
+  }
+}
+
+// ── Build everything ────────────────────────────────────────────
+const shipObjs = {};
+for (const s of Object.values(SHIPS)) shipObjs[s.id] = buildShip(s);
+const nd = SHIPS.nordic, ndc = Math.cos(nd.ang), nds = Math.sin(nd.ang);
+const tugs = [buildTug(nd.x + ndc * 50, nd.y + nds * 50, nd.ang), buildTug(nd.x - nds * 10 - ndc * 14, nd.y + ndc * 10 - nds * 14, nd.ang)];
+for (const x of [-620, -300, 20, 560]) { buildBuoy(x, 96, '#A8584E'); buildBuoy(x, 185, '#4E7F5E'); }
+buildCrane(-368, 'kaida', 0, true); buildCrane(-336, 'kaida', .45, true);
+for (const [i, x] of [-80, -62, -44, -26].entries()) buildCrane(x, 'aurora', i * .27, true);
+buildCrane(108, null, 0, false); buildCrane(430, null, 0, false); buildCrane(-230, null, 0, false);
+buildYard();
+for (const x of [-450, -300, -150, 0, 150, 300, 450]) { buildMast(x, -48); buildMast(x + 75, -88); }
+buildBuilding(-440, -150, 34, 14, 4, '#DADCDC', '#C9CDCF');
+buildShed(420, -150, 64, 22, 4.5, '#C9CCCD', '#B8BDBF');
+buildShed(250, -152, 36, 16, 3.5, '#CFD2D3', '#BEC3C5');
+buildBuilding(-300, -165, 18, 10, 2, '#DADCDC', '#C9CDCF');
+{ // gate canopy over the lanes
+  const o = obj([0, -150, QZ + 2], { overhead: true });
+  for (const x of [-16, -5, 5, 16]) addStack(o, [x, -150, QZ], extrude(rect(x, -150, .4, .4), QZ, QZ + 2.6, STEEL), 0);
+  addStack(o, [0, -150, QZ + 2.6], extrude(rect(0, -150, 38, 7), QZ + 2.6, QZ + 3, '#DADCDC'), 1);
+  cast(rect(0, -150, 38, 7), QZ + 2.6, QZ + 3, 'land');
+}
+// street trees along the back road and the gate approach, ~8 m crowns
+{ const r = mulberry(55); for (let x = -560; x <= 560; x += 9 + r() * 5) { if (Math.abs(x) < 36) continue; for (const y of [-112, -130]) { if (r() < .2) continue; const tr = 1 + r() * .45, z = QZ + 1.2 + tr; objs.push({ anchor: [x, y, z], tree: { x, y, z, r: tr }, base: [], boxes: [] }); contact(rect(x, y, tr * 1.6, tr * 1.6), 'land', .6); } } }
+buildParking(-470, -172, 4, 40);
+buildParking(300, -176, 3, 36);
+
+function recolor() {
+  pal = isDark() ? PAL.dark : PAL.light;
+  shadeCache.clear();
+  for (const f of allFaces) {
+    const hex = typeof f.col === 'string' && f.col[0] !== '#' ? pal[f.col] : f.col;
+    f.css = shade(hex, f.lf);
+    if (f.top) f.hi = edgeLight(hex);
+  }
+  const cs = getComputedStyle(root);
+  for (const k of ['accent', 'accent-soft', 'alert', 'alert-soft', 'ink']) css[k] = cs.getPropertyValue('--' + k).trim();
+  themeVer++; dirty = true;
+}
+
+// ── Camera ──────────────────────────────────────────────────────
+const VIEWS = { overview: { yaw: rad(-20), pitch: rad(40) }, sea: { yaw: 0, pitch: rad(18) }, land: { yaw: Math.PI, pitch: rad(26) }, plan: { yaw: 0, pitch: rad(86) } };
+const HOME = { cx: 170, cy: 40, zoom: 2.15 };
+const cam = { yaw: rad(-60), pitch: rad(40), zoom: 2.15, cx: 170, cy: 40 };
+let DPR = 1, W = 0, H = 0, cY, sY, cP, sP, sc, ox, oy, camX, camY, camZ, dirty = true;
+function setupCam() {
+  cY = Math.cos(cam.yaw); sY = Math.sin(cam.yaw); cP = Math.cos(cam.pitch); sP = Math.sin(cam.pitch);
+  sc = Math.min(W / 1150, H / 600) * cam.zoom; ox = W / 2; oy = H / 2 + H * .06;
+  camX = cam.cx + F * cP * sY; camY = cam.cy + F * cP * cY; camZ = F * sP;
+}
+function P(x, y, z) {
+  const dx = x - cam.cx, dy = y - cam.cy, x1 = dx * cY - dy * sY, y1 = dx * sY + dy * cY;
+  const k = F / Math.max(80, F - (y1 * cP + z * sP));
+  return [ox + x1 * sc * k, oy + (y1 * sP - z * cP) * sc * k];
+}
+function D(x, y, z) { const a = x - camX, b = y - camY, c = z - camZ; return -Math.sqrt(a * a + b * b + c * c); }
+function trace(pts, zo, off = 0) {
+  for (let i = 0; i < pts.length; i++) {
+    const p = pts[i], q = P(p[0], p[1], zo === undefined ? p[2] : zo);
+    if (i) ctx.lineTo(q[0] - off, q[1]); else ctx.moveTo(q[0] - off, q[1]);
+  }
+  ctx.closePath();
+}
+function drawFace(f) {
+  const n = f.n, p = f.pts[0];
+  if (n[0] * (camX - p[0]) + n[1] * (camY - p[1]) + n[2] * (camZ - p[2]) <= 0) return;
+  ctx.beginPath(); trace(f.pts);
+  ctx.fillStyle = f.css; ctx.fill();
+  if (f.top && f.hi && (!f.thin || sc > 3.2 * DPR)) { ctx.lineWidth = .7 * DPR; ctx.strokeStyle = f.hi; ctx.stroke(); }
+  else if (!f.thin) { ctx.lineWidth = .8 * DPR; ctx.strokeStyle = f.css; ctx.stroke(); }
+}
+
+// ── Layers ──────────────────────────────────────────────────────
+const OFF = 30000;
+function drawShadows(list, z, blur, alpha, col) {
+  if (!list.length) return;
+  ctx.save();
+  ctx.shadowColor = `rgba(${col},${alpha})`; ctx.shadowBlur = Math.max(1, blur * sc); ctx.shadowOffsetX = OFF; ctx.fillStyle = '#000';
+  ctx.beginPath(); for (const p of list) trace(p, z, OFF); ctx.fill();
+  ctx.restore();
+}
+function polyline(pts, z) { pts.forEach((p, i) => { const q = P(p[0], p[1], z); i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]); }); }
+function drawTile(b, fill, stroke, dash) {
+  ctx.beginPath(); trace(rect(b.x, 7.3, 92, 12.5), .03);
+  ctx.fillStyle = fill; ctx.fill();
+  ctx.setLineDash(dash ? [5 * DPR, 4 * DPR] : []); ctx.lineWidth = 1.4 * DPR; ctx.strokeStyle = stroke; ctx.stroke(); ctx.setLineDash([]);
+}
+function drawChart() {
+  ctx.beginPath(); trace([[-420, 0], [420, 0], [420, 22], [-420, 22]], .01); ctx.fillStyle = pal.pocket; ctx.fill();
+  ctx.lineWidth = 1 * DPR; ctx.strokeStyle = pal.fairway; ctx.setLineDash([10 * DPR, 6 * DPR]);
+  for (const y of [95, 186]) { ctx.beginPath(); polyline([[X0, y], [X1, y]], .02); ctx.stroke(); }
+  ctx.setLineDash([]);
+  ctx.strokeStyle = pal.contour;
+  for (const iso of isobaths) { ctx.beginPath(); polyline(iso.pts, .02); ctx.stroke(); }
+  const fs = 10 * DPR;
+  ctx.font = `400 ${fs}px 'IBM Plex Mono', ui-monospace, monospace`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  const isoLabels = isobaths.map(iso => iso.pts[Math.floor(iso.pts.length * .62)]).filter(Boolean);
+  ctx.fillStyle = pal.sounding;
+  if (sc > 1.1 * DPR) for (const [x, y, d] of soundings) {
+    if (isoLabels.some(p => Math.hypot(p[0] - x, p[1] - y) < 45)) continue;
+    const q = P(x, y, 0); if (q[0] > 0 && q[0] < W && q[1] > 0 && q[1] < H) ctx.fillText(d.toFixed(1), q[0], q[1]);
+  }
+  ctx.font = `500 ${fs}px 'IBM Plex Mono', ui-monospace, monospace`;
+  isobaths.forEach((iso, i) => { const p = isoLabels[i]; if (!p) return; const q = P(p[0], p[1], 0); ctx.fillStyle = pal.seaNear; ctx.fillRect(q[0] - 9 * DPR, q[1] - 6 * DPR, 18 * DPR, 12 * DPR); ctx.fillStyle = pal.sounding; ctx.fillText(String(iso.level), q[0], q[1]); });
+  const fq = P(-700, 140, 0); ctx.fillStyle = pal.fairway; ctx.fillText('FAIRWAY  17.0 m', fq[0], fq[1]);
+}
+// Kelvin wake: two arms at 19.5° either side of the track, plus turbulent water straight astern
+function drawWake(v, len) {
+  const c = Math.cos(v.ang), s = Math.sin(v.ang), st = [v.x - c * v.L / 2, v.y - s * v.L / 2];
+  const arm = (a, w, alpha, from) => {
+    const dx = -Math.cos(a) * c + Math.sin(a) * s, dy = -Math.cos(a) * s - Math.sin(a) * c;
+    const p0 = P(from[0], from[1], .05), p1 = P(from[0] + dx * len, from[1] + dy * len, .05);
+    const g = ctx.createLinearGradient(p0[0], p0[1], p1[0], p1[1]);
+    g.addColorStop(0, `rgba(${pal.wake},${alpha * pal.wakeA})`); g.addColorStop(1, `rgba(${pal.wake},0)`);
+    ctx.strokeStyle = g; ctx.lineWidth = w * DPR; ctx.beginPath(); ctx.moveTo(p0[0], p0[1]); ctx.lineTo(p1[0], p1[1]); ctx.stroke();
+  };
+  const side = sgn => [st[0] - s * sgn * v.B * .45, st[1] + c * sgn * v.B * .45];
+  arm(rad(19.5), 1.2, .9, side(1)); arm(rad(-19.5), 1.2, .9, side(-1));
+  arm(0, Math.max(2, v.B * sc * .35 / DPR), .7, st);
+}
+function drawGround() {
+  ctx.lineWidth = .9 * DPR;
+  const a = P(cam.cx, 0, 0), b = P(cam.cx, SY1, 0);
+  const g = ctx.createLinearGradient(a[0], a[1], b[0], b[1]); g.addColorStop(0, pal.seaNear); g.addColorStop(1, pal.seaFar);
+  ctx.beginPath(); trace(ground.water); ctx.fillStyle = g; ctx.fill();
+  // sun glint: only when the camera looks toward the sun
+  const lh = Math.hypot(L[0], L[1]), sx = L[0] / lh, sy = L[1] / lh, facing = -(sY * sx + cY * sy);
+  if (facing > 0) {
+    const q = P(cam.cx + sx * 240, cam.cy + sy * 240, 0), R = 480 * sc;
+    const rg = ctx.createRadialGradient(q[0], q[1], 0, q[0], q[1], R);
+    rg.addColorStop(0, `rgba(${pal.glint},${pal.glintA * facing})`); rg.addColorStop(1, `rgba(${pal.glint},0)`);
+    ctx.save(); ctx.beginPath(); trace(ground.water); ctx.clip(); ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H); ctx.restore();
+  }
+  drawChart();
+  for (const bt of BERTHS) {
+    if (bt.restricted) drawTile(bt, css['alert-soft'], css.alert, true);
+    else if (bt.needs) drawTile(bt, css['accent-soft'], css.accent, false);
+  }
+  const selB = selection && selection.type === 'berth' ? BERTHS.find(x => x.n === selection.id) : null;
+  if (selB) drawTile(selB, 'rgba(0,0,0,0)', css.ink, true);
+  drawWake(nd, 70); for (const t of tugs) drawWake(t, 18);
+  const s = nd, bx = 250, by = 7.3, cx = 322, cy = 50;
+  const sx0 = s.x + Math.cos(s.ang) * (s.L / 2 + 2), sy0 = s.y + Math.sin(s.ang) * (s.L / 2 + 2);
+  ctx.beginPath();
+  for (let i = 0; i <= 28; i++) { const t = i / 28, u = 1 - t; const q = P(u * u * sx0 + 2 * u * t * cx + t * t * bx, u * u * sy0 + 2 * u * t * cy + t * t * by, .05); i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]); }
+  ctx.setLineDash([6 * DPR, 5 * DPR]); ctx.lineWidth = 1.8 * DPR; ctx.strokeStyle = css.accent; ctx.stroke(); ctx.setLineDash([]);
+  drawShadows(sh.sea, 0, 3, pal.shA, pal.shSea);
+  drawShadows(sh.cSea, 0, 4, pal.shA * .55, pal.shSea);   // wide ambient occlusion
+  drawShadows(sh.cSea, 0, .8, pal.shA, pal.shSea);
+  ctx.lineWidth = .9 * DPR;
+  drawFace(ground.quaySide);
+  drawFace(ground.land);
+  for (const d of decals) { ctx.beginPath(); trace(d.poly, QZ); ctx.fillStyle = pal[d.key]; ctx.fill(); }
+  // numbers painted on the quay, in the world rather than over it; the berth that needs you in the accent
+  for (const b of BERTHS) groundText(b.n, b.x - 34, -16, QZ + .02, 7, b.needs ? css.accent : b.restricted ? css.alert : pal.paint);
+  drawShadows(sh.land, QZ, 2.5, pal.shA * .85, pal.shLand);
+  drawShadows(sh.cLand, QZ, 3, pal.shA * .5, pal.shLand);
+  drawShadows(sh.cLand, QZ, .6, pal.shA * .8, pal.shLand);
+}
+// text lying in a horizontal plane: the local projection of the plane is close to affine at text scale
+function groundText(txt, x, y, z, size, color) {
+  const o = P(x, y, z), ex = P(x + 1, y, z), ey = P(x, y + 1, z);
+  ctx.save();
+  ctx.setTransform(ex[0] - o[0], ex[1] - o[1], ey[0] - o[0], ey[1] - o[1], o[0], o[1]);
+  ctx.font = `600 ${size}px 'IBM Plex Mono', ui-monospace, monospace`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = color; ctx.fillText(txt, 0, 0);
+  ctx.restore();
+}
+function drawObj(o) {
+  if (o.tree) { const t = o.tree, [X, Y] = P(t.x, t.y, t.z), R = Math.max(1, t.r * sc);
+    ctx.beginPath(); ctx.arc(X, Y, R, 0, 7); ctx.fillStyle = shade(pal.tree, .82); ctx.fill();
+    ctx.beginPath(); ctx.arc(X - R * .2, Y - R * .25, R * .7, 0, 7); ctx.fillStyle = pal.treeHi; ctx.fill(); return; }
+  for (const f of o.base) drawFace(f);
+  const bx = o.boxes;
+  if (bx.length > 1) { for (const b of bx) b.k = D(b.c[0], b.c[1], b.c[2]); bx.sort((a, b) => a.layer - b.layer || a.k - b.k); }
+  for (const b of bx) for (const f of b.faces) drawFace(f);
+}
+function maxDepth(o) { let m = -1e9; for (const b of o.boxes) for (const f of b.faces) for (const p of f.pts) { const d = D(p[0], p[1], p[2]); if (d > m) m = d; } return m; }
+function sortDraw(list) {
+  for (const o of list) o.k = o.overhead ? maxDepth(o) : D(o.anchor[0], o.anchor[1], o.anchor[2]);
+  list.sort((a, b) => a.k - b.k);
+  for (const o of list) drawObj(o);
+}
+
+// ── Live layer: trolleys, spreaders, terminal trucks ────────────
+function dynBox(poly, z0, z1, col) { const f = extrude(poly, z0, z1, col); allFaces.length -= f.length; for (const x of f) x.css = shade(x.col, x.lf); return f; }
+const TRUCKS = []; { const r = mulberry(8); for (let i = 0; i < 12; i++) TRUCKS.push({ lane: i % 3, x0: -480 + r() * 960, v: 5 + r() * 4, load: r() < .6 ? pickCont(r) : null, cab: r() < .5 ? '#D9C38A' : '#E2E4E4' }); }
+const LANES = [{ y: (YW + YL) / 2 + .6, dir: 1 }, { y: -14, dir: -1 }, { y: -19, dir: 1 }];
+function dynamics(now) {
+  const out = [], t = RM.matches ? 0 : now / 1000;
+  for (const c of cranes) {
+    let s = c.working ? ((now / 11000) + c.phase) % 1 : .02;
+    if (RM.matches) s = c.working ? .3 + c.phase * .2 : .02;
+    const yLane = (YW + YL) / 2, ty = yLane + (c.shipY - yLane) * (.5 - .5 * Math.cos(2 * Math.PI * s));
+    const lower = c.working ? Math.pow(Math.max(0, Math.cos(4 * Math.PI * s)), 2) : 0;
+    const zTop = QZ + 10.5, zEnd = (s < .25 || s > .75) ? QZ + 1.4 : DECKZ + 4.2;
+    const zb = zTop - (zTop - zEnd) * lower;
+    const carrying = c.working && (c.ship === 'kaida' ? s < .5 : s >= .5);
+    const f = [];
+    if (carrying) f.push(...dynBox(rect(c.x, ty, CL, CW), zb - CH, zb, c.box));
+    f.push(...dynBox(rect(c.x, ty, CL + .1, CW + .1), zb, zb + .22, STEEL));
+    f.push(...dynBox(rect(c.x, ty, .1, .1), zb + .22, QZ + 12.2, STEEL));
+    f.push(...dynBox(rect(c.x, ty, 1.6, 1.8), QZ + 12.2, QZ + 12.85, HOUSE));
+    out.push({ anchor: [c.x, ty, zb], overhead: true, base: [], boxes: [{ c: [c.x, ty, zb], faces: f, layer: 0 }] });
+  }
+  for (const k of TRUCKS) {
+    const lane = LANES[k.lane], span = 960;
+    let x = ((k.x0 + lane.dir * k.v * t + 480) % span + span) % span - 480;
+    const y = lane.y, fwd = lane.dir, f = [];
+    f.push(...dynBox(rect(x, y, 3.3, .66), QZ + .25, QZ + .45, CAP));
+    if (k.load) f.push(...dynBox(rect(x, y, CL, CW), QZ + .45, QZ + .45 + CH, k.load));
+    f.push(...dynBox(rect(x + fwd * 2.2, y, 1.1, .72), QZ, QZ + .95, k.cab));
+    out.push({ anchor: [x, y, QZ], overhead: false, base: [], boxes: [{ c: [x, y, QZ], faces: f, layer: 0 }] });
+  }
+  return out.concat(uppers);
+}
+
+// ── Labels ──────────────────────────────────────────────────────
+const tagEls = {};
+let selection = null;
+for (const s of Object.values(SHIPS)) {
+  const el = document.createElement('button'); el.type = 'button'; el.tabIndex = -1;
+  el.className = 'dtag' + (s.kind === 'needs' ? ' needs' : '');
+  el.innerHTML = `<b>${s.name}</b><small>${s.tag}</small>`;
+  el.addEventListener('click', () => select({ type: 'ship', id: s.id }, false));
+  labelsEl.appendChild(el); tagEls[s.id] = el;
+}
+const LEAD = 30, tagW = {};
+function tagPos(id) {
+  const [x, y] = P(...shipObjs[id].houseTop);
+  const half = (tagW[id] ||= tagEls[id].offsetWidth) / 2 * DPR, pad = 10 * DPR;
+  return [x, y, Math.min(Math.max(x, half + pad), W - half - pad), Math.max(y - LEAD * DPR, 60 * DPR)];
+}
+function drawLeaders() {
+  ctx.lineWidth = 1 * DPR;
+  for (const id in tagEls) {
+    const [x, y, tx, ty] = tagPos(id);
+    ctx.strokeStyle = SHIPS[id].kind === 'needs' ? css.accent : pal.leader;
+    ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(tx, ty); ctx.stroke();
+    ctx.fillStyle = ctx.strokeStyle; ctx.beginPath(); ctx.arc(x, y, 2 * DPR, 0, Math.PI * 2); ctx.fill();
+  }
+}
+function placeLabels() {
+  for (const id in tagEls) {
+    const [, , tx, ty] = tagPos(id);
+    tagEls[id].style.transform = `translate(${tx / DPR}px,${ty / DPR}px) translate(-50%,-100%)`;
+    tagEls[id].classList.toggle('sel', !!selection && selection.type === 'ship' && selection.id === id);
+  }
+}
+const needle = document.getElementById('needle'), scaleBar = document.getElementById('scale-bar'), scaleLabel = document.getElementById('scale-label');
+function placeHud() {
+  const a = P(cam.cx, cam.cy, 0), b = P(cam.cx, cam.cy - 100, 0);
+  needle.style.transform = `rotate(${Math.atan2(b[1] - a[1], b[0] - a[0]) * 180 / Math.PI + 90}deg)`;
+  const pxPerM = sc / DPR / M_PER_UNIT, nice = [25, 50, 100, 200, 250, 500, 1000];
+  let m = nice[0]; for (const v of nice) if (v * pxPerM <= 130) m = v;
+  scaleBar.style.width = Math.round(m * pxPerM) + 'px'; scaleLabel.textContent = `${m} m`;
+}
+
+// ── Highlight + hit testing ─────────────────────────────────────
+function shipOutline(id) {
+  const o = shipObjs[id], pts = [];
+  for (const p of o.ring) { pts.push(P(p[0], p[1], 0)); pts.push(P(p[0], p[1], o.deckZ + 3)); }
+  pts.push(P(...o.houseTop));
+  return hull2(pts);
+}
+function strokeOutline(poly, color, width) {
+  ctx.beginPath(); poly.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.closePath();
+  ctx.lineJoin = 'round'; ctx.lineWidth = width * DPR; ctx.strokeStyle = color; ctx.stroke();
+}
+function inPoly(pt, poly) { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const a = poly[i], b = poly[j]; if ((a[1] > pt[1]) !== (b[1] > pt[1]) && pt[0] < (b[0] - a[0]) * (pt[1] - a[1]) / (b[1] - a[1]) + a[0]) c = !c; } return c; }
+function hitShip(px, py) {
+  let best = null, bd = -1e9;
+  for (const id in shipObjs) { if (inPoly([px, py], shipOutline(id))) { const d = D(...shipObjs[id].anchor); if (d > bd) { bd = d; best = id; } } }
+  return best;
+}
+
+// ── Render: static scene cached per camera, live layer every frame ──
+let statKey = '';
+function drawStatic() {
+  ctx = statCtx;
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.fillStyle = pal.stage; ctx.fillRect(0, 0, W, H);
+  ctx.lineJoin = 'round';
+  drawGround();
+  ctx.lineWidth = .8 * DPR;
+  sortDraw(objs.slice());
+  groundText('WESTHAVEN', 420, -150, QZ + 4.52, 6.5, pal.sign);
+  tiltShift();
+  ctx = mainCtx;
+}
+// tilt-shift: the optical signature of a model shot with a macro lens. Sharp band through the
+// camera target, blur ramping toward the top and bottom of the frame. Baked into the static cache.
+const tmp = document.createElement('canvas'), tctx = tmp.getContext('2d');
+const canBlur = 'filter' in tctx;
+function tiltShift() {
+  if (!canBlur) return;
+  if (tmp.width !== W || tmp.height !== H) { tmp.width = W; tmp.height = H; }
+  const fy = Math.min(Math.max(P(cam.cx, cam.cy, 0)[1] / H, .3), .75);
+  const b = (2 + 1.2 * Math.cos(cam.pitch)) * DPR;
+  tctx.globalCompositeOperation = 'copy'; tctx.filter = `blur(${b}px)`; tctx.drawImage(stat, 0, 0);
+  tctx.filter = 'none'; tctx.globalCompositeOperation = 'destination-in';
+  const g = tctx.createLinearGradient(0, 0, 0, H);
+  const a = Math.max(0, fy - .2), c = Math.min(1, fy + .16);
+  g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(a, 'rgba(0,0,0,0)'); g.addColorStop(c, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,1)');
+  tctx.fillStyle = g; tctx.fillRect(0, 0, W, H);
+  tctx.globalCompositeOperation = 'source-over';
+  ctx.drawImage(tmp, 0, 0);
+}
+function drawAtmosphere() {
+  const hz = rgb(pal.haze), a = pal.hazeA * Math.max(0, Math.cos(cam.pitch) - .1);
+  if (a > .01) { const g = ctx.createLinearGradient(0, 0, 0, H * .62); g.addColorStop(0, `rgba(${hz},${a})`); g.addColorStop(1, `rgba(${hz},0)`); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H * .62); }
+  const solid = `rgba(${hz},1)`, clear = `rgba(${hz},0)`;
+  const band = (x0, y0, x1, y1, rx, ry, rw, rh) => { const g = ctx.createLinearGradient(x0, y0, x1, y1); g.addColorStop(0, solid); g.addColorStop(1, clear); ctx.fillStyle = g; ctx.fillRect(rx, ry, rw, rh); };
+  const t = H * .14, b = H * .08, s = W * .05;
+  band(0, 0, 0, t, 0, 0, W, t); band(0, H, 0, H - b, 0, H - b, W, b);
+  band(0, 0, s, 0, 0, 0, s, H); band(W, 0, W - s, 0, W - s, 0, s, H);
+}
+function render(now) {
+  setupCam();
+  const key = [cam.yaw, cam.pitch, cam.zoom, cam.cx, cam.cy, W, H, themeVer, selection && selection.type === 'berth' ? selection.id : ''].join('|');
+  if (key !== statKey) { statKey = key; drawStatic(); }
+  ctx = mainCtx;
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.drawImage(stat, 0, 0);
+  ctx.lineJoin = 'round'; ctx.lineWidth = .8 * DPR;
+  sortDraw(dynamics(now));
+  if (hover && !(selection && selection.id === hover)) strokeOutline(shipOutline(hover), pal.leader, 1);
+  if (selection && selection.type === 'ship') strokeOutline(shipOutline(selection.id), css.ink, 1.6);
+  drawAtmosphere();
+  drawLeaders();
+  placeLabels(); placeHud();
+}
+let last = 0, tween = null, vel = 0, dragging = false, hover = null, inView = true;
+const ease = t => 1 - Math.pow(1 - t, 4);
+function frame(now) {
+  requestAnimationFrame(frame);
+  if (document.hidden || !W) return;
+  let active = false;
+  if (tween) {
+    const k = Math.min(1, (now - tween.t0) / tween.dur), e = ease(k);
+    for (const key in tween.to) cam[key] = tween.from[key] + (tween.to[key] - tween.from[key]) * e;
+    if (k >= 1) tween = null; active = true;
+  }
+  if (!dragging && Math.abs(vel) > 1e-4) { cam.yaw += vel; vel *= .92; active = true; }
+  const ambient = inView && !RM.matches && now - last > 33;
+  if (!(dirty || active || dragging || ambient)) return;
+  last = now; dirty = false; render(now);
+}
+function animateCam(to, dur = 800) {
+  to = { ...to };
+  if ('yaw' in to) { let d = to.yaw - cam.yaw; d = ((d + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI) - Math.PI; to.yaw = cam.yaw + d; }
+  if (RM.matches) { Object.assign(cam, to); dirty = true; return; }
+  const from = {}; for (const k in to) from[k] = cam[k];
+  vel = 0; tween = { from, to, t0: performance.now(), dur };
+}
+const segBtns = document.querySelectorAll('.seg button');
+function setView(name) { animateCam(VIEWS[name]); segBtns.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === name))); }
+function clearView() { segBtns.forEach(b => b.setAttribute('aria-pressed', 'false')); }
+
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  const r = cv.getBoundingClientRect();
+  W = Math.round(r.width * DPR); H = Math.round(r.height * DPR);
+  cv.width = W; cv.height = H; stat.width = W; stat.height = H; statKey = ''; dirty = true;
+  for (const k in tagW) delete tagW[k];
+}
+new ResizeObserver(resize).observe(cv);
+new IntersectionObserver(e => { inView = e[0].isIntersecting; }).observe(cv);
+document.fonts?.ready.then(() => { for (const k in tagW) delete tagW[k]; statKey = ''; dirty = true; });
+
+// ── Input ───────────────────────────────────────────────────────
+const pointers = new Map();
+let downAt = null, moved = 0, pinch0 = 0, zoom0 = 1;
+const hint = document.getElementById('hint');
+const clampPitch = p => Math.max(rad(10), Math.min(rad(88), p));
+const clampZoom = z => Math.max(.8, Math.min(9, z));
+cv.addEventListener('pointerdown', e => {
+  cv.setPointerCapture(e.pointerId); pointers.set(e.pointerId, [e.clientX, e.clientY]);
+  if (pointers.size === 1) { downAt = [e.clientX, e.clientY]; moved = 0; dragging = true; vel = 0; tween = null; cv.classList.add('dragging'); }
+  if (pointers.size === 2) { const [a, b] = [...pointers.values()]; pinch0 = Math.hypot(a[0] - b[0], a[1] - b[1]); zoom0 = cam.zoom; }
+});
+cv.addEventListener('pointermove', e => {
+  if (!pointers.has(e.pointerId)) {
+    const r = cv.getBoundingClientRect(), h = hitShip((e.clientX - r.left) * DPR, (e.clientY - r.top) * DPR);
+    if (h !== hover) { hover = h; cv.classList.toggle('hovering', !!h); dirty = true; }
+    return;
+  }
+  const prev = pointers.get(e.pointerId), dx = e.clientX - prev[0], dy = e.clientY - prev[1];
+  pointers.set(e.pointerId, [e.clientX, e.clientY]);
+  if (pointers.size === 2) { const [a, b] = [...pointers.values()]; cam.zoom = clampZoom(zoom0 * Math.hypot(a[0] - b[0], a[1] - b[1]) / (pinch0 || 1)); dirty = true; return; }
+  moved += Math.abs(dx) + Math.abs(dy);
+  if (moved > 4) { hint.classList.add('gone'); clearView(); }
+  cam.yaw -= dx * .0065; vel = -dx * .0065;
+  cam.pitch = clampPitch(cam.pitch + dy * .005);
+  dirty = true;
+});
+function endPointer(e) {
+  if (!pointers.has(e.pointerId)) return;
+  pointers.delete(e.pointerId);
+  if (pointers.size === 0) {
+    dragging = false; cv.classList.remove('dragging');
+    if (RM.matches) vel = 0;
+    if (moved <= 4 && downAt) {
+      const r = cv.getBoundingClientRect(), h = hitShip((e.clientX - r.left) * DPR, (e.clientY - r.top) * DPR);
+      vel = 0; if (h) select({ type: 'ship', id: h }, false);
+    }
+  }
+}
+cv.addEventListener('pointerup', endPointer);
+cv.addEventListener('pointercancel', endPointer);
+cv.addEventListener('pointerleave', () => { if (hover && !dragging) { hover = null; cv.classList.remove('hovering'); dirty = true; } });
+cv.addEventListener('wheel', e => { e.preventDefault(); cam.zoom = clampZoom(cam.zoom * Math.exp(-e.deltaY * .0015)); hint.classList.add('gone'); dirty = true; }, { passive: false });
+cv.addEventListener('keydown', e => {
+  const k = e.key;
+  if (k === 'ArrowLeft') animateCam({ yaw: cam.yaw + rad(15) }, 260);
+  else if (k === 'ArrowRight') animateCam({ yaw: cam.yaw - rad(15) }, 260);
+  else if (k === 'ArrowUp') animateCam({ pitch: clampPitch(cam.pitch + rad(6)) }, 260);
+  else if (k === 'ArrowDown') animateCam({ pitch: clampPitch(cam.pitch - rad(6)) }, 260);
+  else if (k === '+' || k === '=') animateCam({ zoom: clampZoom(cam.zoom * 1.25) }, 260);
+  else if (k === '-' || k === '_') animateCam({ zoom: clampZoom(cam.zoom / 1.25) }, 260);
+  else if (k === '0') { animateCam({ ...VIEWS.overview, ...homeFor() }); segBtns.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === 'overview'))); e.preventDefault(); return; }
+  else return;
+  e.preventDefault(); clearView();
+});
+segBtns.forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
+document.getElementById('zin').addEventListener('click', () => animateCam({ zoom: clampZoom(cam.zoom * 1.3) }, 300));
+document.getElementById('zout').addEventListener('click', () => animateCam({ zoom: clampZoom(cam.zoom / 1.3) }, 300));
+
+// ── Selection, list and detail ──────────────────────────────────
+const rowsEl = document.getElementById('rows');
+function rowHtml(r) {
+  return `<button type="button" class="row ${r.cls}" data-type="${r.type}" data-id="${r.id}">
+    <span class="bplate">${r.plate}</span>
+    <span class="txt"><span class="state">${r.state}</span><span class="name">${r.name}</span><span class="meta">${r.meta}</span></span>
+    <span class="when">${r.when || ''}</span><span class="chev" aria-hidden="true">›</span></button>`;
+}
+const rows = BERTHS.map(b => {
+  if (b.ship) { const s = SHIPS[b.ship]; return { type: 'ship', id: s.id, plate: b.n, cls: s.kind === 'needs' ? 'needs' : '', state: s.kind === 'needs' ? 'Arriving · confirm berth' : s.state, name: s.name, meta: s.kind === 'needs' ? `Pilot aboard · under-keel ${(b.depth - s.draft).toFixed(1)} m` : s.note, when: s.when }; }
+  if (b.restricted) return { type: 'berth', id: b.n, plate: b.n, cls: 'restricted', state: 'Restricted', name: 'Closed', meta: `${b.restricted} · ${b.depth.toFixed(1)} m`, when: '' };
+  return { type: 'berth', id: b.n, plate: b.n, cls: 'free', state: 'Available', name: 'Free berth', meta: `Depth ${b.depth.toFixed(1)} m`, when: '' };
+});
+rows.push({ type: 'ship', id: 'levant', plate: 'A', cls: '', state: 'At anchor', name: 'Levant Express', meta: 'Unassigned · fits berths 01, 04, 06', when: 'Thu 02:30' });
+rowsEl.innerHTML = rows.map(r => `<li>${rowHtml(r)}</li>`).join('');
+rowsEl.addEventListener('click', e => { const b = e.target.closest('.row'); if (b) select({ type: b.dataset.type, id: b.dataset.id }, true); });
+
+const $ = id => document.getElementById(id);
+function homeFor() { return W / DPR < 700 ? { cx: 80, cy: 40, zoom: 2.6 } : HOME; }
+function focusPoint(x, y) { animateCam({ cx: x, cy: y, zoom: Math.max(cam.zoom, 3.6) }, 900); clearView(); }
+function select(sel, moveCam) {
+  selection = sel; dirty = true;
+  rowsEl.querySelectorAll('.row').forEach(r => r.setAttribute('aria-current', String(r.dataset.type === sel.type && r.dataset.id === sel.id)));
+  const detail = $('detail'), facts = [];
+  if (sel.type === 'ship') {
+    const s = SHIPS[sel.id];
+    detail.classList.toggle('needs', s.kind === 'needs');
+    $('d-name').textContent = s.name; $('d-where').textContent = s.berth ? `Berth ${s.berth}` : 'Anchorage';
+    $('d-state').textContent = s.state; $('d-big').textContent = s.big; $('d-bigsub').textContent = s.bigSub; $('d-note').textContent = s.note;
+    $('d-bar').style.width = s.aboard + '%'; $('d-barlabel').textContent = `Cargo aboard ${s.aboard}%`; $('d-load').hidden = false;
+    facts.push(['Length', `${s.len} m`], ['Draft', `${s.draft.toFixed(1)} m`]);
+    if (s.depth) { const ukc = s.depth - s.draft; facts.push(['Berth depth', `${s.depth.toFixed(1)} m`], ['Under-keel', `${ukc.toFixed(1)} m`, ukc < 1]); }
+    else facts.push(['Berth depth', '—'], ['Under-keel', '—']);
+    if (moveCam) focusPoint(s.x, s.y);
+  } else {
+    const b = BERTHS.find(x => x.n === sel.id);
+    detail.classList.remove('needs');
+    $('d-name').textContent = `Berth ${b.n}`; $('d-where').textContent = 'North Quay';
+    $('d-state').textContent = b.restricted ? 'Restricted' : 'Available';
+    $('d-big').textContent = `${b.depth.toFixed(1)} m`; $('d-bigsub').textContent = 'alongside depth';
+    $('d-note').textContent = b.restricted ? b.restricted : 'No vessel assigned in the next 36 h';
+    $('d-load').hidden = true;
+    facts.push(['Berth length', '390 m'], ['Next booking', 'None in 36 h']);
+    if (moveCam) focusPoint(b.x, 0);
+  }
+  $('d-facts').innerHTML = facts.map(([k, v, tight]) => `<div><dt>${k}</dt><dd${tight ? ' class="tight"' : ''}>${v}</dd></div>`).join('');
+}
+$('d-focus').addEventListener('click', () => {
+  if (selection.type === 'ship') { const s = SHIPS[selection.id]; focusPoint(s.x, s.y); }
+  else { const b = BERTHS.find(x => x.n === selection.id); focusPoint(b.x, 0); }
+});
+
+// ── Theme + start ───────────────────────────────────────────────
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', recolor);
+new MutationObserver(recolor).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+recolor();
+resize();
+Object.assign(cam, homeFor());
+select({ type: 'ship', id: 'nordic' }, false);
+requestAnimationFrame(frame);
+if (RM.matches) Object.assign(cam, VIEWS.overview); else setTimeout(() => animateCam(VIEWS.overview, 1300), 120);
+})();
+</script>
