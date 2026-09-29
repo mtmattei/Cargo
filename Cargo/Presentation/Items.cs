@@ -70,23 +70,6 @@ public sealed class LayerItem
     public required ICommand Command { get; init; }
 }
 
-public sealed class VesselCallout
-{
-    public required string Id { get; init; }
-    public required string Name { get; init; }
-    public required string Line1 { get; init; }
-    public required string Line2 { get; init; }
-    public required Brush Dot { get; init; }
-    public required Brush Border { get; init; }
-    public required bool Expanded { get; init; }
-    public required IReadOnlyList<Fact> Facts { get; init; }
-    public required ICommand Toggle { get; init; }
-    public required ICommand Open { get; init; }
-    public required double Left { get; init; }
-    public required double Top { get; init; }
-    public required double MinWidth { get; init; }
-}
-
 public sealed class Fact
 {
     public required string Key { get; init; }

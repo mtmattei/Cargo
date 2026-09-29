@@ -19,17 +19,16 @@ public sealed partial class ShellPage : Page
     {
         State = state;
         NavItems = new ObservableCollection<NavItem>();
-        Callouts = new ObservableCollection<VesselCallout>();
         Layers = new ObservableCollection<LayerItem>();
 
         InitializeComponent();
 
         DataContext = state;
         Stage.State = state;
+        Harbour.State = state;
 
         BuildNav();
         BuildLayers();
-        BuildCallouts();
         ShowSection(state.Section);
         RefreshTide();
 
@@ -38,7 +37,6 @@ public sealed partial class ShellPage : Page
         state.Ticked += (_, _) => RefreshTide();
 
         SizeChanged += (_, e) => ApplyBreakpoints(e.NewSize.Width);
-        StageHost.SizeChanged += (_, _) => BuildCallouts();
 
         Loaded += (_, _) =>
         {
@@ -51,13 +49,11 @@ public sealed partial class ShellPage : Page
 
     public ObservableCollection<NavItem> NavItems { get; }
 
-    public ObservableCollection<VesselCallout> Callouts { get; }
-
     public ObservableCollection<LayerItem> Layers { get; }
 
     public TideReadout Tide { get; } = new();
 
-    // The overlay and the callouts each depend on one property, so they listen for that one
+    // The nav and the layer switcher each depend on one property, so they listen for that one
     // rather than for every structural change in the app.
     private void OnStateChanged(object? sender, PropertyChangedEventArgs e)
     {
@@ -69,9 +65,6 @@ public sealed partial class ShellPage : Page
                 break;
             case nameof(PortState.HarbourLayer):
                 BuildLayers();
-                break;
-            case nameof(PortState.HarbourSelection):
-                BuildCallouts();
                 break;
         }
     }
@@ -257,59 +250,9 @@ public sealed partial class ShellPage : Page
                 Id = id,
                 Label = label,
                 Icon = Geo.Path(icon),
-                Background = current ? Tokens.Brush("DeckWhiteColor", 0.14) : Tokens.Transparent,
-                Foreground = current ? Tokens.Brush("SurfaceBrush") : Tokens.Brush("DeckWhiteColor", 0.6),
+                Background = current ? Tokens.Brush("InkBrush") : Tokens.Transparent,
+                Foreground = current ? Tokens.Brush("PaperBrush") : Tokens.Brush("TextMutedBrush"),
                 Command = State.SetLayerCommand
-            });
-        }
-    }
-
-    private void BuildCallouts()
-    {
-        var width = StageHost.ActualWidth;
-        var height = StageHost.ActualHeight;
-        if (width <= 0 || height <= 0)
-        {
-            return;
-        }
-
-        // Anchored to the hulls they describe, as fractions of the stage. Nordic Star's card
-        // is pinned to the bottom-right corner instead, clear of the approach channel.
-        (string Id, double Fx, double Fy, string Tone, string L1, string L2)[] definitions =
-        {
-            ("kaida", 0.053, 0.505, "TealBrightBrush", "Berth 01 · Loading", "74% loaded · sails 23:30"),
-            ("aurora", 0.354, 0.505, "TealPaleBrush", "Docked · Berth 04", "1,248 containers · 62% unloaded"),
-            ("nordic", -1, -1, "AmberBrush", "Arriving in 42 min", "Assigned · Berth 07")
-        };
-
-        Callouts.Clear();
-        foreach (var (id, fx, fy, tone, line1, line2) in definitions)
-        {
-            var vessel = PortData.Vessel(id);
-            var expanded = State.HarbourSelection == id;
-            var pinned = fx < 0;
-
-            Callouts.Add(new VesselCallout
-            {
-                Id = id,
-                Name = vessel.Name,
-                Line1 = line1,
-                Line2 = line2,
-                Dot = Tokens.Brush(tone),
-                Border = expanded ? Tokens.Brush("DeckWhiteColor", 0.35) : Tokens.Brush("DeckWhiteColor", 0.12),
-                Expanded = expanded,
-                MinWidth = expanded ? 240 : 168,
-                Left = pinned ? Math.Round(width - (expanded ? 292 : 220)) : Math.Round(width * fx),
-                Top = pinned ? Math.Round(height - (expanded ? 216 : 112)) : Math.Round(height * fy),
-                Facts = new[]
-                {
-                    new Fact { Key = "Arrival", Value = vessel.Eta },
-                    new Fact { Key = "Departure", Value = vessel.Etd },
-                    new Fact { Key = "Length · draft", Value = $"{vessel.Length} m · {vessel.Draft} m" },
-                    new Fact { Key = "Security", Value = vessel.Security }
-                },
-                Toggle = State.PickHullVesselCommand,
-                Open = State.OpenVesselCommand
             });
         }
     }

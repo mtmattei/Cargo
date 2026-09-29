@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:Cargo.Presentation"
       xmlns:controls="using:Cargo.Controls"
+      xmlns:harbour="using:Cargo.Controls.Harbour"
       xmlns:shapes="using:Microsoft.UI.Xaml.Shapes"
       Background="{StaticResource PaperBrush}">
 
@@ -108,67 +109,15 @@
     <!-- ══ SHARED HARBOUR STAGE ════════════════════════════════════════ -->
     <Grid x:Name="StageHost" Grid.Row="1" Background="{StaticResource TealDeepBrush}"
           Visibility="{x:Bind State.ShowStage, Mode=OneWay}">
-      <controls:PortStage x:Name="Stage" />
+      <!-- Compact strip (Vessels, Security): the sprite stage until the 3D scene grows a strip view -->
+      <controls:PortStage x:Name="Stage" Visibility="{x:Bind State.StageCompact, Mode=OneWay}" />
 
-      <!-- Vessel callouts float over the water, anchored to their hulls -->
-      <ItemsControl x:Name="CalloutLayer" ItemsSource="{x:Bind Callouts, Mode=OneWay}"
-                    Visibility="{x:Bind State.StageFull, Mode=OneWay}">
-        <ItemsControl.ItemsPanel>
-          <ItemsPanelTemplate><Canvas /></ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
-        <ItemsControl.ItemTemplate>
-          <DataTemplate x:DataType="local:VesselCallout">
-            <Button Style="{StaticResource BareButton}" Command="{x:Bind Toggle}" CommandParameter="{x:Bind Id}"
-                    MinWidth="{x:Bind MinWidth}" HorizontalAlignment="Left">
-              <Button.RenderTransform>
-                <TranslateTransform X="{x:Bind Left}" Y="{x:Bind Top}" />
-              </Button.RenderTransform>
-              <Border Background="{StaticResource ScrimBrush}" BorderBrush="{x:Bind Border}" BorderThickness="1"
-                      CornerRadius="12" Padding="18,14" MinWidth="{x:Bind MinWidth}">
-                <StackPanel Spacing="5">
-                  <StackPanel Orientation="Horizontal" Spacing="8">
-                    <Ellipse Width="7" Height="7" Fill="{x:Bind Dot}" VerticalAlignment="Center" />
-                    <TextBlock Text="{x:Bind Name}" FontFamily="{StaticResource BodyStrongFont}" FontSize="13.5"
-                               Foreground="{StaticResource SurfaceBrush}" />
-                  </StackPanel>
-                  <TextBlock Text="{x:Bind Line1}" Style="{StaticResource CaptionText}" FontSize="12"
-                             Foreground="{StaticResource TextOnDarkBrush}" />
-                  <TextBlock Text="{x:Bind Line2}" Style="{StaticResource CaptionText}" FontSize="12"
-                             Foreground="{StaticResource TextOnDarkBrush}" />
-
-                  <StackPanel Spacing="10" Margin="0,5,0,0" Visibility="{x:Bind Expanded}">
-                    <Border Height="1" Background="{StaticResource HairlineOnDarkBrush}" />
-                    <ItemsControl ItemsSource="{x:Bind Facts}">
-                      <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                          <controls:TwoColumnPanel ColumnSpacing="16" RowSpacing="8" />
-                        </ItemsPanelTemplate>
-                      </ItemsControl.ItemsPanel>
-                      <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="local:Fact">
-                          <StackPanel Spacing="2">
-                            <TextBlock Text="{x:Bind Key}" FontFamily="{StaticResource BodyFont}" FontSize="10.5"
-                                       Foreground="{StaticResource TextOnDarkMutedBrush}" />
-                            <TextBlock Text="{x:Bind Value}" FontFamily="{StaticResource BodyMediumFont}" FontSize="12"
-                                       Foreground="{StaticResource SurfaceBrush}" />
-                          </StackPanel>
-                        </DataTemplate>
-                      </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                    <TextBlock Text="Open vessel profile →" FontFamily="{StaticResource BodyMediumFont}"
-                               FontSize="12" Foreground="{StaticResource TealPaleBrush}" />
-                  </StackPanel>
-                </StackPanel>
-              </Border>
-            </Button>
-          </DataTemplate>
-        </ItemsControl.ItemTemplate>
-      </ItemsControl>
+      <!-- Full stage: the orbitable harbour, with its own data tags and camera HUD -->
+      <harbour:HarbourView x:Name="Harbour" Visibility="{x:Bind State.StageFull, Mode=OneWay}" />
 
       <!-- Layer switcher -->
-      <Border HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,14"
-              Background="{StaticResource ScrimBrush}" BorderBrush="{StaticResource HairlineOnDarkBrush}"
-              BorderThickness="1" CornerRadius="11" Padding="4"
+      <Border Style="{StaticResource HarbourHudPanel}" Padding="3"
+              HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,12"
               Visibility="{x:Bind State.StageFull, Mode=OneWay}">
         <ItemsControl ItemsSource="{x:Bind Layers, Mode=OneWay}">
           <ItemsControl.ItemsPanel>
@@ -178,7 +127,8 @@
             <DataTemplate x:DataType="local:LayerItem">
               <Button Style="{StaticResource BareButton}" Command="{x:Bind Command}" CommandParameter="{x:Bind Id}"
                       ToolTipService.ToolTip="{x:Bind Label}">
-                <Border Background="{x:Bind Background}" CornerRadius="8" Padding="14,8">
+                <!-- xaml-lint: allow card - the current-segment highlight of a segmented control, not a card -->
+                <Border Background="{x:Bind Background}" CornerRadius="6" Padding="11,7">
                   <StackPanel Orientation="Horizontal" Spacing="8">
                     <shapes:Path Data="{x:Bind Icon}" Stroke="{x:Bind Foreground}" StrokeThickness="1.8"
                                  Width="15" Height="15" Stretch="Uniform" VerticalAlignment="Center" />
@@ -209,7 +159,7 @@
       <Button Style="{StaticResource GhostButton}" Command="{x:Bind State.ToggleStageCommand}"
               Content="{x:Bind State.StageToggleLabel, Mode=OneWay}"
               Visibility="{x:Bind State.ShowStageToggle, Mode=OneWay}"
-              HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="20,12"
+              HorizontalAlignment="Right" VerticalAlignment="Top" Margin="12"
               Background="{StaticResource ScrimBrush}" Foreground="{StaticResource PaperBrush}"
               BorderBrush="{StaticResource HairlineOnDarkBrush}" FontSize="11.5" Padding="11,6" CornerRadius="7" />
     </Grid>

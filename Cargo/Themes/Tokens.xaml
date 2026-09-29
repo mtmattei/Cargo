@@ -79,6 +79,67 @@
   <Color x:Key="ContainerOliveColor">#FF5B7C4A</Color>
   <Color x:Key="ContainerSageColor">#FF8A8F7A</Color>
 
+  <!-- ── Harbour scene (3D stage) ─────────────────────────────── -->
+  <!-- High-key "miniature" light: near-white concrete, blue-violet shadows. Saturated colour
+       in the scene is status only (Amber reserved, Alert restricted); everything else is muted. -->
+  <Color x:Key="HarbourStageColor">#FFEDF0F1</Color>
+  <Color x:Key="HarbourLandColor">#FFE5E5E1</Color>
+  <Color x:Key="HarbourApronColor">#FFDDDDD8</Color>
+  <Color x:Key="HarbourPadColor">#FFDADAD4</Color>
+  <Color x:Key="HarbourRoadColor">#FFCDCEC9</Color>
+  <Color x:Key="HarbourMarkColor">#FFF7F7F4</Color>
+  <Color x:Key="HarbourRailColor">#FF9398A0</Color>
+  <Color x:Key="HarbourSafetyColor">#FFD2BC82</Color>
+  <Color x:Key="HarbourQuaySideColor">#FFB3B6B7</Color>
+  <Color x:Key="HarbourSeaNearColor">#FFA8CAD6</Color>
+  <Color x:Key="HarbourSeaFarColor">#FFC9DDE4</Color>
+  <Color x:Key="HarbourDepthInkColor">#FF1E384C</Color>
+  <Color x:Key="HarbourShadowColor">#FF3A427A</Color>
+  <Color x:Key="HarbourSkyTintColor">#FF96A4CC</Color>
+  <Color x:Key="HarbourWakeColor">#FFFFFFFF</Color>
+  <Color x:Key="HarbourGlintColor">#FFFFFAEE</Color>
+  <Color x:Key="HarbourSignColor">#FF464E54</Color>
+  <Color x:Key="HarbourTreeColor">#FF8FAE86</Color>
+  <Color x:Key="HarbourTreeLightColor">#FFA9C49F</Color>
+  <Color x:Key="HarbourSteelColor">#FF5E676D</Color>
+  <Color x:Key="HarbourCapColor">#FF2F3538</Color>
+  <Color x:Key="HarbourGlassColor">#FF2C3438</Color>
+  <Color x:Key="HarbourHouseColor">#FFE7E9E9</Color>
+  <Color x:Key="HarbourDeckColor">#FF6F777C</Color>
+  <Color x:Key="HarbourBootColor">#FF8A4B42</Color>
+  <Color x:Key="HarbourCraneColor">#FFA9C3D6</Color>
+  <Color x:Key="HarbourCraneDarkColor">#FF7F95A6</Color>
+  <Color x:Key="HarbourRtgColor">#FFD4BA6E</Color>
+  <Color x:Key="HarbourTugColor">#FFB07F76</Color>
+  <Color x:Key="HarbourBuoyPortColor">#FFA8584E</Color>
+  <Color x:Key="HarbourBuoyStarboardColor">#FF4E7F5E</Color>
+  <Color x:Key="HarbourBuildingColor">#FFDADCDC</Color>
+  <Color x:Key="HarbourRoofColor">#FFC9CDCF</Color>
+  <Color x:Key="HarbourShedColor">#FFC9CCCD</Color>
+  <Color x:Key="HarbourShedRoofColor">#FFB8BDBF</Color>
+  <Color x:Key="HarbourVentColor">#FFB9BEC1</Color>
+  <!-- Container liveries, desaturated. No green (reads as status) and no signal red. -->
+  <Color x:Key="LiveryBlueColor">#FF7FA6C4</Color>
+  <Color x:Key="LiveryRustColor">#FF9C6B57</Color>
+  <Color x:Key="LiveryOrangeColor">#FFC98A4E</Color>
+  <Color x:Key="LiveryMagentaColor">#FFA0708F</Color>
+  <Color x:Key="LiveryWhiteColor">#FFD8DADB</Color>
+  <Color x:Key="LiveryGreyColor">#FFA4A9AC</Color>
+  <Color x:Key="LiveryBeigeColor">#FFCDB67E</Color>
+  <Color x:Key="LiveryNavyColor">#FF52657A</Color>
+  <Color x:Key="LiveryOxideColor">#FF8E5E55</Color>
+  <!-- Operator hull and funnel colours -->
+  <Color x:Key="HullMscColor">#FF2F3A48</Color>
+  <Color x:Key="FunnelMscColor">#FFD9C084</Color>
+  <Color x:Key="HullOneColor">#FF5E4458</Color>
+  <Color x:Key="FunnelOneColor">#FFA0708F</Color>
+  <Color x:Key="HullMaerskColor">#FF53708A</Color>
+  <Color x:Key="FunnelMaerskColor">#FFD8DADB</Color>
+  <Color x:Key="HullHapagColor">#FF3B4A5C</Color>
+  <Color x:Key="FunnelHapagColor">#FFC98A4E</Color>
+  <Color x:Key="HullCmaColor">#FF34455E</Color>
+  <Color x:Key="FunnelCmaColor">#FF8FB3CF</Color>
+
   <!-- ── X-ray / scanner ──────────────────────────────────────── -->
   <Color x:Key="ScanOrganicColor">#FFFF9A3C</Color>
   <Color x:Key="ScanMetallicColor">#FF4FB3A9</Color>
@@ -115,6 +176,8 @@
 
   <SolidColorBrush x:Key="AmberBrush" Color="{StaticResource AmberColor}" />
   <SolidColorBrush x:Key="AmberDeepBrush" Color="{StaticResource AmberDeepColor}" />
+  <!-- xaml-lint: allow TOKENTHEME - the app is single-theme (audit H11); the harbour scene is light-only by design (SPEC.md) -->
+  <SolidColorBrush x:Key="HarbourStageBrush" Color="{StaticResource HarbourStageColor}" />
   <SolidColorBrush x:Key="OrangeBrush" Color="{StaticResource OrangeColor}" />
   <SolidColorBrush x:Key="OrangeInkBrush" Color="{StaticResource OrangeInkColor}" />
   <SolidColorBrush x:Key="AlertBrush" Color="{StaticResource AlertColor}" />

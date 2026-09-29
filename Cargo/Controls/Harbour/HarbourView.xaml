@@ -1,0 +1,128 @@
+<UserControl x:Class="Cargo.Controls.Harbour.HarbourView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:harbour="using:Cargo.Controls.Harbour"
+             xmlns:controls="using:Cargo.Controls"
+             xmlns:presentation="using:Cargo.Presentation"
+             xmlns:shapes="using:Microsoft.UI.Xaml.Shapes"
+             IsTabStop="True"
+             UseSystemFocusVisuals="True"
+             AutomationProperties.Name="Harbour map. Arrow keys orbit, plus and minus zoom, zero resets.">
+
+  <UserControl.Resources>
+    <!-- A vessel's data tag: the name and one status line, expanding to the key facts when selected -->
+    <!-- The facts card opens above the chip, so it never covers the vessel it describes -->
+    <DataTemplate x:Key="HarbourTagTemplate" x:DataType="harbour:HarbourTag">
+      <StackPanel Spacing="4">
+        <controls:Card Visibility="{x:Bind Expanded, Mode=OneWay}" CornerRadius="8" Padding="12,10" MinWidth="220">
+          <StackPanel Spacing="10">
+            <ItemsControl ItemsSource="{x:Bind Facts}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <controls:TwoColumnPanel ColumnSpacing="16" RowSpacing="8" />
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="presentation:Fact">
+                  <StackPanel Spacing="2">
+                    <TextBlock Text="{x:Bind Key}" Style="{StaticResource CaptionText}" />
+                    <TextBlock Text="{x:Bind Value}" FontFamily="{StaticResource BodyMediumFont}" FontSize="12"
+                               Foreground="{StaticResource InkBrush}" />
+                  </StackPanel>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Button Style="{StaticResource GhostButton}" Command="{x:Bind Open}" CommandParameter="{x:Bind Id}"
+                    Content="Open vessel profile →" HorizontalAlignment="Stretch" />
+          </StackPanel>
+        </controls:Card>
+
+        <Button Style="{StaticResource BareButton}" Command="{x:Bind Toggle}" CommandParameter="{x:Bind Id}"
+                AutomationProperties.Name="{x:Bind AccessibleName}" HorizontalAlignment="Center">
+          <!-- xaml-lint: allow card - a data-tag chip on a leader line, not a content card -->
+          <Border Background="{x:Bind Background, Mode=OneWay}" BorderBrush="{x:Bind Edge, Mode=OneWay}"
+                  BorderThickness="{x:Bind EdgeThickness, Mode=OneWay}" CornerRadius="4" Padding="7,4,7,5">
+            <StackPanel Spacing="1">
+              <TextBlock Text="{x:Bind Title}" FontFamily="{StaticResource MonoMediumFont}" FontSize="11"
+                         Foreground="{x:Bind Foreground}" />
+              <TextBlock Text="{x:Bind Line}" FontFamily="{StaticResource MonoFont}" FontSize="11"
+                         Foreground="{x:Bind SubForeground}" />
+            </StackPanel>
+          </Border>
+        </Button>
+      </StackPanel>
+    </DataTemplate>
+  </UserControl.Resources>
+
+  <Grid Background="{StaticResource HarbourStageBrush}">
+    <Border x:Name="SceneHost" Background="Transparent" />
+
+    <Canvas x:Name="TagLayer" />
+
+    <!-- Legend: colour in the scene only ever means status -->
+    <Border Style="{StaticResource HarbourHudPanel}" HorizontalAlignment="Left" VerticalAlignment="Top"
+            Margin="12" IsHitTestVisible="False">
+      <StackPanel Orientation="Horizontal" Spacing="14">
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2" Fill="{StaticResource AmberBrush}" VerticalAlignment="Center" />
+          <TextBlock Text="Reserved · arriving" Style="{StaticResource CaptionText}" VerticalAlignment="Center" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2" Stroke="{StaticResource InkBrush}" StrokeThickness="2" VerticalAlignment="Center" />
+          <TextBlock Text="Selected" Style="{StaticResource CaptionText}" VerticalAlignment="Center" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2" Stroke="{StaticResource AlertBrush}" StrokeThickness="1"
+                     StrokeDashArray="2,1.5" VerticalAlignment="Center" />
+          <TextBlock Text="Restricted" Style="{StaticResource CaptionText}" VerticalAlignment="Center" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <Rectangle Width="14" Height="1.5" Fill="{StaticResource TextMutedBrush}" VerticalAlignment="Center" />
+          <TextBlock Text="Depth contour (m)" Style="{StaticResource CaptionText}" VerticalAlignment="Center" />
+        </StackPanel>
+      </StackPanel>
+    </Border>
+
+    <!-- Camera presets -->
+    <Border Style="{StaticResource HarbourHudPanel}" Padding="3" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="12">
+      <StackPanel Orientation="Horizontal" Spacing="2">
+        <Button x:Name="OverviewButton" Style="{StaticResource HarbourSegmentCurrent}" Content="Overview"
+                Command="{x:Bind ViewCommand}" CommandParameter="overview" />
+        <Button x:Name="SeaButton" Style="{StaticResource HarbourSegment}" Content="From sea"
+                Command="{x:Bind ViewCommand}" CommandParameter="sea" />
+        <Button x:Name="LandButton" Style="{StaticResource HarbourSegment}" Content="From land"
+                Command="{x:Bind ViewCommand}" CommandParameter="land" />
+        <Button x:Name="PlanButton" Style="{StaticResource HarbourSegment}" Content="Plan"
+                Command="{x:Bind ViewCommand}" CommandParameter="plan" />
+      </StackPanel>
+    </Border>
+
+    <!-- Scale, north, zoom -->
+    <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="12">
+      <Border Style="{StaticResource HarbourHudPanel}" VerticalAlignment="Stretch" IsHitTestVisible="False">
+        <StackPanel Spacing="3" VerticalAlignment="Center">
+          <Border x:Name="ScaleBar" Height="5" Width="100" HorizontalAlignment="Left"
+                  BorderBrush="{StaticResource InkBrush}" BorderThickness="1.5,0,1.5,1.5" />
+          <TextBlock x:Name="ScaleLabel" Text="200 m" FontFamily="{StaticResource MonoMediumFont}" FontSize="11"
+                     Foreground="{StaticResource TextMutedBrush}" />
+        </StackPanel>
+      </Border>
+      <Border Style="{StaticResource HarbourHudPanel}" Width="34" Height="34" Padding="0" IsHitTestVisible="False"
+              AutomationProperties.Name="North">
+        <Viewbox Width="22" Height="22">
+          <Canvas Width="26" Height="26">
+            <Canvas.RenderTransform>
+              <RotateTransform x:Name="Needle" CenterX="13" CenterY="13" />
+            </Canvas.RenderTransform>
+            <shapes:Path Data="M13 3 L16.6 14 L13 12 L9.4 14 Z" Fill="{StaticResource AlertBrush}" />
+            <shapes:Path Data="M13 23 L16.6 12 L13 14 L9.4 12 Z" Fill="{StaticResource HairlineStrongBrush}" />
+          </Canvas>
+        </Viewbox>
+      </Border>
+      <Button Style="{StaticResource HarbourIconButton}" Content="−" Command="{x:Bind ZoomCommand}" CommandParameter="out"
+              AutomationProperties.Name="Zoom out" />
+      <Button Style="{StaticResource HarbourIconButton}" Content="+" Command="{x:Bind ZoomCommand}" CommandParameter="in"
+              AutomationProperties.Name="Zoom in" />
+    </StackPanel>
+  </Grid>
+</UserControl>
