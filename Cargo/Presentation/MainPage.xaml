@@ -174,9 +174,22 @@
       <controls:GridPaper />
       <ScrollViewer x:Name="SectionScroll" HorizontalScrollBarVisibility="Auto" HorizontalScrollMode="Auto"
                     VerticalScrollBarVisibility="Auto" ZoomMode="Disabled">
-        <!-- Section region: the router creates each section page on first visit and keeps it,
-             collapsed, when you move on (routes: App.RegisterRoutes) -->
-        <Grid x:Name="Sections" uen:Region.Attached="True" uen:Region.Navigator="Visibility" />
+        <!-- Section region: one pane per route in App.RegisterRoutes. Each pane is x:Load'ed, so
+             startup pays for the section you open on; the rest are realized one per idle turn after
+             load (MainPage.WarmSections), and a jump to one not yet built realizes it on the spot
+             (the navigator finds panes by name). x:Name and Region.Name are both the route id. -->
+        <Grid x:Name="Sections" uen:Region.Attached="True" uen:Region.Navigator="Visibility">
+          <local:OverviewView x:Name="overview" x:Load="False" uen:Region.Name="overview" Visibility="Collapsed"
+                              DataContext="{x:Bind ViewModel.Overview, Mode=OneWay}" />
+          <local:BerthsView x:Name="berths" x:Load="False" uen:Region.Name="berths" Visibility="Collapsed"
+                            DataContext="{x:Bind ViewModel.Berths, Mode=OneWay}" />
+          <local:CargoView x:Name="cargo" x:Load="False" uen:Region.Name="cargo" Visibility="Collapsed"
+                           DataContext="{x:Bind ViewModel.Cargo, Mode=OneWay}" />
+          <local:FleetView x:Name="fleet" x:Load="False" uen:Region.Name="fleet" Visibility="Collapsed"
+                           DataContext="{x:Bind ViewModel.Fleet, Mode=OneWay}" />
+          <local:SecurityView x:Name="security" x:Load="False" uen:Region.Name="security" Visibility="Collapsed"
+                              DataContext="{x:Bind ViewModel.Security, Mode=OneWay}" />
+        </Grid>
       </ScrollViewer>
     </Grid>
 

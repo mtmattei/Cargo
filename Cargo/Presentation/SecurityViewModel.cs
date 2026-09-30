@@ -142,7 +142,9 @@ public sealed partial class SecurityViewModel : ObservableObject
 
         try
         {
-            await _navigator.NavigateRouteAsync(this, $"./{tab}");
+            // This model shares Main's navigator (it is created with MainViewModel), so the tab is
+            // addressed through its section
+            await _navigator.NavigateRouteAsync(this, $"./security/{tab}");
         }
         catch (Exception ex)
         {

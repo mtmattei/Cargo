@@ -51,6 +51,13 @@ public partial class App : Application
                 {
                     // One store for the whole shift: every page model reads and writes the same port
                     services.AddSingleton(state);
+
+                    // Section models, handed to MainViewModel: each section page is built ahead of its first visit
+                    services.AddTransient<OverviewViewModel>();
+                    services.AddTransient<BerthsViewModel>();
+                    services.AddTransient<CargoViewModel>();
+                    services.AddTransient<FleetViewModel>();
+                    services.AddTransient<SecurityViewModel>();
                 })
                 .UseNavigation(RegisterRoutes));
 
@@ -83,12 +90,7 @@ public partial class App : Application
     {
         views.Register(
             new ViewMap(ViewModel: typeof(ShellViewModel)),
-            new ViewMap<MainPage, MainViewModel>(),
-            new ViewMap<OverviewView, OverviewViewModel>(),
-            new ViewMap<BerthsView, BerthsViewModel>(),
-            new ViewMap<CargoView, CargoViewModel>(),
-            new ViewMap<FleetView, FleetViewModel>(),
-            new ViewMap<SecurityView, SecurityViewModel>());
+            new ViewMap<MainPage, MainViewModel>());
 
         routes.Register(
             new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
@@ -97,11 +99,13 @@ public partial class App : Application
                     new RouteMap("Main", View: views.FindByViewModel<MainViewModel>(), IsDefault: true,
                         Nested:
                         [
-                            new RouteMap("overview", View: views.FindByViewModel<OverviewViewModel>(), IsDefault: true),
-                            new RouteMap("berths", View: views.FindByViewModel<BerthsViewModel>()),
-                            new RouteMap("cargo", View: views.FindByViewModel<CargoViewModel>()),
-                            new RouteMap("fleet", View: views.FindByViewModel<FleetViewModel>()),
-                            new RouteMap("security", View: views.FindByViewModel<SecurityViewModel>(),
+                            // Sections are panes declared in MainPage's Visibility region (built in the
+                            // background after startup), so these routes carry no views of their own
+                            new RouteMap("overview", IsDefault: true),
+                            new RouteMap("berths"),
+                            new RouteMap("cargo"),
+                            new RouteMap("fleet"),
+                            new RouteMap("security",
                                 Nested:
                                 [
                                     // In-page tabs: panes named in SecurityView's Visibility region, no views of their own

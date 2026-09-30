@@ -18,9 +18,16 @@ public sealed partial class MainViewModel : ObservableObject
     // is not navigated a second time.
     private string? _routedSection;
 
-    public MainViewModel(PortState state, INavigator navigator, IRouteNotifier routeNotifier, IDispatcher dispatcher, ILogger<MainViewModel> logger)
+    public MainViewModel(PortState state, INavigator navigator, IRouteNotifier routeNotifier, IDispatcher dispatcher,
+        ILogger<MainViewModel> logger, OverviewViewModel overview, BerthsViewModel berths, CargoViewModel cargo,
+        FleetViewModel fleet, SecurityViewModel security)
     {
         State = state;
+        Overview = overview;
+        Berths = berths;
+        Cargo = cargo;
+        Fleet = fleet;
+        Security = security;
         _navigator = navigator;
         _logger = logger;
 
@@ -41,6 +48,12 @@ public sealed partial class MainViewModel : ObservableObject
     }
 
     public PortState State { get; }
+
+    public OverviewViewModel Overview { get; }
+    public BerthsViewModel Berths { get; }
+    public CargoViewModel Cargo { get; }
+    public FleetViewModel Fleet { get; }
+    public SecurityViewModel Security { get; }
 
     public ObservableCollection<NavItem> NavItems { get; } = new();
 
