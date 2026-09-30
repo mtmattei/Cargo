@@ -26,6 +26,7 @@ public sealed partial class ContainerScanner : Panel
     private double _dragRx;
     private double _dragRy;
     private bool _dragging;
+    private bool _renderQueued;
 
     public ContainerScanner()
     {
@@ -67,15 +68,34 @@ public sealed partial class ContainerScanner : Panel
         }
     }
 
-    private void OnChanged(object? sender, EventArgs e) => Render();
+    private void OnChanged(object? sender, EventArgs e) => QueueRender();
 
     private void OnPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
         if (e.PropertyName is nameof(PortState.ScanRotationX) or nameof(PortState.ScanRotationY)
             or nameof(PortState.ScanZoom) or nameof(PortState.Xray))
         {
-            Render();
+            QueueRender();
         }
+    }
+
+    /// <summary>
+    /// A drag or a view preset sets both angles, and X-ray raises a property change and a
+    /// structure change, so renders are coalesced into one per dispatcher turn.
+    /// </summary>
+    private void QueueRender()
+    {
+        if (_renderQueued)
+        {
+            return;
+        }
+
+        _renderQueued = true;
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            _renderQueued = false;
+            Render();
+        });
     }
 
     protected override Size MeasureOverride(Size availableSize)

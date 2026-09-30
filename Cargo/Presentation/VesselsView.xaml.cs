@@ -44,6 +44,7 @@ public sealed partial class VesselsView : UserControl
     private readonly VesselProfile _profile;
     private readonly CargoOpsScene _ops = new();
     private readonly BayScene _bay = new();
+    private string? _opsVesselId;
 
     public VesselsView(PortState state)
     {
@@ -137,7 +138,13 @@ public sealed partial class VesselsView : UserControl
         BuildComposition(vessel);
         BuildBay(vessel);
 
-        _ops.Show(vessel);
+        // A bay click or a hover is a structure change too; restarting the crane loop for the
+        // same vessel made the cranes jump back to their first move.
+        if (_opsVesselId != vessel.Id)
+        {
+            _opsVesselId = vessel.Id;
+            _ops.Show(vessel);
+        }
 
         Bindings.Update();
     }
@@ -354,25 +361,44 @@ public sealed partial class VesselsView : UserControl
         Bindings.Update();
     }
 
+    /// <summary>
+    /// Thirty ticks, built once. Progress moves a tick every few minutes, so the one-second
+    /// tick only restyles when the lit count actually changes.
+    /// </summary>
     private static void FillTicks(ItemsControl host, double percent, string litToken)
     {
+        var litCount = Enumerable.Range(0, 30).Count(i => i / 30d * 100 < percent);
+        if (host.Items.Count == 30 && host.Tag is int drawn && drawn == litCount)
+        {
+            return;
+        }
+
         host.ItemsPanel ??= HorizontalTicks();
-        host.Items.Clear();
+        if (host.Items.Count != 30)
+        {
+            host.Items.Clear();
+            for (var i = 0; i < 30; i++)
+            {
+                host.Items.Add(new Rectangle
+                {
+                    RadiusX = 1,
+                    RadiusY = 1,
+                    Width = 4,
+                    Margin = new Thickness(0, 0, 2, 0),
+                    VerticalAlignment = VerticalAlignment.Bottom
+                });
+            }
+        }
 
         for (var i = 0; i < 30; i++)
         {
-            var lit = i / 30d * 100 < percent;
-            host.Items.Add(new Rectangle
-            {
-                Height = lit ? i % 5 == 0 ? 14 : 10 : 6,
-                RadiusX = 1,
-                RadiusY = 1,
-                Width = 4,
-                Margin = new Thickness(0, 0, 2, 0),
-                VerticalAlignment = VerticalAlignment.Bottom,
-                Fill = lit ? Tokens.Brush(litToken) : Tokens.Brush("InkColor", 0.12)
-            });
+            var lit = i < litCount;
+            var tick = (Rectangle)host.Items[i];
+            tick.Height = lit ? i % 5 == 0 ? 14 : 10 : 6;
+            tick.Fill = lit ? Tokens.Brush(litToken) : Tokens.Brush("InkColor", 0.12);
         }
+
+        host.Tag = litCount;
     }
 
     private static ItemsPanelTemplate HorizontalTicks() =>

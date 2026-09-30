@@ -17,6 +17,7 @@ public sealed partial class DockingView : UserControl
 
     private readonly BerthMap _map;
     private bool _syncingSlider;
+    private int _liveMinute = -1;
 
     public DockingView(PortState state)
     {
@@ -47,9 +48,12 @@ public sealed partial class DockingView : UserControl
         this.RebuildWhenVisible(state, Refresh);
         this.TickWhenVisible(state, () =>
         {
-            // Only the live view moves with the clock; a scrubbed one stays put.
-            if (State.PlanHour is null)
+            // Only the live view moves with the clock, and the plan shows minutes, so a
+            // refresh on every one-second tick redrew an identical plan 59 times in 60.
+            var minute = (int)(State.NowHours * 60);
+            if (State.PlanHour is null && minute != _liveMinute)
             {
+                _liveMinute = minute;
                 Refresh();
             }
         });

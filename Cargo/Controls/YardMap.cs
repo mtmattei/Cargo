@@ -18,6 +18,11 @@ public sealed partial class YardMap : SceneHost
 
     private readonly DateTimeOffset _origin = DateTimeOffset.Now;
 
+    // Each slot's elements and the state they were drawn for, so a yard move or a click
+    // redraws only the slots that changed rather than all ~300 of them.
+    private readonly Dictionary<string, (List<UIElement> Elements, int Height, bool Selected, bool Moved)> _drawn = new();
+    private List<(string Key, YardZoneDef Zone, string Slot, int Base, double X, double Y)>? _slots;
+
     public YardMap(PortState state) : base(1100, 560)
     {
         _state = state;
@@ -27,8 +32,8 @@ public sealed partial class YardMap : SceneHost
         Unloaded += (_, _) => _timer.Stop();
 
         Build();
-        this.RebuildWhenVisible(state, Build);
-        this.RebuildOnYardMove(state, Build);
+        this.RebuildWhenVisible(state, UpdateSlots);
+        this.RebuildOnYardMove(state, UpdateSlots);
     }
 
     /// <summary>All slots as (key, zone, slot label, tier count, cargo token).</summary>
@@ -97,51 +102,91 @@ public sealed partial class YardMap : SceneHost
         AddRtg(_rtgA, 52);
         AddRtg(_rtgB, 602);
 
-        var occupied = 0;
-        var capacity = 0;
-        var keys = new List<(string, int)>();
+        _slots ??= Slots().ToList();
+        _state.YardKeys = _slots.Select(s => (s.Key, s.Base)).ToList();
+        _drawn.Clear();
+        UpdateSlots();
+    }
 
-        foreach (var (key, zone, slot, baseHeight, x, y) in Slots())
+    /// <summary>Redraws only the slots whose height, selection or "just moved" ring changed.</summary>
+    private void UpdateSlots()
+    {
+        if (_slots is null)
         {
-            keys.Add((key, baseHeight));
+            return;
+        }
+
+        var occupied = 0;
+        foreach (var (key, zone, _, baseHeight, x, y) in _slots)
+        {
             var height = _state.YardHeight(key, baseHeight);
-            occupied += height;
-            capacity += 5;
-
             var selected = _state.SelectedStack == key;
-            var tint = Tokens.Color(zone.TintToken);
+            var moved = _state.YardRecentlyMoved(key);
+            occupied += height;
 
-            if (height == 0)
+            if (_drawn.TryGetValue(key, out var drawn)
+                && drawn.Height == height && drawn.Selected == selected && drawn.Moved == moved)
             {
-                var empty = Draw.Rect(x, y, 26, 16, null, 1.5, Tokens.Brush("ApronLineColor", 0.5), 1, 0.9);
-                empty.StrokeDashArray = Draw.Dash(3, 3);
-                Bind(empty, key);
-                Scene.Place(empty);
                 continue;
             }
 
+            if (drawn.Elements is not null)
+            {
+                foreach (var element in drawn.Elements)
+                {
+                    Scene.Children.Remove(element);
+                }
+            }
+
+            _drawn[key] = (DrawSlot(key, zone, x, y, height, selected, moved), height, selected, moved);
+        }
+
+        _state.YardOccupancy = _slots.Count == 0 ? 0 : (int)Math.Round(occupied * 100d / (_slots.Count * 5));
+    }
+
+    private List<UIElement> DrawSlot(string key, YardZoneDef zone, double x, double y, int height, bool selected, bool moved)
+    {
+        var elements = new List<UIElement>();
+        var tint = Tokens.Color(zone.TintToken);
+
+        if (height == 0)
+        {
+            // A filled (near-transparent) empty slot, so the whole slot takes the click, not just its outline
+            var empty = Draw.Rect(x, y, 26, 16, Tokens.Brush("InkColor", 0.02), 1.5, Tokens.Brush("ApronLineColor", 0.5), 1, 0.9);
+            empty.StrokeDashArray = Draw.Dash(3, 3);
+            Bind(empty, key);
+            elements.Add(Scene.Place(empty));
+        }
+        else
+        {
             var opacity = height == 5 ? 1 : 0.62 + height * 0.07;
             var top = Draw.Rect(x, y, 26, 16, Tokens.Of(tint, opacity), 1.5);
             Bind(top, key);
-            Scene.Place(top);
+            elements.Add(Scene.Place(top));
 
             // Taller stacks read darker, so height is legible at a glance
-            Scene.Place(Draw.Rect(x, y, 26, Math.Round((height - 1) * 3.5), Tokens.Brush("InkColor", 0.18), 1.5));
-            Scene.Place(Draw.Rect(x + 3, y + 9, Math.Round(20d * height / 5), 4, Tokens.Brush("DeckWhiteColor", 0.55), 1));
-
-            if (selected)
-            {
-                Scene.Place(Draw.Rect(x, y, 26, 16, null, 1.5, Tokens.Brush("InkBrush"), 2));
-            }
-
-            if (_state.YardRecentlyMoved(key))
-            {
-                Scene.Place(Draw.Rect(x, y, 26, 16, null, 1.5, Tokens.Brush("AmberBrush"), 2));
-            }
+            elements.Add(Scene.Place(Unhit(Draw.Rect(x, y, 26, Math.Round((height - 1) * 3.5), Tokens.Brush("InkColor", 0.18), 1.5))));
+            elements.Add(Scene.Place(Unhit(Draw.Rect(x + 3, y + 9, Math.Round(20d * height / 5), 4, Tokens.Brush("DeckWhiteColor", 0.55), 1))));
         }
 
-        _state.YardKeys = keys;
-        _state.YardOccupancy = capacity == 0 ? 0 : (int)Math.Round(occupied * 100d / capacity);
+        if (selected)
+        {
+            elements.Add(Scene.Place(Unhit(Draw.Rect(x, y, 26, 16, null, 1.5, Tokens.Brush("InkBrush"), 2))));
+        }
+
+        if (moved)
+        {
+            elements.Add(Scene.Place(Unhit(Draw.Rect(x, y, 26, 16, null, 1.5, Tokens.Brush("AmberBrush"), 2))));
+        }
+
+        return elements;
+    }
+
+    /// <summary>Overlays must not swallow the click meant for the slot beneath them.</summary>
+    private static T Unhit<T>(T element) where T : UIElement
+    {
+        element.IsHitTestVisible = false;
+        return element;
     }
 
     private void Bind(UIElement element, string key)

@@ -16,6 +16,14 @@ public sealed partial class BerthMap : SceneHost
 
     private readonly PortState _state;
 
+    // Kept from the last build so a drag repaints them instead of rebuilding the scene.
+    private readonly Microsoft.UI.Xaml.Shapes.Rectangle?[] _boxes = new Microsoft.UI.Xaml.Shapes.Rectangle?[8];
+    private readonly TextBlock?[] _statusLabels = new TextBlock?[8];
+    private readonly (string Status, bool Conflict, bool Selected)[] _berthInfo = new (string, bool, bool)[8];
+    private readonly Dictionary<string, (FrameworkElement Hull, FrameworkElement Name)> _hulls = new();
+    private int _paintedHover = -2;
+    private string? _lastHint;
+
     private string? _dragId;
     private Point _dragPoint;
     private Point _dragOffset;
@@ -66,15 +74,16 @@ public sealed partial class BerthMap : SceneHost
     private void Build()
     {
         Scene.Children.Clear();
+        _hulls.Clear();
 
         var planHour = _state.EffectivePlanHour;
         var conflicts = _state.Conflicts();
-        var dragVessel = _dragId is null ? null : PortData.Vessel(_dragId);
-        var hover = _dragId is null ? -1 : BerthUnder(_dragPoint);
 
         DrawGround();
-        DrawBerths(planHour, conflicts, dragVessel, hover);
+        DrawBerths(planHour, conflicts);
         DrawVessels(planHour);
+        _paintedHover = -2;
+        PaintBerths();
     }
 
     private void DrawGround()
@@ -122,8 +131,7 @@ public sealed partial class BerthMap : SceneHost
         Scene.Place(approach);
     }
 
-    private void DrawBerths(double planHour, IReadOnlyList<(string Berth, string A, string B)> conflicts,
-        Vessel? dragVessel, int hover)
+    private void DrawBerths(double planHour, IReadOnlyList<(string Berth, string A, string B)> conflicts)
     {
         for (var i = 0; i < PortData.Berths.Count; i++)
         {
@@ -139,6 +147,40 @@ public sealed partial class BerthMap : SceneHost
                 : "available";
 
             var selected = _state.DockSelection is { } id && _state.BerthOf(id) == berth.Number;
+            _berthInfo[i] = (status, conflict, selected);
+
+            _boxes[i] = Scene.Place(Draw.Rect(x, 146, 132, 70, Tokens.Transparent, 8, Tokens.Transparent, 1.2));
+            Scene.Place(Draw.Text(berth.Number, x, 228, 16, Tokens.Brush("InkBrush"),
+                "MonoMediumFont", TextAlignment.Center, 132));
+            _statusLabels[i] = Scene.Place(Draw.Text(conflict ? "Conflict" : char.ToUpperInvariant(status[0]) + status[1..],
+                x, 248, 14, Tokens.Transparent, "BodyMediumFont", TextAlignment.Center, 132));
+            Scene.Place(Draw.Text($"{berth.Depth:0.0} m", x, 218, 10.5, Tokens.Brush("TextFaintBrush"),
+                "BodyFont", TextAlignment.Center, 132));
+        }
+    }
+
+    /// <summary>
+    /// Berth colours depend on the drag (fits / cannot take it) and the berth under the pointer.
+    /// This only restyles the eight existing boxes, and only when the berth under the pointer changes.
+    /// </summary>
+    private void PaintBerths()
+    {
+        var dragVessel = _dragId is null ? null : PortData.Vessel(_dragId);
+        var hover = _dragId is null ? -1 : BerthUnder(_dragPoint);
+        if (hover == _paintedHover && _paintedHover != -2)
+        {
+            return;
+        }
+
+        _paintedHover = hover;
+        for (var i = 0; i < PortData.Berths.Count; i++)
+        {
+            if (_boxes[i] is not { } box || _statusLabels[i] is not { } label)
+            {
+                continue;
+            }
+
+            var (status, conflict, selected) = _berthInfo[i];
             var isHover = hover == i;
             var fits = dragVessel is not null && _state.Fits(dragVessel, i);
 
@@ -155,23 +197,11 @@ public sealed partial class BerthMap : SceneHost
                 : status == "available" ? 0.14
                 : 0.18;
 
-            var box = Draw.Rect(x, 146, 132, 70, Tokens.Of(tone, fillOpacity), 8,
-                Tokens.Of(isHover && dragVessel is not null ? Tokens.Color("InkColor") : tone),
-                isHover || selected || conflict ? 2.5 : 1.2);
-
-            if (status == "reserved" || (dragVessel is not null && fits))
-            {
-                box.StrokeDashArray = Draw.Dash(6, 5);
-            }
-
-            Scene.Place(box);
-
-            Scene.Place(Draw.Text(berth.Number, x, 228, 16, Tokens.Brush("InkBrush"),
-                "MonoMediumFont", TextAlignment.Center, 132));
-            Scene.Place(Draw.Text(conflict ? "Conflict" : char.ToUpperInvariant(status[0]) + status[1..],
-                x, 248, 14, Tokens.Of(tone), "BodyMediumFont", TextAlignment.Center, 132));
-            Scene.Place(Draw.Text($"{berth.Depth:0.0} m", x, 218, 10.5, Tokens.Brush("TextFaintBrush"),
-                "BodyFont", TextAlignment.Center, 132));
+            box.Fill = Tokens.Of(tone, fillOpacity);
+            box.Stroke = Tokens.Of(isHover && dragVessel is not null ? Tokens.Color("InkColor") : tone);
+            box.StrokeThickness = isHover || selected || conflict ? 2.5 : 1.2;
+            box.StrokeDashArray = status == "reserved" || (dragVessel is not null && fits) ? Draw.Dash(6, 5) : null;
+            label.Foreground = Tokens.Of(tone);
         }
     }
 
@@ -252,12 +282,12 @@ public sealed partial class BerthMap : SceneHost
             });
 
             host.Opacity = opacity;
-            host.PointerPressed += (_, e) => BeginDrag(vessel, movable, e, x, y);
-            host.PointerReleased += (_, _) => Select(vessel.Id);
+            host.PointerPressed += (_, e) => BeginDrag(vessel, movable, e, Canvas.GetLeft(host), Canvas.GetTop(host));
             Scene.Place(host.At(x, y));
 
-            Scene.Place(Draw.Label(vessel.Name, x + 80, y + 36, 15, Tokens.Brush("InkBrush"),
+            var name = Scene.Place(Draw.Label(vessel.Name, x + 80, y + 36, 15, Tokens.Brush("InkBrush"),
                 "BodyStrongFont", TextAlignment.Center, 220));
+            _hulls[vessel.Id] = (host, name);
         }
     }
 
@@ -265,9 +295,11 @@ public sealed partial class BerthMap : SceneHost
 
     private void BeginDrag(Vessel vessel, bool movable, PointerRoutedEventArgs e, double x, double y)
     {
-        Select(vessel.Id);
+        // A movable hull selects on release instead: selecting on press opens the side panel,
+        // which narrows the map under the pointer and sends the drop to the wrong berth.
         if (!movable)
         {
+            Select(vessel.Id);
             return;
         }
 
@@ -306,13 +338,27 @@ public sealed partial class BerthMap : SceneHost
 
         var target = BerthUnder(_dragPoint);
         var vessel = PortData.Vessel(_dragId);
-        HintChanged?.Invoke(this, target >= 0
+        var hint = target >= 0
             ? _state.Fits(vessel, target)
                 ? $"Release to assign Berth {PortData.Berths[target].Number}"
                 : $"Berth {PortData.Berths[target].Number} can't take {vessel.Name}"
-            : "Drop on a green berth");
+            : "Drop on a green berth";
+        if (hint != _lastHint)
+        {
+            _lastHint = hint;
+            HintChanged?.Invoke(this, hint);
+        }
 
-        Build();
+        // Move the dragged hull and its name; everything else stays put.
+        if (_hulls.TryGetValue(_dragId, out var hull))
+        {
+            var x = _dragPoint.X - _dragOffset.X;
+            var y = _dragPoint.Y - _dragOffset.Y;
+            hull.Hull.At(x, y);
+            hull.Name.At(x + 80 - 110, y + 36); // the name is centred in a 220-wide box under the hull
+        }
+
+        PaintBerths();
     }
 
     private void OnPointerReleased(object sender, PointerRoutedEventArgs e)
@@ -335,7 +381,17 @@ public sealed partial class BerthMap : SceneHost
 
         var id = _dragId;
         var target = BerthUnder(_dragPoint);
+        var assigned = target >= 0 && _state.Fits(PortData.Vessel(id), target);
+        var clicked = !_dragMoved;
         _dragId = null;
+        _lastHint = null;
+        _dragMoved = false;
+
+        if (clicked)
+        {
+            Select(id);
+            return;
+        }
 
         if (target >= 0)
         {
@@ -346,7 +402,11 @@ public sealed partial class BerthMap : SceneHost
             }
         }
 
-        _dragMoved = false;
-        Build();
+        // A successful assignment is a structural change, which rebuilds the map once;
+        // otherwise the hull goes back to where it came from.
+        if (!assigned)
+        {
+            Build();
+        }
     }
 }

@@ -19,7 +19,7 @@
         <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
       <Grid.Background>
-        <RadialGradientBrush Center="0.5,0.6" GradientOrigin="0.5,0.6" RadiusX="0.8" RadiusY="0.9">
+        <RadialGradientBrush Center="0.5,0.6" RadiusX="0.8" RadiusY="0.9">
           <GradientStop Offset="0" Color="#FF132A2B" />
           <GradientStop Offset="1" Color="#FF0B1112" />
         </RadialGradientBrush>

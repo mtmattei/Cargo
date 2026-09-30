@@ -1,3 +1,4 @@
+using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Media;
 using Windows.Foundation;
 
@@ -12,6 +13,7 @@ public sealed partial class RiverMap : SceneHost
     private readonly PortState _state;
     private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromSeconds(1) };
     private readonly DateTimeOffset _origin = DateTimeOffset.Now;
+    private readonly List<(RiverVessel Vessel, Button Hull, RotateTransform Heading, FrameworkElement Tag, FrameworkElement Dot, FrameworkElement Name, double Width)> _boats = new();
 
     private double[]? _cumulative;
     private double _totalLength;
@@ -20,7 +22,8 @@ public sealed partial class RiverMap : SceneHost
     {
         _state = state;
 
-        _timer.Tick += (_, _) => Build();
+        // Boats move on each tick; the river, gauges and locks are built once.
+        _timer.Tick += (_, _) => PlaceFleet();
         Loaded += (_, _) => _timer.Start();
         Unloaded += (_, _) => _timer.Stop();
 
@@ -224,19 +227,19 @@ public sealed partial class RiverMap : SceneHost
 
     private void DrawFleet()
     {
+        _boats.Clear();
         foreach (var vessel in PortData.RiverFleet)
         {
-            var km = Math.Clamp(vessel.Km + vessel.Direction * vessel.Speed * 1.852 * ElapsedHours, 0.5, 119.5);
-            var (position, angle, _) = At(km);
             var selected = _state.FleetSelection == vessel.Id;
             var late = vessel.SlipMinutes > 0;
+            var heading = new RotateTransform();
 
             var host = new Grid
             {
                 Width = 96,
                 Height = 28,
                 RenderTransformOrigin = new Point(0.5, 0.5),
-                RenderTransform = new RotateTransform { Angle = angle + (vessel.Direction > 0 ? 180 : 0) }
+                RenderTransform = heading
             };
 
             host.Children.Add(new Microsoft.UI.Xaml.Shapes.Rectangle
@@ -267,16 +270,37 @@ public sealed partial class RiverMap : SceneHost
                 Height = 28,
                 Command = new RelayCommand(() => _state.FleetSelection = vessel.Id)
             };
-            ToolTipService.SetToolTip(button, $"{vessel.Name} · {vessel.Order} · km {km:0.0}");
-            Scene.Place(button.At(position.X - 48, position.Y - 14));
+            AutomationProperties.SetName(button, vessel.Name);
+            Scene.Place(button);
 
             var width = vessel.Name.Length * 6.2 + 22;
-            Scene.Place(Draw.Rect(position.X - width / 2, position.Y - 46, width, 20,
-                Tokens.Brush("InkDeepColor", 0.86), 6));
-            Scene.Place(Draw.Dot(position.X - width / 2 + 9, position.Y - 36, 3.5,
-                Tokens.Brush(late ? "OrangeBrush" : "SeaGreenBrush")));
-            Scene.Place(Draw.Label(vessel.Name, position.X + 5, position.Y - 44, 11.5,
+            var tag = Scene.Place(Draw.Rect(0, 0, width, 20, Tokens.Brush("InkDeepColor", 0.86), 6));
+            var dot = Scene.Place(Draw.Dot(0, 0, 3.5, Tokens.Brush(late ? "OrangeBrush" : "SeaGreenBrush")));
+            var name = Scene.Place(Draw.Label(vessel.Name, 0, 0, 11.5,
                 Tokens.Brush("SurfaceBrush"), "BodyStrongFont", TextAlignment.Center, 200));
+
+            _boats.Add((vessel, button, heading, tag, dot, name, width));
+        }
+
+        PlaceFleet();
+    }
+
+    /// <summary>Moves each boat to its current chainage: positions and heading only, no new elements.</summary>
+    private void PlaceFleet()
+    {
+        foreach (var (vessel, hull, heading, tag, dot, name, width) in _boats)
+        {
+            var km = Math.Clamp(vessel.Km + vessel.Direction * vessel.Speed * 1.852 * ElapsedHours, 0.5, 119.5);
+            var (position, angle, _) = At(km);
+
+            heading.Angle = angle + (vessel.Direction > 0 ? 180 : 0);
+            hull.At(position.X - 48, position.Y - 14);
+            ToolTipService.SetToolTip(hull, $"{vessel.Name} · {vessel.Order} · km {km:0.0}");
+            tag.At(position.X - width / 2, position.Y - 46);
+            DotAt(dot, position.X - width / 2 + 9, position.Y - 36, 3.5);
+            name.At(position.X + 5 - 100, position.Y - 44);
         }
     }
+
+    private static void DotAt(FrameworkElement dot, double cx, double cy, double r) => dot.At(cx - r, cy - r);
 }

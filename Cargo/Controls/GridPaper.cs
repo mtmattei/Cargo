@@ -1,41 +1,31 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Shapes;
+using Path = Microsoft.UI.Xaml.Shapes.Path;
 
 namespace Cargo.Controls;
 
 /// <summary>
 /// The faint 48 px survey grid the design lays under every page, plus a teal wash in the
-/// top-left corner. Drawn as lines rather than a tiled bitmap so it stays crisp at any DPI.
+/// top-left corner. Drawn as lines rather than a tiled bitmap so it stays crisp at any DPI,
+/// and as one Path so a window resize rebuilds a geometry, not a hundred elements.
 /// </summary>
 public sealed partial class GridPaper : UserControl
 {
     private const double Pitch = 48;
 
-    private readonly Canvas _canvas = new();
+    private readonly Path _lines = new() { StrokeThickness = 1 };
 
     public GridPaper()
     {
-        Content = _canvas;
         IsHitTestVisible = false;
-        SizeChanged += (_, e) => Rebuild(e.NewSize.Width, e.NewSize.Height);
-    }
+        _lines.Stroke = Tokens.Brush("InkColor", 0.045);
 
-    private void Rebuild(double width, double height)
-    {
-        _canvas.Children.Clear();
-        if (width <= 0 || height <= 0)
+        var glow = new Rectangle
         {
-            return;
-        }
-
-        var glow = new Microsoft.UI.Xaml.Shapes.Rectangle
-        {
-            Width = width,
-            Height = height,
             Fill = new RadialGradientBrush
             {
                 Center = new Windows.Foundation.Point(0.2, 0),
-                GradientOrigin = new Windows.Foundation.Point(0.2, 0),
                 RadiusX = 0.7,
                 RadiusY = 0.9,
                 GradientStops =
@@ -46,17 +36,24 @@ public sealed partial class GridPaper : UserControl
             },
             Opacity = 0.10
         };
-        _canvas.Children.Add(glow);
 
-        var line = Tokens.Brush("InkColor", 0.045);
+        Content = new Grid { Children = { glow, _lines } };
+        SizeChanged += (_, e) => Rebuild(e.NewSize.Width, e.NewSize.Height);
+    }
+
+    private void Rebuild(double width, double height)
+    {
+        var grid = new GeometryGroup();
         for (var x = Pitch; x < width; x += Pitch)
         {
-            _canvas.Children.Add(Draw.Rule(x, 0, x, height, line));
+            grid.Children.Add(new LineGeometry { StartPoint = new(x, 0), EndPoint = new(x, height) });
         }
 
         for (var y = Pitch; y < height; y += Pitch)
         {
-            _canvas.Children.Add(Draw.Rule(0, y, width, y, line));
+            grid.Children.Add(new LineGeometry { StartPoint = new(0, y), EndPoint = new(width, y) });
         }
+
+        _lines.Data = grid;
     }
 }

@@ -29,6 +29,8 @@ public sealed partial class ScannerOverlay : UserControl
         ("Iso", -18, -32), ("Front", 0, 0), ("Side", 0, -90), ("Top", -88, 0)
     };
 
+    private int _currentView = -2;
+
     public ScannerOverlay(PortState state)
     {
         State = state;
@@ -44,10 +46,14 @@ public sealed partial class ScannerOverlay : UserControl
         this.RebuildWhenVisible(state, Refresh);
         state.PropertyChanged += (_, e) =>
         {
-            if (e.PropertyName is nameof(PortState.Xray) or nameof(PortState.ScanRotationX)
-                or nameof(PortState.ScanRotationY) or nameof(PortState.SelectedContainerId))
+            if (e.PropertyName is nameof(PortState.Xray) or nameof(PortState.SelectedContainerId))
             {
                 Refresh();
+            }
+            else if (e.PropertyName is nameof(PortState.ScanRotationX) or nameof(PortState.ScanRotationY))
+            {
+                // A drag changes the angles on every pointer move; only the preset highlight depends on them
+                RefreshViews();
             }
         };
     }
@@ -133,18 +139,37 @@ public sealed partial class ScannerOverlay : UserControl
             ScanFacts.Add(new Fact { Key = key, Value = value, Tone = tone is null ? null : Tokens.Brush(tone) });
         }
 
-        Views.Clear();
-        foreach (var (label, rx, ry) in ViewAngles)
-        {
-            var current = Math.Abs(State.ScanRotationX - rx) < 0.5 && Math.Abs(State.ScanRotationY - ry) < 0.5;
-            Views.Add(new ScanViewOption
-            {
-                Label = label,
-                Background = current ? Tokens.Brush("DeckWhiteColor", 0.16) : Tokens.Transparent
-            });
-        }
+        _currentView = -2;
+        RefreshViews();
 
         Bindings.Update();
+    }
+
+    /// <summary>Rebuilds the view presets only when the highlighted preset actually changes.</summary>
+    private void RefreshViews()
+    {
+        if (!State.ScannerOpen)
+        {
+            return;
+        }
+
+        var current = Array.FindIndex(ViewAngles, v =>
+            Math.Abs(State.ScanRotationX - v.Rx) < 0.5 && Math.Abs(State.ScanRotationY - v.Ry) < 0.5);
+        if (current == _currentView)
+        {
+            return;
+        }
+
+        _currentView = current;
+        Views.Clear();
+        for (var i = 0; i < ViewAngles.Length; i++)
+        {
+            Views.Add(new ScanViewOption
+            {
+                Label = ViewAngles[i].Label,
+                Background = i == current ? Tokens.Brush("DeckWhiteColor", 0.16) : Tokens.Transparent
+            });
+        }
     }
 
     private void BuildDensity(IReadOnlyList<CargoItem> manifest)

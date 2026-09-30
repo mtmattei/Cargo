@@ -14,7 +14,6 @@
     <Setter Property="FontSize" Value="44" />
     <Setter Property="LineHeight" Value="46" />
     <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
-    <Setter Property="TextLineBounds" Value="TrimToCapHeight" />
   </Style>
 
   <Style x:Key="PageTitleText" TargetType="TextBlock">
@@ -22,7 +21,6 @@
     <Setter Property="FontSize" Value="40" />
     <Setter Property="LineHeight" Value="42" />
     <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
-    <Setter Property="TextLineBounds" Value="TrimToCapHeight" />
   </Style>
 
   <Style x:Key="EyebrowText" TargetType="TextBlock">
@@ -70,7 +68,6 @@
     <Setter Property="FontSize" Value="32" />
     <Setter Property="LineHeight" Value="32" />
     <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
-    <Setter Property="TextLineBounds" Value="TrimToCapHeight" />
   </Style>
 
   <Style x:Key="MonoText" TargetType="TextBlock">
