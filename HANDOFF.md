@@ -1,4 +1,4 @@
-# HANDOFF — Cargo: needs-you spec written; build and GL trial next
+# HANDOFF — Cargo: needs-you + Overview context panel spec written; build and GL trial next
 Updated: 2026-09-30
 
 ## Where we are
@@ -20,7 +20,7 @@ Queued: the MainPage design pass against the user's seven principles, and the us
   - The summary text follows the preset, layer and selection.
   - HUD checked at 960 and 1100 px.
 - Perf (Debug, 16 cores, 4 x 5 s after a 45 s warm-up): Overview idle 60-86% of one core, orbit 112-144%. The same on 6.8.0-dev.23 and on 6.7.30.
-- Git: main at 222d3c0, not pushed.
+- Git: main pushed to origin; working tree clean.
 - Lint: CARD 0 · HEX 0 · TOKENTHEME 0 · BACKBAR 0 · CODEBEHIND 0 · OVERLAY 0 · RESPONSIVE 0 · BUILTIN 0 · ICON 0.
 
 ## Guidance applied
@@ -37,7 +37,7 @@ Queued: the MainPage design pass against the user's seven principles, and the us
 Read, not applied: none.
 
 ## Next actions (in order)
-1. Answer the 5 Unresolved Questions in `SPEC-BERTHS-NEEDS-YOU.md`, then build it (plan steps 1-8) in a fresh session.
+1. Answer the 6 Unresolved Questions in `SPEC-BERTHS-NEEDS-YOU.md`, then build it (plan steps 1-9) in a fresh session. The spec now includes the Overview context panel agreed with the user: below the harbour, one fixed-height panel follows the harbour (priority: needs-you decision, then selection, then berth hover after a 300 ms pause, then the layer tab); the remaining Overview charts move to their sections.
 2. Harbour renderer trial: a `GLCanvasElement` option beside the Skia one (uno-build-options), orbit CPU for both, and a side-by-side screen recording.
 3. MainPage design pass (gold-standard-pass) against the user's seven principles.
 
