@@ -34,6 +34,8 @@ public sealed class HarbourScene : SKCanvasElement
     private double _pinchStart;
     private double _zoomStart;
     private string? _hoveredVessel;
+    private string? _selectedVessel;
+    private string _layer = "port";
     private bool _typefaceRequested;
 
     public HarbourScene()
@@ -80,6 +82,28 @@ public sealed class HarbourScene : SKCanvasElement
         set
         {
             _state = value;
+            Invalidate();
+        }
+    }
+
+    /// <summary>The vessel drawn with the selection outline; each section decides whose selection that is.</summary>
+    public string? SelectedVessel
+    {
+        get => _selectedVessel;
+        set
+        {
+            _selectedVessel = value;
+            Invalidate();
+        }
+    }
+
+    /// <summary>Which overlay the still scene carries: port, yard, security or traffic.</summary>
+    public string Layer
+    {
+        get => _layer;
+        set
+        {
+            _layer = value;
             Invalidate();
         }
     }
@@ -184,12 +208,7 @@ public sealed class HarbourScene : SKCanvasElement
 
     protected override void RenderOverride(SKCanvas canvas, Size area)
     {
-        var frame = new HarbourFrameState(
-            _state?.HarbourSelection,
-            _hoveredVessel,
-            _state?.HoveredBerth,
-            _state?.HarbourLayer ?? "port",
-            _animate);
+        var frame = new HarbourFrameState(_selectedVessel, _hoveredVessel, _state?.HoveredBerth, _layer, _animate);
         _renderer.Render(canvas, (float)area.Width, (float)area.Height, (DateTimeOffset.Now - _started).TotalSeconds, frame);
     }
 

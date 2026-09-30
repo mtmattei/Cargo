@@ -107,14 +107,10 @@
     </Grid>
 
     <!-- ══ SHARED HARBOUR STAGE ════════════════════════════════════════ -->
-    <Grid x:Name="StageHost" Grid.Row="1" Background="{StaticResource TealDeepBrush}"
+    <Grid x:Name="StageHost" Grid.Row="1" Background="{StaticResource HarbourStageBrush}"
           Visibility="{x:Bind State.ShowStage, Mode=OneWay}">
-      <!-- Compact strip (Vessels, Security): the sprite stage until the 3D scene grows a strip view -->
-      <controls:PortStage x:Name="Stage" Visibility="{x:Bind State.StageCompact, Mode=OneWay}" />
-
-      <!-- Full stage: the orbitable harbour, with its own data tags and camera HUD -->
-      <harbour:HarbourView x:Name="Harbour" Visibility="{x:Bind State.StageFull, Mode=OneWay}" />
-
+      <!-- One harbour for every harbour page: the wide stage on Overview, a strip framed by the section elsewhere -->
+      <harbour:HarbourView x:Name="Harbour" Compact="{x:Bind State.StageCompact, Mode=OneWay}" />
       <!-- Layer switcher -->
       <Border Style="{StaticResource HarbourHudPanel}" Padding="3"
               HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,12"
@@ -142,26 +138,11 @@
         </ItemsControl>
       </Border>
 
-      <!-- Compact treatment: the harbour becomes a letterboxed strip -->
-      <Grid Visibility="{x:Bind State.StageCompact, Mode=OneWay}" IsHitTestVisible="False">
-        <Rectangle>
-          <Rectangle.Fill>
-            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-              <GradientStop Offset="0" Color="{StaticResource InkDeepColor}" />
-              <GradientStop Offset="0.35" Color="#00101314" />
-              <GradientStop Offset="0.8" Color="#00101314" />
-              <GradientStop Offset="1" Color="{StaticResource InkDeepColor}" />
-            </LinearGradientBrush>
-          </Rectangle.Fill>
-        </Rectangle>
-      </Grid>
-
       <Button Style="{StaticResource GhostButton}" Command="{x:Bind State.ToggleStageCommand}"
               Content="{x:Bind State.StageToggleLabel, Mode=OneWay}"
               Visibility="{x:Bind State.ShowStageToggle, Mode=OneWay}"
               HorizontalAlignment="Right" VerticalAlignment="Top" Margin="12"
-              Background="{StaticResource ScrimBrush}" Foreground="{StaticResource PaperBrush}"
-              BorderBrush="{StaticResource HairlineOnDarkBrush}" FontSize="11.5" Padding="11,6" CornerRadius="7" />
+              Background="{StaticResource SurfaceBrush}" Padding="11,7" CornerRadius="{StaticResource RadiusControl}" />
     </Grid>
 
     <!-- ══ SECTION ═════════════════════════════════════════════════════ -->

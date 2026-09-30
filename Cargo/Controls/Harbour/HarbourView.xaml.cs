@@ -87,23 +87,80 @@ public sealed partial class HarbourView : UserControl
                 return;
             }
 
-            _selection = value.HarbourSelection;
+            _selection = EffectiveSelection;
+            SyncScene();
             BuildTags();
             this.RebuildWhenVisible(value, OnStructureChanged);
             this.RepaintWhenVisible(value, () => _scene?.RefreshStill());
+            value.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName is nameof(PortState.Section) or nameof(PortState.StageOpen) or nameof(PortState.SelectedVesselId))
+                {
+                    SyncScene();
+                    RefreshTags();
+                    Frame(animate: true);
+                }
+            };
         }
     }
 
-    /// <summary>The stage keeps a landscape proportion, bounded so it never swallows the page.</summary>
+    public static readonly DependencyProperty CompactProperty = DependencyProperty.Register(
+        nameof(Compact), typeof(bool), typeof(HarbourView),
+        new PropertyMetadata(false, (d, _) => ((HarbourView)d).OnModeChanged()));
+
+    /// <summary>The same harbour as a strip above a section: no HUD, no facts cards, framed by the section.</summary>
+    public bool Compact
+    {
+        get => (bool)GetValue(CompactProperty);
+        set => SetValue(CompactProperty, value);
+    }
+
+    public static readonly DependencyProperty HudVisibilityProperty = DependencyProperty.Register(
+        nameof(HudVisibility), typeof(Visibility), typeof(HarbourView), new PropertyMetadata(Visibility.Visible));
+
+    public Visibility HudVisibility
+    {
+        get => (Visibility)GetValue(HudVisibilityProperty);
+        private set => SetValue(HudVisibilityProperty, value);
+    }
+
+    /// <summary>The stage keeps a landscape proportion, bounded so it never swallows the page; the strip is fixed.</summary>
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) || availableSize.Width <= 0 ? 1328 : availableSize.Width;
-        var size = new Size(width, Math.Clamp(width * .42, 380, 640));
+        var size = new Size(width, Compact ? 210 : Math.Clamp(width * .42, 380, 640));
         base.MeasureOverride(size);
         return size;
     }
 
     // ── State ──────────────────────────────────────────────────────────────────
+
+    /// <summary>Vessels has its own selection; everywhere else the harbour's selection applies.</summary>
+    private string? EffectiveSelection =>
+        _state is null ? null : _state.Section == "vessels" ? _state.SelectedVesselId : _state.HarbourSelection;
+
+    /// <summary>Security always shows the security overlay; elsewhere the layer switcher decides.</summary>
+    private string EffectiveLayer =>
+        _state is null ? "port" : _state.Section == "security" ? "security" : _state.HarbourLayer;
+
+    private void SyncScene()
+    {
+        if (_scene is null)
+        {
+            return;
+        }
+
+        _scene.SelectedVessel = EffectiveSelection;
+        _scene.Layer = EffectiveLayer;
+    }
+
+    private void OnModeChanged()
+    {
+        HudVisibility = Compact ? Visibility.Collapsed : Visibility.Visible;
+        InvalidateMeasure();
+        RefreshTags();
+        Frame(animate: true);
+    }
 
     private void OnStructureChanged()
     {
@@ -112,11 +169,13 @@ public sealed partial class HarbourView : UserControl
             return;
         }
 
-        if (_state.HarbourSelection != _selection)
+        SyncScene();
+        var selection = EffectiveSelection;
+        if (selection != _selection)
         {
-            _selection = _state.HarbourSelection;
-            var vessel = _scene?.World.Vessels.FirstOrDefault(v => v.Id == _selection);
-            if (vessel is not null)
+            _selection = selection;
+            var vessel = _scene?.World.Vessels.FirstOrDefault(v => v.Id == selection);
+            if (vessel is not null && !Compact)
             {
                 _scene!.FlyTo(vessel.X, vessel.Y);
             }
@@ -124,6 +183,40 @@ public sealed partial class HarbourView : UserControl
 
         RefreshTags();
         _scene?.RefreshStill();
+    }
+
+    /// <summary>
+    /// Moving between sections moves the camera over the same harbour: the wide shot on
+    /// Overview, the selected ship on Vessels, the terminal perimeter on Security.
+    /// </summary>
+    private void Frame(bool animate)
+    {
+        if (_scene is null || _state is null)
+        {
+            return;
+        }
+
+        static double Rad(double d) => d * Math.PI / 180;
+        var ms = animate ? 900 : 0;
+
+        if (!Compact)
+        {
+            if (_state.Section == "overview")
+            {
+                _scene.GoTo(HarbourCameraPose.Overview, ms);
+                MarkView("overview");
+            }
+
+            return;
+        }
+
+        var vessel = _scene.World.Vessels.FirstOrDefault(v => v.Id == EffectiveSelection);
+        var pose = _state.Section == "security"
+            ? new HarbourCameraPose(Rad(-8), Rad(36), 2.4, 40, -40)
+            : vessel is not null
+                ? new HarbourCameraPose(Rad(-14), Rad(26), 4.6, vessel.X, vessel.Y + 2)
+                : HarbourCameraPose.Overview with { Pitch = Rad(26) };
+        _scene.GoTo(pose, ms);
     }
 
     // ── Tags ───────────────────────────────────────────────────────────────────
@@ -191,14 +284,14 @@ public sealed partial class HarbourView : UserControl
         foreach (var (tag, _) in _tags)
         {
             var needs = PortData.Vessel(tag.Id).Status == "Arriving";
-            var selected = _state?.HarbourSelection == tag.Id;
+            var selected = EffectiveSelection == tag.Id;
             tag.Background = needs ? Tokens.Brush("AmberBrush") : Tokens.Brush("SurfaceBrush");
             // The hairline comes straight from the resource: Tokens.Brush() drops brush opacity (audit C1).
             tag.Edge = selected ? Tokens.Brush("InkBrush")
                 : needs ? Tokens.Brush("AmberDeepBrush")
                 : (Brush)Application.Current.Resources["HairlineStrongBrush"];
             tag.EdgeThickness = new Thickness(selected ? 2 : 1);
-            tag.Expanded = selected ? Visibility.Visible : Visibility.Collapsed;
+            tag.Expanded = selected && !Compact ? Visibility.Visible : Visibility.Collapsed;
         }
 
         DispatcherQueue.TryEnqueue(PlaceOverlays);
@@ -228,7 +321,7 @@ public sealed partial class HarbourView : UserControl
 
             // A vessel out of frame loses its tag rather than pinning it to an edge it is not near.
             // xaml-lint: allow responsive - per-frame projection culling, not a breakpoint
-            var inFrame = x > 0 && x < ActualWidth && y > 40 && y < ActualHeight - 56;
+            var inFrame = x > 0 && x < ActualWidth && y > (Compact ? 16 : 40) && y < ActualHeight - (Compact ? 8 : 56);
             // xaml-lint: allow codebehind - per-frame projection culling; there is no XAML surface for the camera
             host.Visibility = inFrame ? Visibility.Visible : Visibility.Collapsed;
             if (!inFrame)
@@ -240,8 +333,10 @@ public sealed partial class HarbourView : UserControl
             var width = host.ActualWidth > 0 ? host.ActualWidth : 160;
             // xaml-lint: allow responsive - the tag's own measured size, used to place it on its leader
             var height = host.ActualHeight > 0 ? host.ActualHeight : 36;
-            var left = Math.Clamp(x - width / 2, 10, Math.Max(10, ActualWidth - width - 10));
-            var top = Math.Max(52, y - Lead - height);
+            // The strip keeps its top-right corner clear for the Expand harbour button.
+            var right = Compact ? 150 : 10;
+            var left = Math.Clamp(x - width / 2, 10, Math.Max(10, ActualWidth - width - right));
+            var top = Math.Max(Compact ? 6 : 52, y - Lead - height);
 
             var transform = (TranslateTransform)host.RenderTransform;
             transform.X = Math.Round(left);
@@ -327,7 +422,7 @@ public sealed partial class HarbourView : UserControl
     /// <summary>A slow swing into the overview shows the harbour is a space you can move through.</summary>
     private void PlayIntro()
     {
-        if (_introPlayed || _scene is null)
+        if (_introPlayed || _scene is null || Compact)
         {
             return;
         }

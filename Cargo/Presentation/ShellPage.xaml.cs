@@ -24,7 +24,6 @@ public sealed partial class ShellPage : Page
         InitializeComponent();
 
         DataContext = state;
-        Stage.State = state;
         Harbour.State = state;
 
         BuildNav();
