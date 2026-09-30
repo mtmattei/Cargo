@@ -72,7 +72,10 @@ public sealed partial class HarbourView : UserControl
             PlayIntro();
             DispatcherQueue.TryEnqueue(PlaceOverlays);
             // The stage height depends on the window's height, which the Auto row never re-measures for
-            XamlRoot.Changed += OnXamlRootChanged;
+            if (XamlRoot is { } root)
+            {
+                root.Changed += OnXamlRootChanged;
+            }
         };
         Unloaded += (_, _) => { if (XamlRoot is { } root) { root.Changed -= OnXamlRootChanged; } };
     }
