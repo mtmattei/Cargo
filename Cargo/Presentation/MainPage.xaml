@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:Cargo.Presentation"
       xmlns:harbour="using:Cargo.Controls.Harbour"
+      xmlns:controls="using:Cargo.Controls"
       xmlns:shapes="using:Microsoft.UI.Xaml.Shapes"
       xmlns:uen="using:Uno.Extensions.Navigation.UI"
       xmlns:utu="using:Uno.Toolkit.UI"
@@ -153,8 +154,14 @@
 
         <Rectangle Width="1" Height="20" Fill="{StaticResource HairlineOnDarkBrush}" VerticalAlignment="Center" />
 
-        <TextBlock Text="{x:Bind ViewModel.State.Now, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}"
-                   FontSize="13" Foreground="{StaticResource PaperInvariantBrush}" VerticalAlignment="Center" />
+        <!-- Minutes roll; seconds tick plainly -->
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
+                    AutomationProperties.Name="{x:Bind ViewModel.State.Now, Mode=OneWay}">
+          <controls:RollingText Text="{x:Bind ViewModel.State.NowMinutes, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}"
+                           FontSize="13" Foreground="{StaticResource PaperInvariantBrush}" />
+          <TextBlock Text="{x:Bind ViewModel.State.NowSeconds, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}"
+                     FontSize="13" Foreground="{StaticResource PaperInvariantBrush}" />
+        </StackPanel>
 
         <!-- xaml-lint: allow card - user avatar -->
         <Border Width="28" Height="28" CornerRadius="14" Background="{StaticResource TealDeepInvariantBrush}">

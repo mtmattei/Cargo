@@ -82,6 +82,8 @@ public sealed partial class PortState : ObservableObject
     {
         ShuffleYard();
         OnPropertyChanged(nameof(Now));
+        OnPropertyChanged(nameof(NowMinutes));
+        OnPropertyChanged(nameof(NowSeconds));
         OnPropertyChanged(nameof(NowHours));
         Ticked?.Invoke(this, EventArgs.Empty);
     }
@@ -99,6 +101,12 @@ public sealed partial class PortState : ObservableObject
     public double ElapsedSeconds => (DateTimeOffset.Now - _started).TotalSeconds;
 
     public string Now => FormatWithSeconds(NowHours);
+
+    /// <summary>The header clock's rolling part, "20:58".</summary>
+    public string NowMinutes => Now[..5];
+
+    /// <summary>The header clock's plain part, ":34".</summary>
+    public string NowSeconds => Now[5..];
 
     /// <summary>Container moves in the hour so far: the hour's planned volume scaled by how
     /// far into it we are, with a little crane-to-crane jitter.</summary>
