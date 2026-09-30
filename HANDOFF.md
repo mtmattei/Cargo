@@ -1,4 +1,4 @@
-# HANDOFF — Cargo fix list done; design pass and renderer question next
+# HANDOFF — Cargo: needs-you spec written; build and GL trial next
 Updated: 2026-09-30
 
 ## Where we are
@@ -37,15 +37,20 @@ Queued: the MainPage design pass against the user's seven principles, and the us
 Read, not applied: none.
 
 ## Next actions (in order)
-1. Decide on the harbour renderer: stay on SKCanvasElement, or spike `GLCanvasElement` (see Open questions).
-2. MainPage design pass (gold-standard-pass) against the seven principles. Known narrow-width defects: the masthead figures cover the greeting below ~1300 px, and the Vessel movements chart overflows below ~1100 px.
-3. Investigate the idle CPU gap: 60-86% now against the 22-30% recorded in c9e95e9.
-4. Fly-to on selection framed berth 06 when MSC Aurora (berth 04) was picked; check the TopInset offset.
+1. Answer the 5 Unresolved Questions in `SPEC-BERTHS-NEEDS-YOU.md`, then build it (plan steps 1-8) in a fresh session.
+2. Harbour renderer trial: a `GLCanvasElement` option beside the Skia one (uno-build-options), orbit CPU for both, and a side-by-side screen recording.
+3. MainPage design pass (gold-standard-pass) against the user's seven principles.
+
+Done 2026-09-30, second pass (all verified with the uno-app MCP):
+- Idle CPU is not a regression. Measured the same way, c9e95e9 idles at 126-218% and HEAD at 48-53%.
+- The harbour bake is reused (probe: about 12.6 frames/s, one re-bake a minute).
+- Tags lead with their berth (B04 ·) and step up instead of overlapping.
+- Overview fits narrow windows (masthead stacks below 1240 px; the pane takes the viewport width).
+- The Overview stage is capped at 58% of the window height.
 
 ## Open questions
 - SPEC.md still lists the compact strip as deferred; the code has moved on.
 - SPEC.md compared SKCanvasElement only against XAML shapes. `GLCanvasElement` (UnoFeature `GLCanvas`, Silk.NET) was never evaluated. Per the docs it runs on WinAppSDK, Skia desktop with hardware acceleration, and Skia WebAssembly, not on Android or iOS, both of which this app targets.
-- In the compact strip, vessel tags overlap each other (MSC Aurora under Kaida Maru).
 - Screen readers get a one-line harbour summary and the tag buttons, but no berth-by-berth keyboard walk (declined for now).
 - These gotchas from 2026-09-29 still have no exported transcript excerpt: RouteChanged path segments, off-UI-thread view models, RowSpan overlay shrinking an Auto row.
 
