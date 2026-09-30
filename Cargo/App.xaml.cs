@@ -72,7 +72,7 @@ public partial class App : Application
 
         // Open straight on the section the store starts in (Overview, unless a DEBUG hook says otherwise)
         Host = await builder.NavigateAsync<Shell>(initialNavigate: (services, navigator) =>
-            navigator.NavigateRouteAsync(this, $"Main/{state.Section}"));
+            navigator.NavigateRouteAsync(this, $"Main/{MainViewModel.RouteFor(state)}"));
     }
 
     /// <summary>
@@ -101,7 +101,14 @@ public partial class App : Application
                             new RouteMap("berths", View: views.FindByViewModel<BerthsViewModel>()),
                             new RouteMap("cargo", View: views.FindByViewModel<CargoViewModel>()),
                             new RouteMap("fleet", View: views.FindByViewModel<FleetViewModel>()),
-                            new RouteMap("security", View: views.FindByViewModel<SecurityViewModel>())
+                            new RouteMap("security", View: views.FindByViewModel<SecurityViewModel>(),
+                                Nested:
+                                [
+                                    // In-page tabs: panes named in SecurityView's Visibility region, no views of their own
+                                    new RouteMap("zones", IsDefault: true),
+                                    new RouteMap("access"),
+                                    new RouteMap("inspection")
+                                ])
                         ])
                 ]));
     }

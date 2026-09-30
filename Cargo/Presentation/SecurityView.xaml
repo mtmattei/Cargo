@@ -2,9 +2,10 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:Cargo.Presentation"
-             xmlns:controls="using:Cargo.Controls">
+             xmlns:controls="using:Cargo.Controls"
+             xmlns:uen="using:Uno.Extensions.Navigation.UI">
 
-  <Grid Padding="40,24,40,48" MinWidth="1100" MaxWidth="1520" RowSpacing="20">
+  <Grid Padding="40,24,40,48" MinWidth="1100" MaxWidth="1520" RowSpacing="20" uen:Region.Attached="True">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
@@ -17,17 +18,17 @@
       </Grid.ColumnDefinitions>
       <StackPanel Spacing="12">
         <TextBlock Text="SECURITY · ISPS LEVEL 1 · 1 HOLD ACTIVE" Style="{StaticResource EyebrowText}" />
-        <TextBlock Text="{x:Bind Title, Mode=OneWay}" Style="{StaticResource PageTitleText}" />
+        <TextBlock Text="{x:Bind ViewModel.State.SecurityTitle, Mode=OneWay}" Style="{StaticResource PageTitleText}" />
       </StackPanel>
       <Border Grid.Column="1" Background="{StaticResource SurfaceSunkAltBrush}" CornerRadius="12" Padding="4"
               VerticalAlignment="Bottom">
-        <ItemsControl ItemsSource="{x:Bind Tabs, Mode=OneWay}">
+        <ItemsControl ItemsSource="{x:Bind ViewModel.Tabs, Mode=OneWay}">
           <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="4" /></ItemsPanelTemplate>
           </ItemsControl.ItemsPanel>
           <ItemsControl.ItemTemplate>
-            <DataTemplate x:DataType="local:FilterChip">
-              <Button Style="{StaticResource BareButton}" Command="{x:Bind Apply}" CommandParameter="{x:Bind Label}">
+            <DataTemplate x:DataType="local:PageTab">
+              <Button Style="{StaticResource BareButton}" uen:Navigation.Request="{x:Bind Route}">
                 <Border Background="{x:Bind Background}" CornerRadius="9" Padding="14,7">
                   <TextBlock Text="{x:Bind Label}" FontFamily="{StaticResource BodyMediumFont}" FontSize="12.5"
                              Foreground="{x:Bind Foreground}" />
@@ -39,8 +40,11 @@
       </Border>
     </Grid>
 
+    <!-- Tabs: nested routes under "security" (App.RegisterRoutes), shown in this Visibility region -->
+    <Grid Grid.Row="1" uen:Region.Attached="True" uen:Region.Navigator="Visibility">
+
     <!-- ══ ZONES ═════════════════════════════════════════════════════ -->
-    <Grid x:Name="ZonesTab" Grid.Row="1" ColumnSpacing="18">
+    <Grid uen:Region.Name="zones" ColumnSpacing="18" Visibility="Collapsed">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*" MinWidth="620" />
         <ColumnDefinition Width="380" />
@@ -49,7 +53,7 @@
       <StackPanel Spacing="18">
         <Border CornerRadius="18" BorderBrush="{StaticResource HairlineBrush}" BorderThickness="1"
                 Background="{StaticResource LandBrush}">
-          <ContentControl x:Name="ZoneMapHost" HorizontalContentAlignment="Stretch" />
+          <controls:SecurityZoneMap />
         </Border>
 
         <controls:Card Padding="22,20,22,18">
@@ -71,7 +75,7 @@
                 </StackPanel>
               </StackPanel>
             </Grid>
-            <ContentControl x:Name="TimelineHost" HorizontalContentAlignment="Stretch" />
+            <controls:SecurityTimeline />
           </StackPanel>
         </controls:Card>
       </StackPanel>
@@ -87,7 +91,7 @@
                            Foreground="{StaticResource TealBrush}" />
               </Border>
             </Grid>
-            <ItemsControl ItemsSource="{x:Bind ClearedChecks}">
+            <ItemsControl ItemsSource="{x:Bind ViewModel.ClearedChecks, Mode=OneWay}">
               <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate><StackPanel Spacing="5" /></ItemsPanelTemplate>
               </ItemsControl.ItemsPanel>
@@ -114,7 +118,7 @@
                            Foreground="{StaticResource OrangeInkBrush}" />
               </Border>
             </Grid>
-            <ItemsControl ItemsSource="{x:Bind HeldChecks}">
+            <ItemsControl ItemsSource="{x:Bind ViewModel.HeldChecks, Mode=OneWay}">
               <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate><StackPanel Spacing="5" /></ItemsPanelTemplate>
               </ItemsControl.ItemsPanel>
@@ -129,14 +133,14 @@
               </ItemsControl.ItemTemplate>
             </ItemsControl>
             <Button Style="{StaticResource PrimaryButton}" Content="Open inspection →" Margin="0,4,0,0"
-                    Command="{x:Bind State.OpenInspectionCommand}" HorizontalAlignment="Left" Padding="12,8" />
+                    Command="{x:Bind ViewModel.State.OpenInspectionCommand, Mode=OneWay}" HorizontalAlignment="Left" Padding="12,8" />
           </StackPanel>
         </controls:Card>
 
         <controls:Card Padding="20,18">
           <StackPanel Spacing="12">
             <TextBlock Text="Records today" Style="{StaticResource PanelTitleText}" />
-            <ItemsControl ItemsSource="{x:Bind Records}">
+            <ItemsControl ItemsSource="{x:Bind ViewModel.Records, Mode=OneWay}">
               <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate><StackPanel Spacing="8" /></ItemsPanelTemplate>
               </ItemsControl.ItemsPanel>
@@ -162,7 +166,7 @@
     </Grid>
 
     <!-- ══ ACCESS CONTROL ════════════════════════════════════════════ -->
-    <Grid x:Name="AccessTab" Grid.Row="1" ColumnSpacing="18" Visibility="Collapsed">
+    <Grid uen:Region.Name="access" ColumnSpacing="18" Visibility="Collapsed">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*" />
         <ColumnDefinition Width="*" />
@@ -170,7 +174,7 @@
 
       <StackPanel Spacing="14">
         <TextBlock Text="Personnel" Style="{StaticResource PanelTitleText}" Foreground="{StaticResource TextMutedBrush}" />
-        <ItemsControl ItemsSource="{x:Bind People, Mode=OneWay}">
+        <ItemsControl ItemsSource="{x:Bind ViewModel.People, Mode=OneWay}">
           <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate><controls:TileGridPanel MinTileWidth="230" Gap="12" /></ItemsPanelTemplate>
           </ItemsControl.ItemsPanel>
@@ -205,11 +209,11 @@
         <controls:Card Padding="20,18">
           <StackPanel Spacing="10">
             <Grid>
-              <TextBlock Text="{x:Bind ZoneHeading, Mode=OneWay}" Style="{StaticResource CardTitleText}" />
-              <TextBlock Text="{x:Bind ZoneCount, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12"
+              <TextBlock Text="{x:Bind ViewModel.ZoneHeading, Mode=OneWay}" Style="{StaticResource CardTitleText}" />
+              <TextBlock Text="{x:Bind ViewModel.ZoneCount, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12"
                          HorizontalAlignment="Right" VerticalAlignment="Center" />
             </Grid>
-            <ContentControl x:Name="AccessMapHost" HorizontalContentAlignment="Stretch" />
+            <controls:AccessZoneMap Allowed="{x:Bind ViewModel.AllowedZones, Mode=OneWay}" />
           </StackPanel>
         </controls:Card>
       </StackPanel>
@@ -217,7 +221,7 @@
       <StackPanel Grid.Column="1" Spacing="14">
         <TextBlock Text="Vehicles at gates" Style="{StaticResource PanelTitleText}"
                    Foreground="{StaticResource TextMutedBrush}" />
-        <ItemsControl ItemsSource="{x:Bind Vehicles}">
+        <ItemsControl ItemsSource="{x:Bind ViewModel.Vehicles, Mode=OneWay}">
           <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate><StackPanel Spacing="12" /></ItemsPanelTemplate>
           </ItemsControl.ItemsPanel>
@@ -253,7 +257,7 @@
     </Grid>
 
     <!-- ══ INSPECTION ════════════════════════════════════════════════ -->
-    <Grid x:Name="InspectionTab" Grid.Row="1" ColumnSpacing="18" Visibility="Collapsed">
+    <Grid uen:Region.Name="inspection" ColumnSpacing="18" Visibility="Collapsed">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*" MinWidth="620" />
         <ColumnDefinition Width="340" />
@@ -267,7 +271,7 @@
                        Style="{StaticResource CaptionText}" FontSize="12.5"
                        HorizontalAlignment="Right" VerticalAlignment="Center" />
           </Grid>
-          <ContentControl x:Name="InspectionHost" HorizontalContentAlignment="Stretch" />
+          <controls:InspectionDiagram />
         </StackPanel>
       </controls:Card>
 
@@ -284,7 +288,7 @@
         <controls:Card Padding="20,18">
           <StackPanel Spacing="12">
             <TextBlock Text="Inspection log" Style="{StaticResource PanelTitleText}" />
-            <ItemsControl ItemsSource="{x:Bind InspectionLog}">
+            <ItemsControl ItemsSource="{x:Bind ViewModel.InspectionLog, Mode=OneWay}">
               <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate><StackPanel Spacing="10" /></ItemsPanelTemplate>
               </ItemsControl.ItemsPanel>
@@ -315,6 +319,7 @@
           <Button Style="{StaticResource GhostButton}" Content="Request re-weigh" Width="160" />
         </StackPanel>
       </StackPanel>
+    </Grid>
     </Grid>
   </Grid>
 </Page>

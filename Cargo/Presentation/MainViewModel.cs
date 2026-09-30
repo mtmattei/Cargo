@@ -89,13 +89,16 @@ public sealed partial class MainViewModel : ObservableObject
     }
 
     /// <summary>
-    /// For a section route the event's Route is the app-level path ("Main/berths") and the
-    /// navigator's route base is the section id; between moves it also reports a bare "Main".
+    /// The segments of the app-level route under Main: "Main/security/zones" gives
+    /// ["security", "zones"]. The navigator's own route names only the deepest level, and a
+    /// bare "Main" is reported between moves, so the full path is the reliable source.
     /// </summary>
+    public static string[] RouteSegments(RouteChangedEventArgs e) =>
+        (e.Route?.Path ?? string.Empty).Split('/', StringSplitOptions.RemoveEmptyEntries);
+
     private void OnRouteChanged(RouteChangedEventArgs e)
     {
-        if (e.Navigator?.Route?.Base is not { Length: > 0 } section
-            || PortData.Sections.All(s => s.Id != section))
+        if (RouteSegments(e) is not [var section, ..] || PortData.Sections.All(s => s.Id != section))
         {
             return;
         }
@@ -103,6 +106,14 @@ public sealed partial class MainViewModel : ObservableObject
         _routedSection = section;
         State.Section = section;
     }
+
+    /// <summary>
+    /// The route for the store's section. Security carries its tab, so a deep link such as
+    /// "Open inspection" lands on the right pane even on the page's first visit, when the
+    /// region would otherwise start on its default tab.
+    /// </summary>
+    public static string RouteFor(PortState state) =>
+        state.Section == "security" ? $"security/{state.SecurityTab}" : state.Section;
 
     private async Task ShowSectionAsync(string section)
     {
@@ -115,7 +126,7 @@ public sealed partial class MainViewModel : ObservableObject
         {
             // Section ids are the route names, registered under Main in App.RegisterRoutes.
             // "./" targets the section region inside Main; without it the route replaces Main itself.
-            await _navigator.NavigateRouteAsync(this, $"./{section}");
+            await _navigator.NavigateRouteAsync(this, $"./{RouteFor(State)}");
         }
         catch (Exception ex)
         {

@@ -136,11 +136,22 @@ public sealed partial class SecurityTimeline : SceneHost
 /// <summary>Which zones a badge opens.</summary>
 public sealed partial class AccessZoneMap : SceneHost
 {
+    public static readonly DependencyProperty AllowedProperty = DependencyProperty.Register(
+        nameof(Allowed), typeof(IReadOnlyList<int>), typeof(AccessZoneMap),
+        new PropertyMetadata(null, (d, e) => ((AccessZoneMap)d).Show(e.NewValue as IReadOnlyList<int> ?? [])));
+
     public AccessZoneMap() : base(520, 220)
     {
     }
 
-    public void Show(IReadOnlyList<int> allowed)
+    /// <summary>Indexes into <see cref="PortData.AccessZones"/> that the selected badge opens.</summary>
+    public IReadOnlyList<int>? Allowed
+    {
+        get => (IReadOnlyList<int>?)GetValue(AllowedProperty);
+        set => SetValue(AllowedProperty, value);
+    }
+
+    private void Show(IReadOnlyList<int> allowed)
     {
         Scene.Children.Clear();
         Scene.Place(Draw.Rect(0, 0, 520, 220, Tokens.Brush("LandBrush"), 10));
