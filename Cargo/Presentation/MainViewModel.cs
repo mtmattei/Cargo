@@ -11,9 +11,6 @@ namespace Cargo.Presentation;
 /// </summary>
 public sealed partial class MainViewModel : ObservableObject
 {
-    private const double WideBreakpoint = 1280;
-    private const double NarrowBreakpoint = 1040;
-
     private readonly INavigator _navigator;
     private readonly ILogger<MainViewModel> _logger;
 
@@ -54,28 +51,6 @@ public sealed partial class MainViewModel : ObservableObject
     /// <summary>The container inspection that covers the whole window while it is open.</summary>
     [ObservableProperty]
     private ScannerViewModel? _scanner;
-
-    /// <summary>Weather and tide leave the header below the wide breakpoint.</summary>
-    [ObservableProperty]
-    private bool _wide = true;
-
-    /// <summary>The ISPS badge leaves below the narrow breakpoint.</summary>
-    [ObservableProperty]
-    private bool _roomy = true;
-
-    public void ApplyWidth(double width)
-    {
-        var wide = width >= WideBreakpoint;
-        var roomy = width >= NarrowBreakpoint;
-        if (wide == Wide && roomy == Roomy)
-        {
-            return;
-        }
-
-        Wide = wide;
-        Roomy = roomy;
-        BuildNav();
-    }
 
     // The nav and the layer switcher each depend on one property, so they listen for that one
     // rather than for every structural change in the app.
@@ -176,9 +151,6 @@ public sealed partial class MainViewModel : ObservableObject
             var current = State.Section == item.Id;
             var (sub, badge) = meta[item.Id];
 
-            // Below the wide breakpoint only the section you are on keeps its name.
-            var showLabel = Wide || (current && Roomy);
-
             item.Tooltip = $"{item.Label} · {sub}";
             item.ChipBackground = current ? Tokens.Brush("TealBrightBrush") : Tokens.Brush("DeckWhiteColor", 0.08);
             item.ChipForeground = current ? Tokens.Brush("InkDeepBrush") : Tokens.Brush("TextOnDarkMutedBrush");
@@ -186,7 +158,8 @@ public sealed partial class MainViewModel : ObservableObject
             item.BadgeBrush = badge is null ? Tokens.Transparent : Tokens.Brush(badge);
             item.BadgeOpacity = badge is null ? 0 : 1;
             item.UnderlineOpacity = current ? 1 : 0;
-            item.LabelVisibility = showLabel ? Visibility.Visible : Visibility.Collapsed;
+            item.CurrentVisibility = current ? Visibility.Visible : Visibility.Collapsed;
+            item.OtherVisibility = current ? Visibility.Collapsed : Visibility.Visible;
         }
     }
 

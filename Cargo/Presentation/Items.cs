@@ -41,8 +41,13 @@ public sealed partial class NavItem : ObservableObject
     [ObservableProperty]
     private double _underlineOpacity;
 
+    /// <summary>Visible on the section you are on; its name shows from the Normal breakpoint.</summary>
     [ObservableProperty]
-    private Microsoft.UI.Xaml.Visibility _labelVisibility;
+    private Microsoft.UI.Xaml.Visibility _currentVisibility;
+
+    /// <summary>Visible on the other sections; their names show only at the Wide breakpoint.</summary>
+    [ObservableProperty]
+    private Microsoft.UI.Xaml.Visibility _otherVisibility;
 }
 
 /// <summary>

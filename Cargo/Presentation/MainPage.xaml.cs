@@ -11,8 +11,6 @@ public sealed partial class MainPage : Page
         InitializeComponent();
 
         DataContextChanged += (_, _) => Attach();
-        // xaml-lint: allow responsive - see Attach
-        SizeChanged += (_, e) => ViewModel?.ApplyWidth(e.NewSize.Width);
         Loaded += (_, _) => ScrollToStartOffset();
     }
 
@@ -28,8 +26,6 @@ public sealed partial class MainPage : Page
 
         _attached = true;
         Harbour.State = vm.State;
-        // xaml-lint: allow responsive - a nav label shows by width AND current section; moves to utu:Responsive in the Toolkit pass
-        vm.ApplyWidth(ActualWidth > 0 ? ActualWidth : 1680);
         Bindings.Update();
     }
 
