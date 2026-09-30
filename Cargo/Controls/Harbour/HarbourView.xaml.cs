@@ -318,9 +318,10 @@ public sealed partial class HarbourView : UserControl
         static string Clock(string s) => s.Replace("Today ", string.Empty).ToUpperInvariant();
         return v.Status switch
         {
-            "Docked" when v.UnloadPercent is > 0 and < 100 => $"DISCH {v.UnloadPercent}% · ETD {Clock(v.Etd)}",
-            "Docked" => $"LOADING {v.LoadPercent}% · ETD {Clock(v.Etd)}",
-            "Departing" => $"DEPARTING · {Clock(v.Etd)}",
+            // The berth leads: a selected vessel's tag sits over its painted berth number
+            "Docked" when v.UnloadPercent is > 0 and < 100 => $"B{v.HomeBerth} · DISCH {v.UnloadPercent}% · ETD {Clock(v.Etd)}",
+            "Docked" => $"B{v.HomeBerth} · LOADING {v.LoadPercent}% · ETD {Clock(v.Etd)}",
+            "Departing" => $"B{v.HomeBerth} · DEPARTING · {Clock(v.Etd)}",
             "Arriving" => $"ETA {Clock(v.Eta)} · B{v.HomeBerth}",
             _ => "ANCHORED · UNASSIGNED"
         };
@@ -394,8 +395,10 @@ public sealed partial class HarbourView : UserControl
         _scene.SyncCamera();
         var camera = _scene.Camera;
         var leaders = new Dictionary<string, (SKPoint, SKPoint)>();
+        var placed = new List<Rect>();
 
-        foreach (var (tag, host) in _tags)
+        // Left to right, so a later tag gives way to one already placed
+        foreach (var (tag, host) in _tags.OrderBy(t => camera.Project(_scene.World.Vessels.First(v => v.Id == t.Tag.Id).Mast).X))
         {
             var vessel = _scene.World.Vessels.First(v => v.Id == tag.Id);
             var (x, y) = camera.Project(vessel.Mast);
@@ -417,7 +420,10 @@ public sealed partial class HarbourView : UserControl
             // The strip keeps its top-right corner clear for the Expand harbour button.
             var right = Compact ? 150 : 10;
             var left = Math.Clamp(x - width / 2, 10, Math.Max(10, ActualWidth - width - right));
-            var top = Math.Max(Compact ? 6 : 52, y - Lead - height);
+            var minTop = Compact ? 6 : 52;
+            var top = Math.Max(minTop, y - Lead - height);
+            (left, top) = AvoidOverlap(placed, left, top, width, height, minTop, ActualWidth - right);
+            placed.Add(new Rect(left, top, width, height));
 
             var transform = (TranslateTransform)host.RenderTransform;
             transform.X = Math.Round(left);
@@ -436,6 +442,41 @@ public sealed partial class HarbourView : UserControl
         var metres = new[] { 25, 50, 100, 200, 250, 500, 1000 }.LastOrDefault(m => m * pxPerMetre <= 130, 25);
         ScaleBar.Width = Math.Max(8, Math.Round(metres * pxPerMetre));
         ScaleLabel.Text = $"{metres} m";
+    }
+
+    /// <summary>
+    /// Vessels alongside neighbouring berths project close together, most of all in the compact
+    /// strip, so a tag that lands on one already placed moves up above it (its leader grows). When
+    /// there is no room above, it moves beside it instead.
+    /// </summary>
+    private static (double Left, double Top) AvoidOverlap(List<Rect> placed, double left, double top,
+        double width, double height, double minTop, double maxRight)
+    {
+        const double Gap = 6;
+        for (var guard = 0; guard < placed.Count + 1; guard++)
+        {
+            var hit = placed.FirstOrDefault(r => left < r.Right + Gap && left + width + Gap > r.Left
+                && top < r.Bottom + Gap && top + height + Gap > r.Top, Rect.Empty);
+            if (hit.IsEmpty)
+            {
+                break;
+            }
+
+            if (hit.Top - Gap - height >= minTop)
+            {
+                top = hit.Top - Gap - height;
+            }
+            else
+            {
+                left = Math.Min(hit.Right + Gap, Math.Max(10, maxRight - width));
+                if (left + width > maxRight)
+                {
+                    break;
+                }
+            }
+        }
+
+        return (left, top);
     }
 
     // ── Camera controls ────────────────────────────────────────────────────────
