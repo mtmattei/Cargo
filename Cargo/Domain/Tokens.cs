@@ -27,7 +27,9 @@ public static class Tokens
             value = raw switch
             {
                 Color c => c,
-                SolidColorBrush b => b.Color,
+                // A brush token carries its transparency in Opacity (the hairlines are ink at
+                // 4.5-14%); fold it into the alpha, or every code-set hairline renders solid ink.
+                SolidColorBrush b => Windows.UI.Color.FromArgb((byte)Math.Round(b.Color.A * b.Opacity), b.Color.R, b.Color.G, b.Color.B),
                 _ => default
             };
         }

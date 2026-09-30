@@ -18,8 +18,9 @@
   <Color x:Key="SurfaceSunkAltColor">#FFE9EAE6</Color>
   <Color x:Key="LandColor">#FFE6E7E2</Color>
   <Color x:Key="RoadColor">#FFDDD7CA</Color>
-  <Color x:Key="TextMutedColor">#FF6F777B</Color>
-  <Color x:Key="TextFaintColor">#FF8A9094</Color>
+  <!-- Secondary text, darkened to pass WCAG AA on Paper (muted 5.2:1, faint 4.6:1; were 4.2 and 3.0) -->
+  <Color x:Key="TextMutedColor">#FF5E6569</Color>
+  <Color x:Key="TextFaintColor">#FF6B7377</Color>
   <Color x:Key="TextOnDarkMutedColor">#FF9AA4A8</Color>
   <Color x:Key="TextOnDarkColor">#FFC9CED1</Color>
 
@@ -38,7 +39,10 @@
   <Color x:Key="AmberColor">#FFE0A72F</Color>
   <Color x:Key="AmberDeepColor">#FFC9A227</Color>
   <Color x:Key="OrangeColor">#FFD9822B</Color>
-  <Color x:Key="OrangeInkColor">#FFB8661A</Color>
+  <!-- Ink variants: status colours set as text (≥ 5:1 on Paper). The bright tones stay for fills and marks. -->
+  <Color x:Key="OrangeInkColor">#FF9A5212</Color>
+  <Color x:Key="AmberInkColor">#FF8A6307</Color>
+  <Color x:Key="SeaGreenInkColor">#FF146B5B</Color>
   <Color x:Key="AlertColor">#FFC74B4B</Color>
   <Color x:Key="RestrictedColor">#FFB04A3C</Color>
 
@@ -180,6 +184,9 @@
   <SolidColorBrush x:Key="HarbourStageBrush" Color="{StaticResource HarbourStageColor}" />
   <SolidColorBrush x:Key="OrangeBrush" Color="{StaticResource OrangeColor}" />
   <SolidColorBrush x:Key="OrangeInkBrush" Color="{StaticResource OrangeInkColor}" />
+  <!-- xaml-lint: allow TOKENTHEME - the app is pinned to Light (App.xaml RequestedTheme) -->
+  <SolidColorBrush x:Key="AmberInkBrush" Color="{StaticResource AmberInkColor}" />
+  <SolidColorBrush x:Key="SeaGreenInkBrush" Color="{StaticResource SeaGreenInkColor}" />
   <SolidColorBrush x:Key="AlertBrush" Color="{StaticResource AlertColor}" />
   <SolidColorBrush x:Key="RestrictedBrush" Color="{StaticResource RestrictedColor}" />
 
@@ -230,5 +237,20 @@
   <FontFamily x:Key="BodyStrongFont">ms-appx:///Assets/Fonts/Archivo-SemiBold.ttf#Archivo SemiBold</FontFamily>
   <FontFamily x:Key="MonoFont">ms-appx:///Assets/Fonts/IBMPlexMono-Regular.ttf#IBM Plex Mono</FontFamily>
   <FontFamily x:Key="MonoMediumFont">ms-appx:///Assets/Fonts/IBMPlexMono-Medium.ttf#IBM Plex Mono Medium</FontFamily>
+
+  <!-- ── Spacing & radius ─────────────────────────────────────── -->
+  <!-- One spacing ramp and four radii. Inner radius = outer radius − padding (concentric). -->
+  <x:Double x:Key="SpaceXS">4</x:Double>
+  <x:Double x:Key="SpaceS">8</x:Double>
+  <x:Double x:Key="SpaceM">12</x:Double>
+  <x:Double x:Key="SpaceL">16</x:Double>
+  <x:Double x:Key="SpaceXL">24</x:Double>
+  <x:Double x:Key="SpaceXXL">32</x:Double>
+  <CornerRadius x:Key="RadiusChip">4</CornerRadius>
+  <CornerRadius x:Key="RadiusControl">8</CornerRadius>
+  <CornerRadius x:Key="RadiusPanel">12</CornerRadius>
+  <CornerRadius x:Key="RadiusCard">18</CornerRadius>
+  <!-- Every section page shares one frame -->
+  <Thickness x:Key="PagePadding">40,28,40,48</Thickness>
 
 </ResourceDictionary>
