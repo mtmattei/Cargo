@@ -20,6 +20,10 @@ public sealed class HarbourScene : SKCanvasElement
     private static readonly TimeSpan MotionFrame = TimeSpan.FromMilliseconds(33);
     private static readonly TimeSpan IdleFrame = TimeSpan.FromMilliseconds(66);
 
+#if DEBUG
+    private static readonly bool DebugOrbit = Environment.GetEnvironmentVariable("CARGO_ORBIT") == "1";
+#endif
+
     private readonly HarbourPalette _palette = new();
     private readonly HarbourCamera _camera = new();
     private readonly HarbourWorld _world;
@@ -205,6 +209,15 @@ public sealed class HarbourScene : SKCanvasElement
 
             moved = true;
         }
+
+#if DEBUG
+        // Measurement hook: a steady orbit runs the drag-frame path (camera moving, direct draw, no bake),
+        // which synthesized input cannot reach from a background process.
+        if (DebugOrbit)
+        {
+            _yawVelocity = .01;
+        }
+#endif
 
         if (_pointers.Count == 0 && Math.Abs(_yawVelocity) > 1e-4)
         {

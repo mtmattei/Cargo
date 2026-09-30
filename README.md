@@ -130,6 +130,7 @@ headless run can photograph them:
 | `CARGO_OPTIMIZE=1` | Runs the berth optimiser at startup |
 | `CARGO_SCROLL` | Scrolls the section body by N pixels, to photograph a panel below the fold |
 | `CARGO_HARBOUR_VIEW` | Harbour camera preset, no intro swing: `overview`, `sea`, `land`, `plan` |
+| `CARGO_ORBIT=1` | Spins the harbour camera without stopping, to measure drag-frame cost |
 | `CARGO_HOVER_BERTH` | Berth index 0–7 to show hovered, for the harbour highlight and its label |
 
 Startup failures are written to `startup.log` beside the executable — a desktop Uno app is a
