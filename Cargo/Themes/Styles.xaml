@@ -333,11 +333,6 @@
     <Setter Property="CornerRadius" Value="6" />
   </Style>
 
-  <Style x:Key="HarbourSegmentCurrent" TargetType="Button" BasedOn="{StaticResource HarbourSegment}">
-    <Setter Property="Background" Value="{StaticResource InkInvariantBrush}" />
-    <Setter Property="Foreground" Value="{StaticResource PaperInvariantBrush}" />
-  </Style>
-
   <Style x:Key="HarbourIconButton" TargetType="Button" BasedOn="{StaticResource GhostButton}">
     <Setter Property="Background" Value="{StaticResource SurfaceInvariantBrush}" />
     <Setter Property="Width" Value="34" />

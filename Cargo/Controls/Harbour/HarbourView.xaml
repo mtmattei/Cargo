@@ -91,8 +91,19 @@
 
     <!-- Camera presets -->
     <Border Style="{StaticResource HarbourHudPanel}" Visibility="{x:Bind HudVisibility, Mode=OneWay}" Padding="3" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="24,16">
-      <StackPanel Orientation="Horizontal" Spacing="2">
-        <Button x:Name="OverviewButton" Style="{StaticResource HarbourSegmentCurrent}" Content="Overview"
+      <!-- One ink pill slides and resizes to the chosen preset (200 ms EaseSmooth) and fades out
+           when a drag leaves no preset current (150 ms) -->
+      <Grid>
+        <!-- xaml-lint: allow card - the sliding selection pill behind the preset buttons, not a content card -->
+        <Border x:Name="SegmentPill" HorizontalAlignment="Left" Width="0" Opacity="0" CornerRadius="6"
+                Background="{StaticResource InkInvariantBrush}" IsHitTestVisible="False">
+          <Border.RenderTransform>
+            <TranslateTransform x:Name="PillShift" />
+          </Border.RenderTransform>
+        </Border>
+      <StackPanel x:Name="SegmentPanel" Orientation="Horizontal" Spacing="2">
+        <Button x:Name="OverviewButton" Style="{StaticResource HarbourSegment}" Content="Overview"
+                Foreground="{StaticResource PaperInvariantBrush}"
                 Command="{x:Bind ViewCommand}" CommandParameter="overview" />
         <Button x:Name="SeaButton" Style="{StaticResource HarbourSegment}" Content="From sea"
                 Command="{x:Bind ViewCommand}" CommandParameter="sea" />
@@ -101,6 +112,7 @@
         <Button x:Name="PlanButton" Style="{StaticResource HarbourSegment}" Content="Plan"
                 Command="{x:Bind ViewCommand}" CommandParameter="plan" />
       </StackPanel>
+      </Grid>
     </Border>
 
     <!-- Scale, north, zoom -->
