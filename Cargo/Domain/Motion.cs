@@ -59,6 +59,37 @@ public static class Motion
             new((float)spline.ControlPoint2.X, (float)spline.ControlPoint2.Y));
     }
 
+    /// <summary>
+    /// A house curve evaluated in code, for motion a renderer steps itself: progress 0..1 in,
+    /// eased 0..1 out. Solves the cubic bezier for x by Newton's method, then returns y.
+    /// </summary>
+    public static double Curve(double t, string key = "EaseSmooth")
+    {
+        t = Math.Clamp(t, 0, 1);
+        var spline = Application.Current.Resources.TryGetValue(key, out var v) && v is KeySpline k
+            ? k
+            : new KeySpline { ControlPoint1 = new(0.22, 1), ControlPoint2 = new(0.36, 1) };
+        var (x1, y1, x2, y2) = (spline.ControlPoint1.X, spline.ControlPoint1.Y, spline.ControlPoint2.X, spline.ControlPoint2.Y);
+
+        static double Bez(double u, double p1, double p2) => 3 * (1 - u) * (1 - u) * u * p1 + 3 * (1 - u) * u * u * p2 + u * u * u;
+        static double Slope(double u, double p1, double p2) => 3 * (1 - u) * (1 - u) * p1 + 6 * (1 - u) * u * (p2 - p1) + 3 * u * u * (1 - p2);
+
+        var s = t;
+        for (var i = 0; i < 8; i++)
+        {
+            var dx = Bez(s, x1, x2) - t;
+            var d = Slope(s, x1, x2);
+            if (Math.Abs(dx) < 1e-5 || Math.Abs(d) < 1e-6)
+            {
+                break;
+            }
+
+            s = Math.Clamp(s - dx / d, 0, 1);
+        }
+
+        return Bez(s, y1, y2);
+    }
+
     // Settings storage can be unavailable (a sandboxed or read-only profile); the preference then
     // lasts for the session only.
     private static bool Read()

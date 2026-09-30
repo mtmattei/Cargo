@@ -41,6 +41,9 @@ public sealed class HarbourScene : SKCanvasElement
     private double _pinchStart;
     private double _zoomStart;
     private string? _selectedVessel;
+    private string? _needsVessel;
+    private double _needs;
+    private (double From, double To, DateTimeOffset Start)? _needsFade;
     private string _layer = "port";
     private bool _typefaceRequested;
 
@@ -169,6 +172,33 @@ public sealed class HarbourScene : SKCanvasElement
         _tween = (_camera.Pose, pose, DateTimeOffset.Now, ms);
     }
 
+    /// <summary>
+    /// The berth decision the harbour marks: amber tile, painted number, creeping track and leader.
+    /// Confirming fades them out over 400 ms on EaseSmooth and Undo fades them back; with reduced
+    /// motion they switch at once.
+    /// </summary>
+    public void SetNeeds(string? vesselId, bool pending)
+    {
+        if (vesselId is not null)
+        {
+            _needsVessel = vesselId;
+        }
+
+        var target = pending ? 1d : 0d;
+        if (!Animate || _needsVessel is null)
+        {
+            _needsFade = null;
+            _needs = target;
+        }
+        else if (Math.Abs(target - _needs) > .001)
+        {
+            _needsFade = (_needs, target, DateTimeOffset.Now);
+            _timer.Interval = MotionFrame;
+        }
+
+        Invalidate();
+    }
+
     public void FlyTo(double x, double y) =>
         GoTo(_camera.Pose with { TargetX = x, TargetY = y, Zoom = Math.Max(_camera.Zoom, 3.6) }, 480);
 
@@ -195,6 +225,18 @@ public sealed class HarbourScene : SKCanvasElement
     private void Tick()
     {
         var moved = false;
+
+        if (_needsFade is { } fade)
+        {
+            var k = Math.Min(1, (DateTimeOffset.Now - fade.Start).TotalMilliseconds / Motion.Duration("DurationResolveMs").TotalMilliseconds);
+            _needs = fade.From + (fade.To - fade.From) * Motion.Curve(k);
+            if (k >= 1)
+            {
+                _needsFade = null;
+            }
+
+            Invalidate();
+        }
 
         if (_tween is { } tween)
         {
@@ -231,7 +273,7 @@ public sealed class HarbourScene : SKCanvasElement
         }
         else if (Animate)
         {
-            if (_pointers.Count == 0)
+            if (_pointers.Count == 0 && _needsFade is null)
             {
                 _timer.Interval = IdleFrame;
             }
@@ -243,7 +285,8 @@ public sealed class HarbourScene : SKCanvasElement
 
     protected override void RenderOverride(SKCanvas canvas, Size area)
     {
-        var frame = new HarbourFrameState(_selectedVessel, _state?.HoveredVessel, _state?.HoveredBerth, _layer, Animate);
+        var frame = new HarbourFrameState(_selectedVessel, _state?.HoveredVessel, _state?.HoveredBerth, _layer, Animate,
+            _needsVessel, _needs, Creep: Animate && _state?.NeedsDecision == true);
         _renderer.Render(canvas, (float)area.Width, (float)area.Height, (DateTimeOffset.Now - _started).TotalSeconds, frame);
     }
 

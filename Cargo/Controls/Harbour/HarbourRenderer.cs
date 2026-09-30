@@ -8,7 +8,10 @@ public sealed record HarbourFrameState(
     string? HoveredVessel,
     int? HoveredBerth,
     string Layer,
-    bool Animate);
+    bool Animate,
+    string? NeedsVessel = null,
+    double Needs = 0,
+    bool Creep = false);
 
 /// <summary>
 /// Draws the harbour with SkiaSharp. The still scene (ground, chart, yard, ships, shadows) is
@@ -113,6 +116,7 @@ public sealed class HarbourRenderer : IDisposable
             TiltShift(canvas, width, height);
         }
 
+        DrawNeeds(canvas, seconds, state);
         DrawLive(canvas, seconds, state);
         DrawAtmosphere(canvas, width, height);
         DrawLeaders(canvas, state);
@@ -220,16 +224,13 @@ public sealed class HarbourRenderer : IDisposable
         SunGlint(canvas);
         DrawChart(canvas);
 
-        // Berth tiles: status colour is reserved for the berths that need attention.
+        // Berth tiles: status colour is reserved for the berths that need attention. The berth
+        // waiting on a decision is drawn live (DrawNeeds), so it can fade when it is confirmed.
         foreach (var berth in _world.Berths)
         {
             if (berth.State == "restricted")
             {
                 BerthTile(canvas, berth, _pal.WithAlpha("AlertColor", .16), _pal["AlertColor"], dashed: true);
-            }
-            else if (berth.State == "reserved")
-            {
-                BerthTile(canvas, berth, _pal.WithAlpha("AmberColor", .22), _pal["AmberDeepColor"], dashed: false);
             }
         }
 
@@ -271,12 +272,7 @@ public sealed class HarbourRenderer : IDisposable
         // Berth numbers painted on the quay: in the world rather than floating over it.
         foreach (var berth in _world.Berths)
         {
-            var color = berth.State switch
-            {
-                "reserved" => _pal["AmberDeepColor"],
-                "restricted" => _pal["AlertColor"],
-                _ => _pal.WithAlpha("HarbourSignColor", .6)
-            };
+            var color = berth.State == "restricted" ? _pal["AlertColor"] : _pal.WithAlpha("HarbourSignColor", .6);
             GroundText(canvas, berth.Number, berth.X - 34, -17, HarbourWorld.QuayZ + .02, color, 9);
         }
 
@@ -386,22 +382,9 @@ public sealed class HarbourRenderer : IDisposable
         _stroke.PathEffect = null;
     }
 
-    /// <summary>The planned track of the inbound vessel, and on the Traffic layer the other movements too.</summary>
+    /// <summary>On the Traffic layer, the other planned movements. The inbound track is live (DrawNeeds).</summary>
     private void DrawRoutes(SKCanvas canvas, string layer)
     {
-        foreach (var vessel in _world.Vessels)
-        {
-            var data = PortData.Vessel(vessel.Id);
-            if (data.Status != "Arriving")
-            {
-                continue;
-            }
-
-            var berth = _world.Berths.First(b => b.Number == data.HomeBerth);
-            var bow = new P2(vessel.X + Math.Cos(vessel.Heading) * (vessel.Length / 2 + 2), vessel.Y + Math.Sin(vessel.Heading) * (vessel.Length / 2 + 2));
-            Route(canvas, bow, new P2(berth.X + 72, 50), new P2(berth.X, 7.3), _pal["AmberDeepColor"], 1.8f);
-        }
-
         if (layer != "traffic")
         {
             return;
@@ -421,7 +404,35 @@ public sealed class HarbourRenderer : IDisposable
         }
     }
 
-    private void Route(SKCanvas canvas, P2 from, P2 control, P2 to, SKColor color, float width)
+    /// <summary>
+    /// The decision marks, drawn live over the baked still so they can fade: the reserved berth's
+    /// tile and painted number, and the inbound track, which creeps toward the berth (one dash
+    /// cycle every 1.2 s) while the berth still needs confirming.
+    /// </summary>
+    private void DrawNeeds(SKCanvas canvas, double seconds, HarbourFrameState state)
+    {
+        if (state.NeedsVessel is not { } id || state.Needs <= .001 || _world.Vessels.FirstOrDefault(v => v.Id == id) is not { } vessel)
+        {
+            return;
+        }
+
+        var data = PortData.Vessel(id);
+        if (_world.Berths.FirstOrDefault(b => b.Number == data.HomeBerth) is not { } berth)
+        {
+            return;
+        }
+
+        var k = state.Needs;
+        BerthTile(canvas, berth, _pal.WithAlpha("AmberColor", .22 * k), _pal.WithAlpha("AmberDeepColor", k), dashed: false);
+        GroundText(canvas, berth.Number, berth.X - 34, -17, HarbourWorld.QuayZ + .02, _pal.WithAlpha("AmberDeepColor", k), 9);
+
+        var bow = new P2(vessel.X + Math.Cos(vessel.Heading) * (vessel.Length / 2 + 2), vessel.Y + Math.Sin(vessel.Heading) * (vessel.Length / 2 + 2));
+        // The dash runs 6 on, 5 off: a falling phase walks the pattern from the bow toward the berth
+        var phase = state.Creep ? (float)(11 - seconds / 1.2 % 1 * 11) : 0;
+        Route(canvas, bow, new P2(berth.X + 72, 50), new P2(berth.X, 7.3), _pal.WithAlpha("AmberDeepColor", k), 1.8f, phase);
+    }
+
+    private void Route(SKCanvas canvas, P2 from, P2 control, P2 to, SKColor color, float width, float phase = 0)
     {
         _path.Reset();
         for (var i = 0; i <= 28; i++)
@@ -442,7 +453,8 @@ public sealed class HarbourRenderer : IDisposable
 
         _stroke.Color = color;
         _stroke.StrokeWidth = width;
-        _stroke.PathEffect = _dashRoute;
+        using var creeping = phase == 0 ? null : SKPathEffect.CreateDash(new[] { 6f, 5f }, phase);
+        _stroke.PathEffect = creeping ?? _dashRoute;
         canvas.DrawPath(_path, _stroke);
         _stroke.PathEffect = null;
     }
@@ -800,14 +812,21 @@ public sealed class HarbourRenderer : IDisposable
         _stroke.StrokeWidth = 1;
         foreach (var (id, (anchor, tag)) in Leaders)
         {
-            var needs = PortData.Vessel(id).Status == "Arriving";
-            var color = needs ? _pal["AmberDeepColor"] : _pal.WithAlpha("InkColor", .5);
+            // The pending arrival's leader is amber, and fades to the plain ink leader with its berth
+            var needs = id == state.NeedsVessel ? state.Needs : 0;
+            var color = Blend(_pal.WithAlpha("InkColor", .5), _pal["AmberDeepColor"], needs);
             _stroke.Color = color;
             canvas.DrawLine(anchor, tag, _stroke);
             _fill.Color = color;
             canvas.DrawCircle(anchor, 2, _fill);
         }
     }
+
+    private static SKColor Blend(SKColor a, SKColor b, double t) => new(
+        (byte)(a.Red + (b.Red - a.Red) * t),
+        (byte)(a.Green + (b.Green - a.Green) * t),
+        (byte)(a.Blue + (b.Blue - a.Blue) * t),
+        (byte)(a.Alpha + (b.Alpha - a.Alpha) * t));
 
     // ── Paths ──────────────────────────────────────────────────────────────────
 

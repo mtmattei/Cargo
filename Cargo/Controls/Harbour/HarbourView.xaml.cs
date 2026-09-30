@@ -111,8 +111,15 @@ public sealed partial class HarbourView : UserControl
                 _scene?.Invalidate();
                 PaintTags();
             });
+            _scene?.SetNeeds(value.PendingDecision, value.NeedsDecision);
             value.PropertyChanged += (_, e) =>
             {
+                if (e.PropertyName is nameof(PortState.PendingDecision))
+                {
+                    _scene?.SetNeeds(value.PendingDecision, value.NeedsDecision);
+                    PaintTags();
+                }
+
                 if (e.PropertyName is nameof(PortState.Section) or nameof(PortState.StageOpen) or nameof(PortState.SelectedVesselId))
                 {
                     SyncScene();
@@ -362,7 +369,8 @@ public sealed partial class HarbourView : UserControl
     {
         foreach (var (tag, _) in _tags)
         {
-            var needs = PortData.Vessel(tag.Id).Status == "Arriving";
+            // Amber marks the arrival still waiting on a berth decision; confirmed, it is a plain tag
+            var needs = _state?.PendingDecision == tag.Id;
             var selected = EffectiveSelection == tag.Id;
             var lit = _state?.HoveredVessel == tag.Id;
             tag.Background = needs ? Tokens.Brush("AmberInvariantBrush") : Tokens.Brush("SurfaceInvariantBrush");
