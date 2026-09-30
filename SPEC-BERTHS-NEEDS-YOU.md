@@ -153,11 +153,17 @@ no screen-reader path).
 8. Overview context panel: `OverviewContextViewModel`, one view per mode, dwell hover, move the remaining charts to their sections.
 9. Reduced motion pass, lint, gold-standard self-critique (`ui-craft` checklist), HANDOFF.
 
+## Decisions (answered 2026-09-30)
+
+- Needs-you colour: **amber** (the app's existing *reserved · arriving*).
+- Placement: the **full bar on Berths**; on Overview the context panel's top-priority mode carries the decision
+  with Confirm. No separate compact bar.
+- Confirm **writes a real assignment** through `PortState.Assign`; the planner and conflict count follow. Undo
+  removes it.
+- Header clock rolls **minutes only**; seconds tick plainly.
+- Only Nordic Star can need a decision; a general decisions queue is out of scope.
+- Activity feed: **a context-panel mode reached from Map**.
+
 ## Unresolved Questions
 
-- Needs-you colour: amber (the app's existing *reserved · arriving*) or teal as in the artifact? Spec assumes amber.
-- Placement: Berths page only, or also a compact needs-you bar on Overview?
-- Confirm writes a real assignment (`_assigned`), which also changes the planner and conflict count. Intended?
-- Header clock rolls minutes only; seconds keep ticking plainly. OK?
-- Only Nordic Star can need a decision in the demo data; a general "decisions" queue is out of scope.
-- Context panel: Activity feed goes where (its own mode, or Security)? Spec assumes a panel mode reached from Map.
+- None open.
