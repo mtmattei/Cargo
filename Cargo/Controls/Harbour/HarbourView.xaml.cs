@@ -71,8 +71,13 @@ public sealed partial class HarbourView : UserControl
         {
             PlayIntro();
             DispatcherQueue.TryEnqueue(PlaceOverlays);
+            // The stage height depends on the window's height, which the Auto row never re-measures for
+            XamlRoot.Changed += OnXamlRootChanged;
         };
+        Unloaded += (_, _) => { if (XamlRoot is { } root) { root.Changed -= OnXamlRootChanged; } };
     }
+
+    private void OnXamlRootChanged(XamlRoot sender, XamlRootChangedEventArgs args) => InvalidateMeasure();
 
     public PortState? State
     {
@@ -164,11 +169,17 @@ public sealed partial class HarbourView : UserControl
         private set => SetValue(HudVisibilityProperty, value);
     }
 
-    /// <summary>The stage keeps a landscape proportion, bounded so it never swallows the page; the strip is fixed.</summary>
+    /// <summary>
+    /// The stage keeps a landscape proportion, bounded so it never swallows the page: at most 58% of
+    /// the window's height (the charts below keep ~40% to scroll in), never less than 300 px of harbour
+    /// under the greeting. The strip is fixed.
+    /// </summary>
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) || availableSize.Width <= 0 ? 1328 : availableSize.Width;
-        var size = new Size(width, Compact ? 210 : Math.Clamp(width * .42, 380, 640) + TopInset);
+        var byWidth = Math.Clamp(width * .42, 380, 640) + TopInset;
+        var byWindow = XamlRoot is { } root ? Math.Max(TopInset + 300, root.Size.Height * .58) : byWidth;
+        var size = new Size(width, Compact ? 210 : Math.Min(byWidth, byWindow));
         base.MeasureOverride(size);
         return size;
     }
