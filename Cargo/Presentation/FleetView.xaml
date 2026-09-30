@@ -1,4 +1,4 @@
-<UserControl x:Class="Cargo.Presentation.FleetView"
+<Page x:Class="Cargo.Presentation.FleetView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:Cargo.Presentation"
@@ -305,4 +305,4 @@
       </Border>
     </Grid>
   </Grid>
-</UserControl>
+</Page>

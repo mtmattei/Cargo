@@ -1,0 +1,11 @@
+namespace Cargo.Presentation;
+
+public sealed partial class Shell : UserControl, IContentControlProvider
+{
+    public Shell()
+    {
+        InitializeComponent();
+    }
+
+    public ContentControl ContentControl => Host;
+}

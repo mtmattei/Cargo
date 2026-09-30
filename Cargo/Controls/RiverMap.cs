@@ -24,8 +24,7 @@ public sealed partial class RiverMap : SceneHost
 
         // Boats move on each tick; the river, gauges and locks are built once.
         _timer.Tick += (_, _) => PlaceFleet();
-        Loaded += (_, _) => _timer.Start();
-        Unloaded += (_, _) => _timer.Stop();
+        this.TrackShown(shown => { if (shown) { _timer.Start(); } else { _timer.Stop(); } });
 
         Build();
         this.RebuildWhenVisible(state, Build);

@@ -12,7 +12,7 @@ public partial class App : Application
     protected Window? MainWindow { get; private set; }
     protected IHost? Host { get; private set; }
 
-    protected override void OnLaunched(LaunchActivatedEventArgs args)
+    protected override async void OnLaunched(LaunchActivatedEventArgs args)
     {
         // A desktop Uno app is windowed, so redirected stdout captures nothing:
         // startup failures go to startup.log next to the executable instead of vanishing.
@@ -21,7 +21,7 @@ public partial class App : Application
 
         try
         {
-            Launch(args);
+            await LaunchAsync(args);
         }
         catch (Exception ex)
         {
@@ -30,8 +30,12 @@ public partial class App : Application
         }
     }
 
-    private void Launch(LaunchActivatedEventArgs args)
+    private async Task LaunchAsync(LaunchActivatedEventArgs args)
     {
+        // The store owns the shift clock (a DispatcherTimer), so it is built here on the UI
+        // thread; the router resolves page models on a background thread.
+        var state = new PortState();
+
         var builder = this.CreateBuilder(args)
             .Configure(host => host
 #if DEBUG
@@ -42,10 +46,13 @@ public partial class App : Application
                         .SetMinimumLevel(context.HostingEnvironment.IsDevelopment() ? LogLevel.Information : LogLevel.Warning)
                         .CoreLogLevel(LogLevel.Warning),
                     enableUnoLogging: true)
+                .UseToolkitNavigation()
                 .ConfigureServices((context, services) =>
                 {
-                    services.AddSingleton<PortState>();
-                }));
+                    // One store for the whole shift: every page model reads and writes the same port
+                    services.AddSingleton(state);
+                })
+                .UseNavigation(RegisterRoutes));
 
         MainWindow = builder.Window;
 
@@ -63,12 +70,40 @@ public partial class App : Application
         // at the platform default and clipping the harbour.
         MainWindow.AppWindow.Resize(new Windows.Graphics.SizeInt32 { Width = 1680, Height = 1020 });
 
-        Host = builder.Build();
+        // Open straight on the section the store starts in (Overview, unless a DEBUG hook says otherwise)
+        Host = await builder.NavigateAsync<Shell>(initialNavigate: (services, navigator) =>
+            navigator.NavigateRouteAsync(this, $"Main/{state.Section}"));
+    }
 
-        var state = Host.Services.GetRequiredService<PortState>();
+    /// <summary>
+    /// Main hosts the header, the harbour stage and the section region; each section is a
+    /// nested route whose name is its <see cref="PortState.Section"/> id.
+    /// </summary>
+    private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
+    {
+        views.Register(
+            new ViewMap(ViewModel: typeof(ShellViewModel)),
+            new ViewMap<MainPage, MainViewModel>(),
+            new ViewMap<OverviewView, OverviewViewModel>(),
+            new ViewMap<BerthsView, BerthsViewModel>(),
+            new ViewMap<CargoView, CargoViewModel>(),
+            new ViewMap<FleetView, FleetViewModel>(),
+            new ViewMap<SecurityView, SecurityViewModel>());
 
-        MainWindow.Content = new ShellPage(state);
-        MainWindow.Activate();
+        routes.Register(
+            new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
+                Nested:
+                [
+                    new RouteMap("Main", View: views.FindByViewModel<MainViewModel>(), IsDefault: true,
+                        Nested:
+                        [
+                            new RouteMap("overview", View: views.FindByViewModel<OverviewViewModel>(), IsDefault: true),
+                            new RouteMap("berths", View: views.FindByViewModel<BerthsViewModel>()),
+                            new RouteMap("cargo", View: views.FindByViewModel<CargoViewModel>()),
+                            new RouteMap("fleet", View: views.FindByViewModel<FleetViewModel>()),
+                            new RouteMap("security", View: views.FindByViewModel<SecurityViewModel>())
+                        ])
+                ]));
     }
 
     private static void Trace(string source, Exception? ex)

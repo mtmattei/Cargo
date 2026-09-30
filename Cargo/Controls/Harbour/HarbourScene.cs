@@ -46,13 +46,10 @@ public sealed class HarbourScene : SKCanvasElement
         _camera.Apply(HarbourCameraPose.Overview);
 
         _timer.Tick += (_, _) => Tick();
-        Loaded += (_, _) =>
-        {
-            _timer.Start();
-            LoadTypeface();
-        };
-        Unloaded += (_, _) => _timer.Stop();
+        Loaded += (_, _) => LoadTypeface();
 
+        // The stage collapses on pages without a harbour; a hidden scene should not draw 30 frames a second
+        this.TrackShown(shown => { if (shown) { _timer.Start(); } else { _timer.Stop(); } });
     }
 
     /// <summary>

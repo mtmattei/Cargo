@@ -63,13 +63,12 @@ public sealed class QuickMessage
     public required ICommand Send { get; init; }
 }
 
-public sealed partial class FleetView : UserControl
+public sealed partial class FleetView : Page
 {
-    private readonly RiverMap _river;
+    private bool _attached;
 
-    public FleetView(PortState state)
+    public FleetView()
     {
-        State = state;
         Fleet = new ObservableCollection<FleetRow>();
         Thread = new ObservableCollection<ChatBubble>();
         QuickMessages = new ObservableCollection<QuickMessage>();
@@ -121,15 +120,29 @@ public sealed partial class FleetView : UserControl
         }).ToList();
 
         InitializeComponent();
+        DataContextChanged += (_, _) => Attach();
+    }
 
-        _river = new RiverMap(state);
-        RiverHost.Content = _river;
+    /// <summary>The router builds the page, then hands it its model; the live work starts there.</summary>
+    private void Attach()
+    {
+        if (_attached || DataContext is not FleetViewModel vm)
+        {
+            return;
+        }
+
+        _attached = true;
+        State = vm.State;
+        var state = vm.State;
+
+        RiverHost.Content = new RiverMap(state);
 
         Refresh();
         this.RebuildWhenVisible(state, Refresh);
+        Bindings.Update();
     }
 
-    public PortState State { get; }
+    public PortState State { get; private set; } = null!;
 
     public IReadOnlyList<LegendItem> Legend { get; }
     public IReadOnlyList<LockingRow> Lockings { get; }

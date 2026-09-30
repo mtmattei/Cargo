@@ -1,54 +1,69 @@
 using System.ComponentModel;
-using Microsoft.UI.Dispatching;
 
 namespace Cargo.Presentation;
 
-public sealed partial class ShellPage : Page
+/// <summary>
+/// The dispatcher's frame: the section header, the harbour layer switcher, the tide readout,
+/// and the bridge from <see cref="PortState.Section"/> to the router. Section stays the source
+/// of truth because most moves between sections start inside the store (opening a vessel, an
+/// inspection, a harbour tag), so the route follows it in one direction and never loops back.
+/// </summary>
+public sealed partial class MainViewModel : ObservableObject
 {
     private const double WideBreakpoint = 1280;
     private const double NarrowBreakpoint = 1040;
 
-    private readonly Dictionary<string, UIElement> _sections = new();
+    private readonly INavigator _navigator;
+    private readonly ILogger<MainViewModel> _logger;
 
-    private bool _wide = true;
-    private bool _roomy = true;
-
-    public ShellPage(PortState state)
+    public MainViewModel(PortState state, INavigator navigator, IDispatcher dispatcher, ILogger<MainViewModel> logger)
     {
         State = state;
-        NavItems = new ObservableCollection<NavItem>();
-        Layers = new ObservableCollection<LayerItem>();
+        _navigator = navigator;
+        _logger = logger;
 
-        InitializeComponent();
-
-        DataContext = state;
-        Harbour.State = state;
-
-        BuildNav();
-        BuildLayers();
-        ShowSection(state.Section);
-        RefreshTide();
-
-        state.PropertyChanged += OnStateChanged;
-        ScannerHost.Content = new ScannerOverlay(state);
-        state.Ticked += (_, _) => RefreshTide();
-
-        SizeChanged += (_, e) => ApplyBreakpoints(e.NewSize.Width);
-
-        Loaded += (_, _) =>
+        // The router builds models off the UI thread, and the header items carry brushes and
+        // geometries, which must be created on it.
+        dispatcher.TryEnqueue(() =>
         {
-            WarmSections();
-            ScrollToStartOffset();
-        };
+            BuildNav();
+            BuildLayers();
+            RefreshTide();
+
+            state.PropertyChanged += OnStateChanged;
+            state.Ticked += (_, _) => RefreshTide();
+        });
     }
 
     public PortState State { get; }
 
-    public ObservableCollection<NavItem> NavItems { get; }
+    public ObservableCollection<NavItem> NavItems { get; } = new();
 
-    public ObservableCollection<LayerItem> Layers { get; }
+    public ObservableCollection<LayerItem> Layers { get; } = new();
 
     public TideReadout Tide { get; } = new();
+
+    /// <summary>Weather and tide leave the header below the wide breakpoint.</summary>
+    [ObservableProperty]
+    private bool _wide = true;
+
+    /// <summary>The ISPS badge leaves below the narrow breakpoint.</summary>
+    [ObservableProperty]
+    private bool _roomy = true;
+
+    public void ApplyWidth(double width)
+    {
+        var wide = width >= WideBreakpoint;
+        var roomy = width >= NarrowBreakpoint;
+        if (wide == Wide && roomy == Roomy)
+        {
+            return;
+        }
+
+        Wide = wide;
+        Roomy = roomy;
+        BuildNav();
+    }
 
     // The nav and the layer switcher each depend on one property, so they listen for that one
     // rather than for every structural change in the app.
@@ -58,7 +73,7 @@ public sealed partial class ShellPage : Page
         {
             case nameof(PortState.Section):
                 BuildNav();
-                ShowSection(State.Section);
+                _ = ShowSectionAsync(State.Section);
                 break;
             case nameof(PortState.HarbourLayer):
                 BuildLayers();
@@ -66,97 +81,18 @@ public sealed partial class ShellPage : Page
         }
     }
 
-    // ── Sections ──────────────────────────────────────────────────────────────
-
-    private void ShowSection(string section)
+    private async Task ShowSectionAsync(string section)
     {
-        if (!_sections.TryGetValue(section, out var view))
+        try
         {
-            view = Create(section);
-            _sections[section] = view;
+            // Section ids are the route names, registered under Main in App.RegisterRoutes.
+            // "./" targets the section region inside Main; without it the route replaces Main itself.
+            await _navigator.NavigateRouteAsync(this, $"./{section}");
         }
-
-        SectionHost.Content = view;
-    }
-
-    /// <summary>
-    /// Lets a verification run photograph a panel that sits below the fold, which a
-    /// background process cannot scroll to with synthesized input.
-    /// </summary>
-    [System.Diagnostics.Conditional("DEBUG")]
-    private void ScrollToStartOffset()
-    {
-        if (!double.TryParse(Environment.GetEnvironmentVariable("CARGO_SCROLL"), out var offset) || offset <= 0)
+        catch (Exception ex)
         {
-            return;
+            _logger.LogError(ex, "Navigation to section {Section} failed", section);
         }
-
-        DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low,
-            () => SectionScroll.ChangeView(null, offset, null, true));
-    }
-
-    /// <summary>
-    /// Builds the sections that have not been visited yet, one per idle turn. A section costs
-    /// the better part of a second to construct the first time, and paying that on the click
-    /// is what made moving to a new section feel like a stall.
-    /// </summary>
-    private void WarmSections()
-    {
-        var pending = PortData.Sections
-            .Select(s => s.Id)
-            .Where(id => !_sections.ContainsKey(id))
-            .ToList();
-
-        var index = 0;
-
-        void Next()
-        {
-            if (index >= pending.Count)
-            {
-                return;
-            }
-
-            var id = pending[index++];
-            if (!_sections.ContainsKey(id))
-            {
-                _sections[id] = Create(id);
-            }
-
-            DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, Next);
-        }
-
-        DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, Next);
-    }
-
-    private UIElement Create(string section) => section switch
-    {
-        "berths" => new BerthsView(State),
-        "cargo" => new CargoView(State),
-        "security" => new SecurityView(State),
-        "fleet" => new FleetView(State),
-        _ => new OverviewView(State)
-    };
-
-    // ── Header ────────────────────────────────────────────────────────────────
-
-    private void ApplyBreakpoints(double width)
-    {
-        var wide = width >= WideBreakpoint;
-        var roomy = width >= NarrowBreakpoint;
-
-        if (wide == _wide && roomy == _roomy)
-        {
-            return;
-        }
-
-        _wide = wide;
-        _roomy = roomy;
-
-        WeatherBadge.Visibility = wide ? Visibility.Visible : Visibility.Collapsed;
-        TideBadge.Visibility = wide ? Visibility.Visible : Visibility.Collapsed;
-        IspsBadge.Visibility = roomy ? Visibility.Visible : Visibility.Collapsed;
-
-        BuildNav();
     }
 
     /// <summary>
@@ -198,7 +134,7 @@ public sealed partial class ShellPage : Page
             var (sub, badge) = meta[item.Id];
 
             // Below the wide breakpoint only the section you are on keeps its name.
-            var showLabel = _wide || (current && _roomy);
+            var showLabel = Wide || (current && Roomy);
 
             item.Tooltip = $"{item.Label} · {sub}";
             item.ChipBackground = current ? Tokens.Brush("TealBrightBrush") : Tokens.Brush("DeckWhiteColor", 0.08);
@@ -219,8 +155,6 @@ public sealed partial class ShellPage : Page
         Tide.Label = $"+{level:0.0} m";
         Tide.Tooltip = $"Tide · +{level:0.0} m rising";
     }
-
-    // ── Harbour overlay ───────────────────────────────────────────────────────
 
     private void BuildLayers()
     {

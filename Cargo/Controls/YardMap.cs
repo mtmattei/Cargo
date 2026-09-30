@@ -28,8 +28,7 @@ public sealed partial class YardMap : SceneHost
         _state = state;
 
         _timer.Tick += (_, _) => Animate();
-        Loaded += (_, _) => _timer.Start();
-        Unloaded += (_, _) => _timer.Stop();
+        this.TrackShown(shown => { if (shown) { _timer.Start(); } else { _timer.Stop(); } });
 
         Build();
         this.RebuildWhenVisible(state, UpdateSlots);

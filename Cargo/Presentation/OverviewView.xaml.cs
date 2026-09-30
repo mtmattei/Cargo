@@ -22,13 +22,28 @@ public sealed partial class NextUpItem : ObservableObject
     private string _countdown = string.Empty;
 }
 
-public sealed partial class OverviewView : UserControl
+public sealed partial class OverviewView : Page
 {
-    public OverviewView(PortState state)
+    private bool _attached;
+
+    public OverviewView()
     {
-        State = state;
         NextUp = new ObservableCollection<NextUpItem>();
         InitializeComponent();
+        DataContextChanged += (_, _) => Attach();
+    }
+
+    /// <summary>The router builds the page, then hands it its model; the live work starts there.</summary>
+    private void Attach()
+    {
+        if (_attached || DataContext is not OverviewViewModel vm)
+        {
+            return;
+        }
+
+        _attached = true;
+        State = vm.State;
+        var state = vm.State;
 
         // The shift log (what happened) sits under the live picture (what is happening)
         ActivityHost.Content = new ActivityView(state);
@@ -39,9 +54,10 @@ public sealed partial class OverviewView : UserControl
         RefreshLive();
 
         this.TickWhenVisible(state, RefreshLive);
+        Bindings.Update();
     }
 
-    public PortState State { get; }
+    public PortState State { get; private set; } = null!;
 
     public string Subtitle => $"{PortData.Today} · Westhaven · the harbour as it is right now.";
 

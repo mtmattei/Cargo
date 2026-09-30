@@ -30,7 +30,7 @@ public sealed class VehicleCard
     public required IReadOnlyList<Fact> Facts { get; init; }
 }
 
-public sealed partial class SecurityView : UserControl
+public sealed partial class SecurityView : Page
 {
     private static readonly (string Id, string Label)[] TabDefinitions =
     {
@@ -39,9 +39,10 @@ public sealed partial class SecurityView : UserControl
 
     private readonly AccessZoneMap _accessMap = new();
 
-    public SecurityView(PortState state)
+    private bool _attached;
+
+    public SecurityView()
     {
-        State = state;
         Tabs = new ObservableCollection<FilterChip>();
         People = new ObservableCollection<PersonCard>();
 
@@ -92,6 +93,20 @@ public sealed partial class SecurityView : UserControl
         }).ToList();
 
         InitializeComponent();
+        DataContextChanged += (_, _) => Attach();
+    }
+
+    /// <summary>The router builds the page, then hands it its model; the live work starts there.</summary>
+    private void Attach()
+    {
+        if (_attached || DataContext is not SecurityViewModel vm)
+        {
+            return;
+        }
+
+        _attached = true;
+        State = vm.State;
+        var state = vm.State;
 
         ZoneMapHost.Content = new SecurityZoneMap();
         TimelineHost.Content = new SecurityTimeline();
@@ -100,9 +115,10 @@ public sealed partial class SecurityView : UserControl
 
         Refresh();
         this.RebuildWhenVisible(state, Refresh);
+        Bindings.Update();
     }
 
-    public PortState State { get; }
+    public PortState State { get; private set; } = null!;
 
     public ObservableCollection<FilterChip> Tabs { get; }
     public ObservableCollection<PersonCard> People { get; }
