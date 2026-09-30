@@ -132,13 +132,10 @@ public sealed partial class ShellPage : Page
 
     private UIElement Create(string section) => section switch
     {
-        "vessels" => new VesselsView(State),
-        "docking" => new DockingView(State),
-        "containers" => new ContainersView(State),
-        "yard" => new YardView(State),
+        "berths" => new BerthsView(State),
+        "cargo" => new CargoView(State),
         "security" => new SecurityView(State),
         "fleet" => new FleetView(State),
-        "activity" => new ActivityView(State),
         _ => new OverviewView(State)
     };
 
@@ -175,14 +172,11 @@ public sealed partial class ShellPage : Page
         var nordicIn = (int)Math.Floor(Math.Max(0, 21 + 40 / 60d - State.NowHours) * 60);
         var meta = new Dictionary<string, (string Sub, string? Badge)>
         {
-            ["overview"] = ("3 alongside · 2 inbound", null),
+            ["overview"] = ("3 alongside · 2 inbound · 2,146 moves today", null),
+            ["berths"] = ($"Nordic Star in {nordicIn} min · Berth 06 frees 21:30", "AmberColor"),
+            ["cargo"] = ($"4,812 on site · {State.YardOccupancy}% yard · 1 hold", "OrangeColor"),
             ["fleet"] = ("6 underway · 2 running late", "OrangeColor"),
-            ["vessels"] = ($"Nordic Star in {nordicIn} min", null),
-            ["docking"] = ("Berth 06 frees 21:30", "AmberColor"),
-            ["containers"] = ("4,812 on site · 1 hold", "OrangeColor"),
-            ["yard"] = ($"{State.YardOccupancy}% occupied · live", null),
-            ["security"] = ("1 hold · 0 incidents", "OrangeColor"),
-            ["activity"] = ("2,146 moves today", null)
+            ["security"] = ("ISPS level 1 · 0 incidents", null)
         };
 
         if (NavItems.Count == 0)

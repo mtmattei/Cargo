@@ -5,16 +5,16 @@
              xmlns:controls="using:Cargo.Controls"
              xmlns:shapes="using:Microsoft.UI.Xaml.Shapes">
 
-  <Grid Padding="44,34,44,48" MaxWidth="1160" HorizontalAlignment="Center" RowSpacing="22">
+  <Grid Style="{StaticResource SectionFrame}">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
-    <StackPanel Spacing="12">
-      <TextBlock Text="{x:Bind Eyebrow}" Style="{StaticResource EyebrowText}" />
-      <TextBlock Text="What happened today" Style="{StaticResource PageTitleText}" />
+    <StackPanel Spacing="4">
+      <TextBlock Text="Earlier today" Style="{StaticResource SectionHeadText}" />
+      <TextBlock Text="{x:Bind Eyebrow}" Style="{StaticResource CaptionText}" />
     </StackPanel>
 
     <controls:Card Grid.Row="1" Padding="22,20,22,14">

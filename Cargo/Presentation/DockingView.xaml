@@ -5,7 +5,7 @@
              xmlns:controls="using:Cargo.Controls"
              xmlns:shapes="using:Microsoft.UI.Xaml.Shapes">
 
-  <Grid Padding="44,34,44,48" MinWidth="1040" MaxWidth="1520" RowSpacing="16">
+  <Grid Style="{StaticResource SectionFrame}">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
@@ -18,9 +18,9 @@
         <ColumnDefinition Width="*" />
         <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
-      <StackPanel Spacing="12">
-        <TextBlock Text="DOCKING · 8 BERTHS · NORTH QUAY" Style="{StaticResource EyebrowText}" />
-        <TextBlock Text="Berth planning" Style="{StaticResource PageTitleText}" />
+      <StackPanel Spacing="4">
+        <TextBlock Text="Berth plan" Style="{StaticResource SectionHeadText}" />
+        <TextBlock Text="Next 36 hours · drag an arriving vessel onto a berth" Style="{StaticResource CaptionText}" />
       </StackPanel>
       <ItemsControl Grid.Column="1" ItemsSource="{x:Bind Legend}" VerticalAlignment="Bottom">
         <ItemsControl.ItemsPanel>

@@ -31,6 +31,9 @@ public sealed partial class OverviewView : UserControl
         NextUp = new ObservableCollection<NextUpItem>();
         InitializeComponent();
 
+        // The shift log (what happened) sits under the live picture (what is happening)
+        ActivityHost.Content = new ActivityView(state);
+
         BuildMovements();
         BuildFlow();
         BuildTide();

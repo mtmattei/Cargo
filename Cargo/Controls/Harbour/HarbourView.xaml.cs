@@ -135,13 +135,18 @@ public sealed partial class HarbourView : UserControl
 
     // ── State ──────────────────────────────────────────────────────────────────
 
-    /// <summary>Vessels has its own selection; everywhere else the harbour's selection applies.</summary>
+    /// <summary>Berths has its own selection (the vessel being worked); elsewhere the harbour's selection applies.</summary>
     private string? EffectiveSelection =>
-        _state is null ? null : _state.Section == "vessels" ? _state.SelectedVesselId : _state.HarbourSelection;
+        _state is null ? null : _state.Section == "berths" ? _state.SelectedVesselId : _state.HarbourSelection;
 
-    /// <summary>Security always shows the security overlay; elsewhere the layer switcher decides.</summary>
-    private string EffectiveLayer =>
-        _state is null ? "port" : _state.Section == "security" ? "security" : _state.HarbourLayer;
+    /// <summary>Security shows the perimeter and Cargo the yard zones; on Overview the layer switcher decides.</summary>
+    private string EffectiveLayer => _state?.Section switch
+    {
+        null => "port",
+        "security" => "security",
+        "cargo" => "yard",
+        _ => _state.HarbourLayer
+    };
 
     private void SyncScene()
     {
@@ -213,6 +218,8 @@ public sealed partial class HarbourView : UserControl
         var vessel = _scene.World.Vessels.FirstOrDefault(v => v.Id == EffectiveSelection);
         var pose = _state.Section == "security"
             ? new HarbourCameraPose(Rad(-8), Rad(36), 2.4, 40, -40)
+            : _state.Section == "cargo"
+                ? new HarbourCameraPose(Rad(-6), Rad(42), 3.0, 0, -66)
             : vessel is not null
                 ? new HarbourCameraPose(Rad(-14), Rad(26), 4.6, vessel.X, vessel.Y + 2)
                 : HarbourCameraPose.Overview with { Pitch = Rad(26) };

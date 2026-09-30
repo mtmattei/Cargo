@@ -23,7 +23,8 @@ public sealed partial class PortState : ObservableObject
 #if DEBUG
         // Lets a verification run open straight onto a section without synthesized input,
         // which Windows will not let a background process deliver reliably.
-        if (Environment.GetEnvironmentVariable("CARGO_START_SECTION") is { Length: > 0 } start
+        if (Environment.GetEnvironmentVariable("CARGO_START_SECTION") is { Length: > 0 } requested
+            && Canonical(requested) is var start
             && PortData.Sections.Any(s => s.Id == start))
         {
             _section = start;
@@ -154,21 +155,33 @@ public sealed partial class PortState : ObservableObject
     }
 
     [RelayCommand]
-    private void Go(string section) => Section = section;
+    private void Go(string section) => Section = Canonical(section);
+
+    /// <summary>
+    /// Eight rooms became five: Vessels and Docking are Berths, Containers and Yard are Cargo,
+    /// and Activity lives at the foot of Overview. Old destinations still land in the right place.
+    /// </summary>
+    public static string Canonical(string section) => section switch
+    {
+        "vessels" or "docking" => "berths",
+        "containers" or "yard" => "cargo",
+        "activity" => "overview",
+        _ => section
+    };
 
     [RelayCommand]
     private void OpenVessel(string vesselId)
     {
         SelectedVesselId = vesselId;
         SelectedBay = null;
-        Section = "vessels";
+        Section = "berths";
     }
 
     [RelayCommand]
     private void OpenDocking()
     {
         DockSelection = SelectedVesselId;
-        Section = "docking";
+        Section = "berths";
     }
 
     [RelayCommand]
@@ -187,7 +200,7 @@ public sealed partial class PortState : ObservableObject
 
     // ── Shared harbour stage ──────────────────────────────────────────────────
 
-    public bool ShowStage => Section is "overview" or "vessels" or "security";
+    public bool ShowStage => Section is "overview" or "berths" or "cargo" or "security";
 
     public bool StageFull => Section == "overview" || StageOpen;
 
@@ -236,7 +249,7 @@ public sealed partial class PortState : ObservableObject
     {
         switch (Section)
         {
-            case "vessels":
+            case "berths":
                 SelectedVesselId = vesselId;
                 SelectedBay = null;
                 break;

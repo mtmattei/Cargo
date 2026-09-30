@@ -18,14 +18,12 @@ public static class PortData
 
     public static readonly IReadOnlyList<NavSection> Sections = new[]
     {
+        // Ordered by how often a duty dispatcher reaches for them over a shift.
         new NavSection("overview", "Overview", "M3 20h18M6 20V10l6-5 6 5v10M10 20v-5h4v5"),
-        new NavSection("fleet", "Fleet & Waterways", "M2 12c2-2 4-2 6 0s4 2 6 0 4-2 6 0M4 8l3-4h10l3 4zM12 4v4"),
-        new NavSection("vessels", "Vessels", "M3 15l2 5h14l2-5zM5 15V9h14v6M9 9V5h6v4"),
-        new NavSection("docking", "Docking", "M12 3v18M8 21h8M12 7a2 2 0 100-4M5 12c0 5 3 8 7 8s7-3 7-8h-3M5 12h3"),
-        new NavSection("containers", "Containers", "M3 8h18v10H3zM7 8v10M11 8v10M15 8v10"),
-        new NavSection("yard", "Yard", "M3 14h6v6H3zM9 14h6v6H9zM15 14h6v6h-6zM6 8h6v6H6zM12 8h6v6h-6z"),
-        new NavSection("security", "Security", "M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6zM9 12l2 2 4-4"),
-        new NavSection("activity", "Activity", "M3 12h4l3-7 4 14 3-7h4")
+        new NavSection("berths", "Berths", "M3 15l2 5h14l2-5zM5 15V9h14v6M9 9V5h6v4"),
+        new NavSection("cargo", "Cargo", "M3 8h18v10H3zM7 8v10M11 8v10M15 8v10"),
+        new NavSection("fleet", "Waterways", "M2 12c2-2 4-2 6 0s4 2 6 0 4-2 6 0M4 8l3-4h10l3 4zM12 4v4"),
+        new NavSection("security", "Security", "M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6zM9 12l2 2 4-4")
     };
 
     public static readonly IReadOnlyList<string> JourneyIcons = new[]

@@ -140,6 +140,25 @@
     <Setter Property="ColumnSpacing" Value="24" />
   </Style>
 
+  <!-- A part of a page (Berths hosts the plan and the vessel; Cargo the explorer and the yard) -->
+  <Style x:Key="SectionFrame" TargetType="Grid">
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="RowSpacing" Value="18" />
+  </Style>
+
+  <!-- Each part starts under a 2px ink rule, like the Overview's panels -->
+  <Style x:Key="SectionRule" TargetType="Border">
+    <Setter Property="BorderBrush" Value="{StaticResource InkBrush}" />
+    <Setter Property="BorderThickness" Value="0,2,0,0" />
+    <Setter Property="Padding" Value="0,18,0,0" />
+  </Style>
+
+  <Style x:Key="SectionHeadText" TargetType="TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+    <Setter Property="FontSize" Value="24" />
+    <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+  </Style>
+
   <Style x:Key="PageSubtitleText" TargetType="TextBlock" BasedOn="{StaticResource CaptionText}">
     <Setter Property="FontSize" Value="14" />
   </Style>

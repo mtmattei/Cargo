@@ -4,8 +4,9 @@
              xmlns:local="using:Cargo.Presentation"
              xmlns:controls="using:Cargo.Controls">
 
-  <Grid Padding="40,28,40,48" MinWidth="1000" MaxWidth="1520" HorizontalAlignment="Stretch" RowSpacing="28">
+  <Grid Style="{StaticResource PageFrame}">
     <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
@@ -244,5 +245,10 @@
         </StackPanel>
       </Border>
     </Grid>
+
+    <!-- ── Row 3: the shift log ─────────────────────────────────── -->
+    <Border Grid.Row="3" Style="{StaticResource SectionRule}">
+      <ContentControl x:Name="ActivityHost" HorizontalContentAlignment="Stretch" />
+    </Border>
   </Grid>
 </UserControl>

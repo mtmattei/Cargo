@@ -1,0 +1,52 @@
+<UserControl x:Class="Cargo.Presentation.CargoView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!-- The boxes and where they stand: find a container, then see it in the yard -->
+  <Grid Style="{StaticResource PageFrame}">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <Grid Style="{StaticResource Masthead}">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
+
+      <StackPanel VerticalAlignment="Bottom" Spacing="8">
+        <TextBlock Text="Cargo" Style="{StaticResource PageTitleText}" />
+        <TextBlock Text="Containers on the terminal · yard blocks A to D, reefer, inspection and bonded" Style="{StaticResource PageSubtitleText}" />
+      </StackPanel>
+
+      <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="26" VerticalAlignment="Bottom">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <TextBlock Text="4,812" Style="{StaticResource MetricText}" />
+          <TextBlock Text="on site" Style="{StaticResource MetricLabelText}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <TextBlock Text="{x:Bind Occupancy, Mode=OneWay}" Style="{StaticResource MetricText}" />
+          <TextBlock Text="yard occupied" Style="{StaticResource MetricLabelText}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <TextBlock Text="{x:Bind Moves, Mode=OneWay}" Style="{StaticResource MetricText}" />
+          <TextBlock Text="moves today" Style="{StaticResource MetricLabelText}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <TextBlock Text="1" Style="{StaticResource MetricText}" Foreground="{StaticResource OrangeInkBrush}" />
+          <TextBlock Text="hold" Style="{StaticResource MetricLabelText}" />
+        </StackPanel>
+      </StackPanel>
+    </Grid>
+
+    <Border Grid.Row="1" Style="{StaticResource SectionRule}">
+      <ContentControl x:Name="ContainersHost" HorizontalContentAlignment="Stretch" />
+    </Border>
+
+    <Border Grid.Row="2" Style="{StaticResource SectionRule}">
+      <ContentControl x:Name="YardHost" HorizontalContentAlignment="Stretch" />
+    </Border>
+  </Grid>
+</UserControl>

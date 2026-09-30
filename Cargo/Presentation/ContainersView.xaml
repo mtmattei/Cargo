@@ -5,7 +5,7 @@
              xmlns:controls="using:Cargo.Controls"
              xmlns:shapes="using:Microsoft.UI.Xaml.Shapes">
 
-  <Grid Padding="44,34,44,48" MinWidth="1040" MaxWidth="1520" RowSpacing="20">
+  <Grid Style="{StaticResource SectionFrame}">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
@@ -16,9 +16,9 @@
         <ColumnDefinition Width="*" />
         <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
-      <StackPanel Spacing="12">
-        <TextBlock Text="CONTAINERS · 4,812 ON SITE" Style="{StaticResource EyebrowText}" />
-        <TextBlock Text="Container explorer" Style="{StaticResource PageTitleText}" />
+      <StackPanel Spacing="4">
+        <TextBlock Text="Containers" Style="{StaticResource SectionHeadText}" />
+        <TextBlock Text="Find a box, follow its journey, release or inspect a hold" Style="{StaticResource CaptionText}" />
       </StackPanel>
       <ItemsControl Grid.Column="1" ItemsSource="{x:Bind Filters, Mode=OneWay}" VerticalAlignment="Bottom">
         <ItemsControl.ItemsPanel>

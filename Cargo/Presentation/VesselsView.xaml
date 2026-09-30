@@ -5,18 +5,16 @@
              xmlns:controls="using:Cargo.Controls"
              xmlns:shapes="using:Microsoft.UI.Xaml.Shapes">
 
-  <Grid Padding="40,24,40,48" MinWidth="1140" MaxWidth="1520" RowSpacing="16">
+  <Grid Style="{StaticResource SectionFrame}">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
-    <StackPanel Spacing="10" Margin="0,0,0,2">
-      <TextBlock Text="{x:Bind Eyebrow}" FontFamily="{StaticResource BodyMediumFont}" FontSize="11.5"
-                 Foreground="{StaticResource TextMutedBrush}" />
-      <TextBlock Text="{x:Bind VesselName, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}"
-                 FontSize="30" Foreground="{StaticResource InkBrush}" />
+    <StackPanel Spacing="4">
+      <TextBlock Text="{x:Bind VesselName, Mode=OneWay}" Style="{StaticResource SectionHeadText}" />
+      <TextBlock Text="{x:Bind Eyebrow}" Style="{StaticResource CaptionText}" />
     </StackPanel>
 
     <Grid Grid.Row="1" ColumnSpacing="16">
