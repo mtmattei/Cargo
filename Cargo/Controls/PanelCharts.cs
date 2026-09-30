@@ -42,6 +42,9 @@ public sealed partial class CompositionBar : ContentControl
         set => SetValue(SlicesProperty, value);
     }
 
+    /// <summary>Height of the bar; the ends are fully rounded.</summary>
+    public double BarHeight { get; set; } = 14;
+
     private void Redraw()
     {
         var panel = new Grid { ColumnSpacing = 2 };
@@ -53,7 +56,7 @@ public sealed partial class CompositionBar : ContentControl
             panel.Children.Add(block);
         }
 
-        Content = new Border { CornerRadius = new CornerRadius(7), Height = 14, Child = panel };
+        Content = new Border { CornerRadius = new CornerRadius(BarHeight / 2), Height = BarHeight, Child = panel };
     }
 }
 

@@ -20,8 +20,8 @@
       </Grid.RowDefinitions>
       <Grid.Background>
         <RadialGradientBrush Center="0.5,0.6" RadiusX="0.8" RadiusY="0.9">
-          <GradientStop Offset="0" Color="#FF132A2B" />
-          <GradientStop Offset="1" Color="#FF0B1112" />
+          <GradientStop Offset="0" Color="{StaticResource ScanStageInnerColor}" />
+          <GradientStop Offset="1" Color="{StaticResource ScanStageOuterColor}" />
         </RadialGradientBrush>
       </Grid.Background>
 
@@ -36,15 +36,15 @@
         <StackPanel Spacing="8">
           <StackPanel Orientation="Horizontal" Spacing="8">
             <Ellipse Width="7" Height="7" Fill="{StaticResource TealBrightBrush}" VerticalAlignment="Center" />
-            <TextBlock Text="{x:Bind ScanMode, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}" FontSize="11"
+            <TextBlock Text="{x:Bind ViewModel.ScanMode, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}" FontSize="11"
                        Foreground="{StaticResource TealBrightBrush}" />
           </StackPanel>
-          <TextBlock Text="{x:Bind ContainerId, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}" FontSize="24"
+          <TextBlock Text="{x:Bind ViewModel.ContainerId, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}" FontSize="24"
                      Foreground="{StaticResource PaperBrush}" />
-          <TextBlock Text="{x:Bind ContainerMeta, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12.5"
+          <TextBlock Text="{x:Bind ViewModel.ContainerMeta, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12.5"
                      Foreground="{StaticResource TextOnDarkMutedBrush}" />
         </StackPanel>
-        <Button Grid.Column="1" Style="{StaticResource GhostButton}" Content="×" Click="OnClose"
+        <Button Grid.Column="1" Style="{StaticResource GhostButton}" Content="×" Command="{x:Bind ViewModel.CloseCommand, Mode=OneWay}"
                 VerticalAlignment="Top" Width="34" Height="34" CornerRadius="17" Padding="0" FontSize="18"
                 Background="{StaticResource HairlineOnDarkBrush}" Foreground="{StaticResource PaperBrush}"
                 BorderBrush="{StaticResource HairlineOnDarkBrush}" />
@@ -57,13 +57,14 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-          <ItemsControl ItemsSource="{x:Bind Views, Mode=OneWay}">
+          <ItemsControl ItemsSource="{x:Bind ViewModel.Views, Mode=OneWay}">
             <ItemsControl.ItemsPanel>
               <ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="6" /></ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
               <DataTemplate x:DataType="local:ScanViewOption">
-                <Button Style="{StaticResource BareButton}" Click="OnViewClick" Tag="{x:Bind Label}">
+                <Button Style="{StaticResource BareButton}" Command="{x:Bind Select}" CommandParameter="{x:Bind Label}">
+                  <!-- xaml-lint: allow card - a view-preset toggle; the Simple theme ships no segmented style -->
                   <Border Background="{x:Bind Background}" BorderBrush="{StaticResource HairlineOnDarkBrush}"
                           BorderThickness="1" CornerRadius="8" Padding="12,7">
                     <TextBlock Text="{x:Bind Label}" FontFamily="{StaticResource BodyMediumFont}" FontSize="12"
@@ -76,15 +77,16 @@
 
           <Rectangle Width="1" Height="20" Fill="{StaticResource HairlineOnDarkBrush}" Margin="6,0" />
 
-          <Button Style="{StaticResource BareButton}" Click="OnToggleXray">
-            <Border Background="{x:Bind XrayBackground, Mode=OneWay}" BorderBrush="{x:Bind XrayBorder, Mode=OneWay}"
+          <Button Style="{StaticResource BareButton}" Command="{x:Bind ViewModel.ToggleXrayCommand, Mode=OneWay}">
+            <!-- xaml-lint: allow card - the X-ray toggle face -->
+            <Border Background="{x:Bind ViewModel.XrayBackground, Mode=OneWay}" BorderBrush="{x:Bind ViewModel.XrayBorder, Mode=OneWay}"
                     BorderThickness="1" CornerRadius="8" Padding="14,7">
               <StackPanel Orientation="Horizontal" Spacing="7">
                 <shapes:Path Data="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"
-                             Stroke="{x:Bind XrayForeground, Mode=OneWay}" StrokeThickness="2"
+                             Stroke="{x:Bind ViewModel.XrayForeground, Mode=OneWay}" StrokeThickness="2"
                              Width="13" Height="13" Stretch="Uniform" VerticalAlignment="Center" />
                 <TextBlock Text="X-ray" FontFamily="{StaticResource BodyMediumFont}" FontSize="12"
-                           Foreground="{x:Bind XrayForeground, Mode=OneWay}" />
+                           Foreground="{x:Bind ViewModel.XrayForeground, Mode=OneWay}" />
               </StackPanel>
             </Border>
           </Button>
@@ -94,13 +96,13 @@
         </StackPanel>
 
         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-          <Button Style="{StaticResource GhostButton}" Content="−" Click="OnZoomOut" Width="32" Height="32"
+          <Button Style="{StaticResource GhostButton}" Content="−" Command="{x:Bind ViewModel.ZoomOutCommand, Mode=OneWay}" AutomationProperties.Name="Zoom out" Width="32" Height="32"
                   CornerRadius="9" Padding="0" Background="{StaticResource HairlineOnDarkBrush}"
                   Foreground="{StaticResource PaperBrush}" BorderBrush="{StaticResource HairlineOnDarkBrush}" />
-          <Button Style="{StaticResource GhostButton}" Content="+" Click="OnZoomIn" Width="32" Height="32"
+          <Button Style="{StaticResource GhostButton}" Content="+" Command="{x:Bind ViewModel.ZoomInCommand, Mode=OneWay}" AutomationProperties.Name="Zoom in" Width="32" Height="32"
                   CornerRadius="9" Padding="0" Background="{StaticResource HairlineOnDarkBrush}"
                   Foreground="{StaticResource PaperBrush}" BorderBrush="{StaticResource HairlineOnDarkBrush}" />
-          <Button Style="{StaticResource GhostButton}" Content="Reset view" Click="OnResetView" Height="32"
+          <Button Style="{StaticResource GhostButton}" Content="Reset view" Command="{x:Bind ViewModel.ResetViewCommand, Mode=OneWay}" Height="32"
                   CornerRadius="9" Padding="12,0" Background="{StaticResource HairlineOnDarkBrush}"
                   Foreground="{StaticResource PaperBrush}" BorderBrush="{StaticResource HairlineOnDarkBrush}" />
         </StackPanel>
@@ -115,11 +117,11 @@
           <TextBlock Text="SCAN RESULT" FontFamily="{StaticResource MonoMediumFont}" FontSize="11"
                      Foreground="{StaticResource TealBrightBrush}" />
           <StackPanel Orientation="Horizontal" Spacing="10">
-            <Ellipse Width="10" Height="10" Fill="{x:Bind VerdictTone, Mode=OneWay}" VerticalAlignment="Center" />
-            <TextBlock Text="{x:Bind Verdict, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}" FontSize="18"
+            <Ellipse Width="10" Height="10" Fill="{x:Bind ViewModel.VerdictTone, Mode=OneWay}" VerticalAlignment="Center" />
+            <TextBlock Text="{x:Bind ViewModel.Verdict, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}" FontSize="18"
                        Foreground="{StaticResource PaperBrush}" />
           </StackPanel>
-          <TextBlock Text="{x:Bind VerdictNote, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12.5"
+          <TextBlock Text="{x:Bind ViewModel.VerdictNote, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12.5"
                      Foreground="{StaticResource TextOnDarkMutedBrush}" TextWrapping="Wrap" LineHeight="19" />
         </StackPanel>
 
@@ -127,8 +129,8 @@
         <StackPanel Spacing="12">
           <TextBlock Text="DENSITY MAP" FontFamily="{StaticResource MonoMediumFont}" FontSize="11"
                      Foreground="{StaticResource TealBrightBrush}" />
-          <ItemsControl x:Name="DensityBar" Height="10" />
-          <ItemsControl ItemsSource="{x:Bind Density, Mode=OneWay}">
+          <controls:CompositionBar BarHeight="10" Slices="{x:Bind ViewModel.DensitySlices, Mode=OneWay}" />
+          <ItemsControl ItemsSource="{x:Bind ViewModel.Density, Mode=OneWay}">
             <ItemsControl.ItemsPanel>
               <ItemsPanelTemplate><StackPanel Spacing="8" /></ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
@@ -150,9 +152,9 @@
 
         <Border Height="1" Background="{StaticResource HairlineOnDarkBrush}" />
         <StackPanel Spacing="12">
-          <TextBlock Text="{x:Bind ManifestHeading, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}"
+          <TextBlock Text="{x:Bind ViewModel.ManifestHeading, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}"
                      FontSize="11" Foreground="{StaticResource TealBrightBrush}" />
-          <ItemsControl ItemsSource="{x:Bind Manifest, Mode=OneWay}">
+          <ItemsControl ItemsSource="{x:Bind ViewModel.Manifest, Mode=OneWay}">
             <ItemsControl.ItemsPanel>
               <ItemsPanelTemplate><StackPanel Spacing="9" /></ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
@@ -176,7 +178,7 @@
         </StackPanel>
 
         <Border Height="1" Background="{StaticResource HairlineOnDarkBrush}" />
-        <ItemsControl ItemsSource="{x:Bind ScanFacts, Mode=OneWay}">
+        <ItemsControl ItemsSource="{x:Bind ViewModel.ScanFacts, Mode=OneWay}">
           <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate><StackPanel /></ItemsPanelTemplate>
           </ItemsControl.ItemsPanel>
@@ -193,11 +195,11 @@
         </ItemsControl>
 
         <StackPanel Orientation="Horizontal" Spacing="8">
-          <Button Style="{StaticResource GhostButton}" Content="Close" Click="OnClose" Width="150"
+          <Button Style="{StaticResource GhostButton}" Content="Close" Command="{x:Bind ViewModel.CloseCommand, Mode=OneWay}" Width="150"
                   Background="Transparent" Foreground="{StaticResource PaperBrush}"
                   BorderBrush="{StaticResource HairlineOnDarkBrush}" />
-          <Button Style="{StaticResource AccentButton}" Content="{x:Bind ScanAction, Mode=OneWay}" Width="150"
-                  Click="OnOpenInspection" />
+          <Button Style="{StaticResource AccentButton}" Content="{x:Bind ViewModel.ScanAction, Mode=OneWay}" Width="150"
+                  Command="{x:Bind ViewModel.OpenInspectionCommand, Mode=OneWay}" />
         </StackPanel>
       </StackPanel>
     </ScrollViewer>

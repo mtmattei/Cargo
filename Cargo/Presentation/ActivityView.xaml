@@ -46,6 +46,7 @@
             <Grid Grid.Column="1">
               <Rectangle Width="1" Fill="{StaticResource HairlineStrongBrush}" HorizontalAlignment="Center"
                          VerticalAlignment="Stretch" Margin="0,34,0,-18" MinHeight="14" />
+              <!-- xaml-lint: allow card - timeline icon disc -->
               <Border Width="28" Height="28" CornerRadius="14" Background="{StaticResource SurfaceBrush}"
                       BorderThickness="1.5" BorderBrush="{x:Bind Tone}" VerticalAlignment="Top">
                 <shapes:Path Data="{x:Bind Icon}" Stroke="{x:Bind Tone}" StrokeThickness="1.8"

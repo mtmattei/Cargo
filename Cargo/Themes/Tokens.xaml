@@ -137,6 +137,9 @@
   <Color x:Key="FunnelCmaColor">#FF8FB3CF</Color>
 
   <!-- ── X-ray / scanner ──────────────────────────────────────── -->
+  <!-- The scanner stage: a dark radial well behind the 3D box -->
+  <Color x:Key="ScanStageInnerColor">#FF132A2B</Color>
+  <Color x:Key="ScanStageOuterColor">#FF0B1112</Color>
   <Color x:Key="ScanOrganicColor">#FFFF9A3C</Color>
   <Color x:Key="ScanMetallicColor">#FF4FB3A9</Color>
   <Color x:Key="ScanMixedColor">#FF7BD6B5</Color>

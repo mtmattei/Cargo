@@ -32,6 +32,7 @@ public sealed partial class MainViewModel : ObservableObject
         // geometries, which must be created on it.
         dispatcher.TryEnqueue(() =>
         {
+            Scanner = new ScannerViewModel(state);
             BuildNav();
             BuildLayers();
             RefreshTide();
@@ -49,6 +50,10 @@ public sealed partial class MainViewModel : ObservableObject
     public ObservableCollection<LayerItem> Layers { get; } = new();
 
     public TideReadout Tide { get; } = new();
+
+    /// <summary>The container inspection that covers the whole window while it is open.</summary>
+    [ObservableProperty]
+    private ScannerViewModel? _scanner;
 
     /// <summary>Weather and tide leave the header below the wide breakpoint.</summary>
     [ObservableProperty]

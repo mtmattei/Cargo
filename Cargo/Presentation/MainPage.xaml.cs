@@ -18,7 +18,7 @@ public sealed partial class MainPage : Page
 
     public MainViewModel? ViewModel => DataContext as MainViewModel;
 
-    // xaml-lint: allow codebehind - the harbour scene and the scanner are code-built controls that take the store directly
+    // xaml-lint: allow codebehind - the harbour scene is a code-built control that takes the store directly
     private void Attach()
     {
         if (_attached || ViewModel is not { } vm)
@@ -28,7 +28,6 @@ public sealed partial class MainPage : Page
 
         _attached = true;
         Harbour.State = vm.State;
-        ScannerHost.Content = new ScannerOverlay(vm.State);
         // xaml-lint: allow responsive - a nav label shows by width AND current section; moves to utu:Responsive in the Toolkit pass
         vm.ApplyWidth(ActualWidth > 0 ? ActualWidth : 1680);
         Bindings.Update();

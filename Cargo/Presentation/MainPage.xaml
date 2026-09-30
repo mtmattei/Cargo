@@ -8,6 +8,9 @@
       xmlns:uen="using:Uno.Extensions.Navigation.UI"
       Background="{StaticResource PaperBrush}">
 
+  <!-- Two layers: the page, and the inspection over the whole window. The overlay stays out of the
+       page rows so its size never feeds the Auto stage row. -->
+  <Grid>
   <Grid uen:Region.Attached="True">
     <Grid.RowDefinitions>
       <RowDefinition Height="56" />
@@ -48,6 +51,7 @@
                     ToolTipService.ToolTip="{x:Bind Tooltip, Mode=OneWay}" Height="56">
               <Grid Padding="8,0">
                 <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                  <!-- xaml-lint: allow card - the section number chip in the header -->
                   <Border Background="{x:Bind ChipBackground, Mode=OneWay}" CornerRadius="4" MinWidth="22" Height="18"
                           Padding="4,0" VerticalAlignment="Center">
                     <TextBlock Text="{x:Bind Index}" FontFamily="{StaticResource MonoMediumFont}" FontSize="10.5"
@@ -102,6 +106,7 @@
         <TextBlock Text="{x:Bind ViewModel.State.Now, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}"
                    FontSize="13" Foreground="{StaticResource PaperBrush}" VerticalAlignment="Center" />
 
+        <!-- xaml-lint: allow card - user avatar -->
         <Border Width="28" Height="28" CornerRadius="14" Background="{StaticResource TealDeepBrush}">
           <TextBlock Text="EL" FontFamily="{StaticResource BodyStrongFont}" FontSize="10.5"
                      Foreground="{StaticResource SurfaceBrush}"
@@ -160,8 +165,10 @@
       </ScrollViewer>
     </Grid>
 
-    <!-- ══ CONTAINER INSPECTION ════════════════════════════════════════ -->
-    <ContentControl x:Name="ScannerHost" Grid.RowSpan="3" Visibility="{x:Bind ViewModel.State.ScannerOpen, Mode=OneWay}"
-                    HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
+  </Grid>
+
+  <!-- ══ CONTAINER INSPECTION ════════════════════════════════════════ -->
+  <local:ScannerOverlay DataContext="{x:Bind ViewModel.Scanner, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.State.ScannerOpen, Mode=OneWay}" />
   </Grid>
 </Page>

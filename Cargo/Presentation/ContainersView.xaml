@@ -58,6 +58,7 @@
               <utu:CardContentControl Style="{StaticResource OutlinedPanel}" BorderBrush="{x:Bind Border}" Padding="16,14">
                 <StackPanel Spacing="6">
                   <Grid>
+                    <!-- xaml-lint: allow card - the image well inside a container card -->
                     <Border CornerRadius="10" Padding="6,8,6,4">
                       <Border.Background>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -67,10 +68,12 @@
                       </Border.Background>
                       <Image Source="{x:Bind Render}" Height="72" Stretch="Uniform" />
                     </Border>
+                    <!-- xaml-lint: allow card - container id tag over the image -->
                     <Border Background="{StaticResource SurfaceBrush}" CornerRadius="4" Padding="7,2"
                             HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10">
                       <TextBlock Text="{x:Bind IdPretty}" FontFamily="{StaticResource MonoMediumFont}" FontSize="12" />
                     </Border>
+                    <!-- xaml-lint: allow card - size and carrier tag over the image -->
                     <Border Background="{StaticResource SurfaceBrush}" CornerRadius="4" Padding="6,2"
                             HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,0,10,8">
                       <TextBlock Text="{x:Bind Meta}" FontFamily="{StaticResource MonoMediumFont}" FontSize="10"
@@ -117,6 +120,7 @@
                       <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <StackPanel Spacing="6" HorizontalAlignment="Center">
+                      <!-- xaml-lint: allow card - journey step icon disc -->
                       <Border Width="30" Height="30" CornerRadius="15" Background="{x:Bind Background}"
                               BorderBrush="{x:Bind Border}" BorderThickness="1.5">
                         <shapes:Path Data="{x:Bind Icon}" Stroke="{x:Bind Foreground}" StrokeThickness="1.8"
