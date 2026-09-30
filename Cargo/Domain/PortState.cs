@@ -100,6 +100,16 @@ public sealed partial class PortState : ObservableObject
 
     public string Now => FormatWithSeconds(NowHours);
 
+    /// <summary>Container moves in the hour so far: the hour's planned volume scaled by how
+    /// far into it we are, with a little crane-to-crane jitter.</summary>
+    public static int MovesAt(double hours)
+    {
+        var hour = (int)Math.Floor(hours);
+        var fraction = hours - hour;
+        var moves = (int)Math.Round(PortData.Volume[Math.Clamp(hour, 0, 24)] * fraction + Math.Sin(hours * 97) * 3);
+        return Math.Max(0, moves);
+    }
+
     public static string Format(double hours)
     {
         var s = (int)Math.Round(hours * 3600) % 86400;

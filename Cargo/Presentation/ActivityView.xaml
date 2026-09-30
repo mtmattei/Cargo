@@ -25,7 +25,7 @@
           <TextBlock Text="moves per hour · 2,146 so far" Style="{StaticResource CaptionText}" FontSize="12"
                      HorizontalAlignment="Right" VerticalAlignment="Center" />
         </Grid>
-        <ContentControl x:Name="ThroughputHost" HorizontalContentAlignment="Stretch" />
+        <controls:ThroughputChart />
       </StackPanel>
     </utu:CardContentControl>
 

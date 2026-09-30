@@ -24,7 +24,7 @@
         <TextBlock Style="{StaticResource GreetingText}">
           <Run Text="Good evening, " /><Run Text="Operations." Foreground="{StaticResource TealBrush}" />
         </TextBlock>
-        <TextBlock Text="{x:Bind Subtitle}" Style="{StaticResource CaptionText}" FontSize="14" />
+        <TextBlock Text="{x:Bind ViewModel.Subtitle, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="14" />
       </StackPanel>
 
       <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="26" VerticalAlignment="Bottom">
@@ -37,17 +37,17 @@
           <TextBlock Text="inbound" Style="{StaticResource CaptionText}" FontSize="12.5" VerticalAlignment="Bottom" Margin="0,0,0,3" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Spacing="8">
-          <TextBlock Text="{x:Bind MovesNow, Mode=OneWay}" Style="{StaticResource MetricText}" Foreground="{StaticResource TealBrush}" />
+          <TextBlock Text="{x:Bind ViewModel.MovesNow, Mode=OneWay}" Style="{StaticResource MetricText}" Foreground="{StaticResource TealBrush}" />
           <TextBlock Text="moves / h" Style="{StaticResource CaptionText}" FontSize="12.5" VerticalAlignment="Bottom" Margin="0,0,0,3" />
         </StackPanel>
-        <Button Style="{StaticResource BareButton}" Command="{x:Bind State.GoCommand}" CommandParameter="fleet"
+        <Button Style="{StaticResource BareButton}" Command="{x:Bind ViewModel.State.GoCommand}" CommandParameter="fleet"
                 ToolTipService.ToolTip="Open Fleet &amp; Waterways">
           <StackPanel Orientation="Horizontal" Spacing="8">
             <TextBlock Text="2" Style="{StaticResource MetricText}" Foreground="{StaticResource OrangeBrush}" />
             <TextBlock Text="orders late" Style="{StaticResource CaptionText}" FontSize="12.5" VerticalAlignment="Bottom" Margin="0,0,0,3" />
           </StackPanel>
         </Button>
-        <Button Style="{StaticResource BareButton}" Command="{x:Bind State.OpenSecurityCommand}"
+        <Button Style="{StaticResource BareButton}" Command="{x:Bind ViewModel.State.OpenSecurityCommand}"
                 ToolTipService.ToolTip="Open Security">
           <StackPanel Orientation="Horizontal" Spacing="8">
             <TextBlock Text="1" Style="{StaticResource MetricText}" Foreground="{StaticResource OrangeBrush}" />
@@ -90,19 +90,19 @@
               <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right" Margin="0,2,0,0">
                 <Ellipse Width="6" Height="6" Fill="{StaticResource AlertBrush}" VerticalAlignment="Center" />
                 <TextBlock Style="{StaticResource CaptionText}" Foreground="{StaticResource TextFaintBrush}">
-                  <Run Text="Live · " /><Run Text="{x:Bind State.Now, Mode=OneWay}" />
+                  <Run Text="Live · " /><Run Text="{x:Bind ViewModel.State.Now, Mode=OneWay}" />
                 </TextBlock>
               </StackPanel>
             </StackPanel>
           </Grid>
-          <ContentControl x:Name="MovementsHost" HorizontalContentAlignment="Stretch" Margin="0,6,0,0" />
+          <controls:MovementsChart Now="{x:Bind ViewModel.NowHours, Mode=OneWay}" Margin="0,6,0,0" />
         </StackPanel>
       </Border>
 
       <Border Grid.Column="1" Style="{StaticResource RuledPanel}" Padding="0,18,20,14">
         <StackPanel Spacing="14">
           <TextBlock Text="Next up" Style="{StaticResource PanelTitleText}" />
-          <ItemsControl ItemsSource="{x:Bind NextUp, Mode=OneWay}">
+          <ItemsControl ItemsSource="{x:Bind ViewModel.NextUp, Mode=OneWay}">
             <ItemsControl.ItemsPanel>
               <ItemsPanelTemplate><StackPanel Spacing="14" /></ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
@@ -156,11 +156,11 @@
           <TextBlock Text="Container volume" Style="{StaticResource CardTitleText}" />
           <TextBlock Text="Moves this hour · one block = 20" Style="{StaticResource CaptionText}" Margin="0,8,0,0" />
           <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4,0,0">
-            <TextBlock Text="{x:Bind MovesNow, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}" FontSize="26" />
+            <TextBlock Text="{x:Bind ViewModel.MovesNow, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}" FontSize="26" />
             <TextBlock Text="↑ 12% vs yesterday" FontFamily="{StaticResource BodyMediumFont}" FontSize="12"
                        Foreground="{StaticResource SeaGreenBrush}" VerticalAlignment="Bottom" Margin="0,0,0,4" />
           </StackPanel>
-          <ContentControl x:Name="VolumeHost" HorizontalContentAlignment="Stretch" Margin="0,8,0,0" />
+          <controls:VolumeChart Now="{x:Bind ViewModel.NowHours, Mode=OneWay}" Margin="0,8,0,0" />
         </StackPanel>
       </Border>
 
@@ -179,7 +179,7 @@
               </StackPanel>
             </StackPanel>
           </Grid>
-          <ContentControl x:Name="FlowHost" HorizontalContentAlignment="Stretch" Margin="0,14,0,0" />
+          <controls:FlowChart Margin="0,14,0,0" />
         </StackPanel>
       </Border>
 
@@ -189,7 +189,7 @@
             <TextBlock Text="Sea &amp; weather" Style="{StaticResource CardTitleText}" />
             <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource CaptionText}"
                        Foreground="{StaticResource TextFaintBrush}">
-              <Run Text="Outer harbour · " /><Run Text="{x:Bind State.Now, Mode=OneWay}" />
+              <Run Text="Outer harbour · " /><Run Text="{x:Bind ViewModel.State.Now, Mode=OneWay}" />
             </TextBlock>
           </Grid>
 
@@ -236,7 +236,7 @@
             <TextBlock Text="Tide · Westhaven Sound" Style="{StaticResource CaptionText}" />
             <TextBlock Text="HW 23:10 · +2.1 m" Style="{StaticResource CaptionText}" HorizontalAlignment="Right" />
           </Grid>
-          <ContentControl x:Name="TideHost" Height="78" HorizontalContentAlignment="Stretch" Margin="0,6,0,0" />
+          <controls:TideChart Height="78" Margin="0,6,0,0" />
           <Grid Margin="0,2,0,0">
             <TextBlock Text="18:00" Style="{StaticResource MicroText}" HorizontalAlignment="Left" />
             <TextBlock Text="00:00" Style="{StaticResource MicroText}" HorizontalAlignment="Center" />
@@ -248,7 +248,7 @@
 
     <!-- ── Row 3: the shift log ─────────────────────────────────── -->
     <Border Grid.Row="3" Style="{StaticResource SectionRule}">
-      <ContentControl x:Name="ActivityHost" HorizontalContentAlignment="Stretch" />
+      <local:ActivityView />
     </Border>
   </Grid>
 </Page>
