@@ -38,6 +38,13 @@ public sealed class HarbourRenderer : IDisposable
 
     private SKPicture? _still;
     private string _stillKey = string.Empty;
+
+    // The still scene with its tilt-shift, baked once the camera settles. Replaying the picture
+    // twice and blurring the full frame cost well over a core at 30 fps; a settled frame is now
+    // one image draw plus the live layer.
+    private SKImage? _baked;
+    private string _bakedKey = string.Empty;
+    private string _lastKey = string.Empty;
     private SKShader? _maskShader;
     private SKShader? _hazeShader;
     private readonly SKShader?[] _fadeShaders = new SKShader?[4];
@@ -62,7 +69,11 @@ public sealed class HarbourRenderer : IDisposable
     }
 
     /// <summary>Forces the still scene to be recorded again on the next frame.</summary>
-    public void Invalidate() => _stillKey = string.Empty;
+    public void Invalidate()
+    {
+        _stillKey = string.Empty;
+        _bakedKey = string.Empty;
+    }
 
     public void Render(SKCanvas canvas, float width, float height, double seconds, HarbourFrameState state)
     {
@@ -80,13 +91,62 @@ public sealed class HarbourRenderer : IDisposable
             RecordStill(width, height, state);
         }
 
+        var bounds = new SKRect(0, 0, width, height);
         canvas.Clear(_pal["HarbourStageColor"]);
-        canvas.DrawPicture(_still);
-        TiltShift(canvas, width, height);
+
+        // While the camera moves, the key changes every frame: draw directly and never pay for a bake.
+        // The first frame it holds still, bake, and every frame after that is a single image draw.
+        var settled = key == _lastKey;
+        _lastKey = key;
+        if (settled && _bakedKey != key)
+        {
+            Bake(canvas, width, height, key);
+        }
+
+        if (_baked is not null && _bakedKey == key)
+        {
+            canvas.DrawImage(_baked, bounds);
+        }
+        else
+        {
+            canvas.DrawPicture(_still);
+            TiltShift(canvas, width, height);
+        }
 
         DrawLive(canvas, seconds, state);
         DrawAtmosphere(canvas, width, height);
         DrawLeaders(canvas, state);
+    }
+
+    /// <summary>
+    /// Renders the sharp still plus tilt-shift into an image at device resolution, on the same
+    /// GPU context as the window when there is one, so drawing it back is a texture blit.
+    /// </summary>
+    private void Bake(SKCanvas target, float width, float height, string key)
+    {
+        var scale = target.TotalMatrix;
+        var sx = Math.Max(1f, Math.Abs(scale.ScaleX));
+        var sy = Math.Max(1f, Math.Abs(scale.ScaleY));
+        var info = new SKImageInfo((int)Math.Ceiling(width * sx), (int)Math.Ceiling(height * sy),
+            SKColorType.Rgba8888, SKAlphaType.Premul);
+
+        using var surface = target.Context is { } gpu
+            ? SKSurface.Create(gpu, true, info) ?? SKSurface.Create(info)
+            : SKSurface.Create(info);
+        if (surface is null)
+        {
+            return;
+        }
+
+        var canvas = surface.Canvas;
+        canvas.Scale(sx, sy);
+        canvas.Clear(_pal["HarbourStageColor"]);
+        canvas.DrawPicture(_still);
+        TiltShift(canvas, width, height);
+
+        _baked?.Dispose();
+        _baked = surface.Snapshot();
+        _bakedKey = key;
     }
 
     // ── Still scene ────────────────────────────────────────────────────────────
@@ -863,6 +923,7 @@ public sealed class HarbourRenderer : IDisposable
     public void Dispose()
     {
         _still?.Dispose();
+        _baked?.Dispose();
         _maskShader?.Dispose();
         _hazeShader?.Dispose();
         foreach (var shader in _fadeShaders)

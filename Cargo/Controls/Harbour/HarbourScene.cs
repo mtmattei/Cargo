@@ -14,13 +14,17 @@ namespace Cargo.Controls.Harbour;
 /// </summary>
 public sealed class HarbourScene : SKCanvasElement
 {
-    private const double FrameMs = 33;
+    // Camera motion (drag, glide, tween) runs at 30 fps. At rest only the ambient cranes and
+    // trucks move, slowly (an 11 s crane cycle, trucks crawling a 1 km quay), so the idle rate
+    // is 15 fps: the same look at half the live-layer work.
+    private static readonly TimeSpan MotionFrame = TimeSpan.FromMilliseconds(33);
+    private static readonly TimeSpan IdleFrame = TimeSpan.FromMilliseconds(66);
 
     private readonly HarbourPalette _palette = new();
     private readonly HarbourCamera _camera = new();
     private readonly HarbourWorld _world;
     private readonly HarbourRenderer _renderer;
-    private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromMilliseconds(FrameMs) };
+    private readonly DispatcherTimer _timer = new() { Interval = IdleFrame };
     private readonly DateTimeOffset _started = DateTimeOffset.Now;
     private readonly bool _animate = new Windows.UI.ViewManagement.UISettings().AnimationsEnabled;
     private readonly Dictionary<uint, Point> _pointers = new();
@@ -162,6 +166,7 @@ public sealed class HarbourScene : SKCanvasElement
 
     private void Moved()
     {
+        _timer.Interval = MotionFrame;
         Invalidate();
         PoseChanged?.Invoke(this, EventArgs.Empty);
     }
@@ -198,6 +203,11 @@ public sealed class HarbourScene : SKCanvasElement
         }
         else if (_animate)
         {
+            if (_pointers.Count == 0)
+            {
+                _timer.Interval = IdleFrame;
+            }
+
             // Cranes and trucks: one frame per tick, never a held render loop.
             Invalidate();
         }
