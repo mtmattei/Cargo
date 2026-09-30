@@ -5,8 +5,8 @@ using Path = Microsoft.UI.Xaml.Shapes.Path;
 namespace Cargo.Controls;
 
 /// <summary>
-/// The faint 48 px survey grid the design lays under every page, plus a teal wash in the
-/// top-left corner. Drawn as lines rather than a tiled bitmap so it stays crisp at any DPI,
+/// The faint 48 px survey grid behind the container scanner's inspection stage, plus a teal
+/// wash in the top-left corner. Drawn as lines rather than a tiled bitmap so it stays crisp at any DPI,
 /// and as one Path so a window resize rebuilds a geometry, not a hundred elements.
 /// </summary>
 public sealed partial class GridPaper : UserControl
