@@ -1,11 +1,22 @@
 <UserControl x:Class="Cargo.Presentation.OverviewMasthead"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:utu="using:Uno.Toolkit.UI">
+
+  <UserControl.Resources>
+    <!-- Greeting (~560 px) + figures (~510 px) + gutters need ~1150 px on one line; below 1240 the
+         figures move under the greeting instead of sliding beneath it -->
+    <utu:ResponsiveLayout x:Key="MastheadBreakpoints" Narrowest="0" Narrow="0" Normal="1240" Wide="100000" Widest="100000" />
+  </UserControl.Resources>
 
   <!-- The Overview greeting and the shift's headline figures, laid over the top of the harbour
        stage. Greeting left, figures right, both on one bottom line. Figures are ink; colour only
        marks status, as a dot before the label. -->
   <Grid ColumnSpacing="32">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="*" />
       <ColumnDefinition Width="Auto" />
@@ -18,7 +29,10 @@
       <TextBlock Text="{x:Bind ViewModel.Subtitle, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="14" />
     </StackPanel>
 
-    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="32" VerticalAlignment="Bottom">
+    <StackPanel Orientation="Horizontal" Spacing="32" VerticalAlignment="Bottom"
+                Grid.Row="{utu:Responsive Layout={StaticResource MastheadBreakpoints}, Narrow=1, Normal=0}"
+                Grid.Column="{utu:Responsive Layout={StaticResource MastheadBreakpoints}, Narrow=0, Normal=1}"
+                Margin="{utu:Responsive Layout={StaticResource MastheadBreakpoints}, Narrow='0,20,0,0', Normal='0'}">
       <StackPanel Style="{StaticResource FigureStack}">
         <TextBlock Text="Alongside" Style="{StaticResource FigureLabelText}" />
         <TextBlock Text="3" Style="{StaticResource MetricText}" />
