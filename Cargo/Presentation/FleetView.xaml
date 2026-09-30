@@ -5,276 +5,304 @@
              xmlns:controls="using:Cargo.Controls"
              xmlns:shapes="using:Microsoft.UI.Xaml.Shapes">
 
-  <Grid Padding="40,28,40,48" MinWidth="1040" MaxWidth="1520" RowSpacing="18">
+  <Grid Style="{StaticResource PageFrame}">
     <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
-    <Grid ColumnSpacing="24">
+    <!-- ── Masthead ─────────────────────────────────────────────── -->
+    <Grid Style="{StaticResource Masthead}">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*" />
         <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
-      <StackPanel Spacing="12">
-        <StackPanel Orientation="Horizontal" Spacing="8">
-          <Ellipse Width="6" Height="6" Fill="{StaticResource AlertBrush}" VerticalAlignment="Center" />
-          <TextBlock Text="LIVE AIS · WESTHAVEN SOUND → ALDER RIVER · 120 KM" Style="{StaticResource EyebrowText}" />
-        </StackPanel>
+
+      <StackPanel VerticalAlignment="Bottom" Spacing="8">
         <TextBlock Text="Fleet &amp; waterways" Style="{StaticResource PageTitleText}" />
+        <StackPanel Orientation="Horizontal" Spacing="7">
+          <Ellipse Width="6" Height="6" Fill="{StaticResource AlertBrush}" VerticalAlignment="Center" />
+          <TextBlock Text="Live AIS · Westhaven Sound to the Alder River · 120 km" Style="{StaticResource PageSubtitleText}" />
+        </StackPanel>
       </StackPanel>
-      <ItemsControl Grid.Column="1" ItemsSource="{x:Bind Legend}" VerticalAlignment="Bottom">
-        <ItemsControl.ItemsPanel>
-          <ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="14" /></ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
-        <ItemsControl.ItemTemplate>
-          <DataTemplate x:DataType="local:LegendItem">
-            <StackPanel Orientation="Horizontal" Spacing="5">
-              <Ellipse Width="10" Height="10" Fill="{x:Bind Swatch}" VerticalAlignment="Center" />
-              <TextBlock Text="{x:Bind Label}" Style="{StaticResource CaptionText}" FontSize="12" />
-            </StackPanel>
-          </DataTemplate>
-        </ItemsControl.ItemTemplate>
-      </ItemsControl>
+
+      <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="26" VerticalAlignment="Bottom">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <TextBlock Text="{x:Bind UnderwayCount}" Style="{StaticResource MetricText}" />
+          <TextBlock Text="underway" Style="{StaticResource MetricLabelText}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <TextBlock Text="{x:Bind LateCount}" Style="{StaticResource MetricText}" Foreground="{StaticResource OrangeInkBrush}" />
+          <TextBlock Text="running late" Style="{StaticResource MetricLabelText}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <TextBlock Text="{x:Bind LockCount}" Style="{StaticResource MetricText}" />
+          <TextBlock Text="lockings booked" Style="{StaticResource MetricLabelText}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <TextBlock Text="{x:Bind NoticeTotal}" Style="{StaticResource MetricText}" Foreground="{StaticResource AlertBrush}" />
+          <TextBlock Text="notices" Style="{StaticResource MetricLabelText}" />
+        </StackPanel>
+      </StackPanel>
     </Grid>
 
-    <Grid Grid.Row="1" ColumnSpacing="16">
+    <!-- ── Row 1: the river + underway ─────────────────────────── -->
+    <Grid Grid.Row="1" ColumnSpacing="40">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*" />
-        <ColumnDefinition Width="340" />
+        <ColumnDefinition Width="300" />
       </Grid.ColumnDefinitions>
 
-      <StackPanel Spacing="16">
-        <Border CornerRadius="18" BorderBrush="{StaticResource HairlineBrush}" BorderThickness="1"
-                Background="{StaticResource LandBrush}">
-          <ContentControl x:Name="RiverHost" HorizontalContentAlignment="Stretch" />
-        </Border>
+      <Border Style="{StaticResource RuledPanel}" Padding="0,18,0,14">
+        <StackPanel Spacing="12">
+          <Grid ColumnSpacing="18">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Alder River" Style="{StaticResource CardTitleText}" VerticalAlignment="Center" />
+            <ItemsControl Grid.Column="1" ItemsSource="{x:Bind Legend}" VerticalAlignment="Center">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="14" /></ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="local:LegendItem">
+                  <StackPanel Orientation="Horizontal" Spacing="6">
+                    <Ellipse Width="7" Height="7" Fill="{x:Bind Swatch}" VerticalAlignment="Center" />
+                    <TextBlock Text="{x:Bind Label}" Style="{StaticResource CaptionText}" />
+                  </StackPanel>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </Grid>
+          <!-- xaml-lint: allow card - the river chart's ground, not a card -->
+          <Border CornerRadius="{StaticResource RadiusPanel}" Background="{StaticResource LandBrush}">
+            <ContentControl x:Name="RiverHost" HorizontalContentAlignment="Stretch" />
+          </Border>
+        </StackPanel>
+      </Border>
 
-        <Grid ColumnSpacing="16">
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1.1*" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-          </Grid.ColumnDefinitions>
-
-          <controls:Card>
-            <StackPanel Spacing="12">
-              <Grid>
-                <TextBlock Text="Lockings today" Style="{StaticResource CardTitleText}" />
-                <TextBlock Text="{x:Bind BookedLabel, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="11.5"
-                           HorizontalAlignment="Right" VerticalAlignment="Center" />
-              </Grid>
-              <ItemsControl ItemsSource="{x:Bind Lockings}">
-                <ItemsControl.ItemsPanel>
-                  <ItemsPanelTemplate><StackPanel Spacing="9" /></ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                  <DataTemplate x:DataType="local:LockingRow">
-                    <Grid ColumnSpacing="10">
+      <Border Grid.Column="1" Style="{StaticResource RuledPanel}" Padding="0,18,0,14">
+        <StackPanel Spacing="14">
+          <Grid>
+            <TextBlock Text="Underway" Style="{StaticResource PanelTitleText}" />
+            <TextBlock Text="{x:Bind FleetCount}" Style="{StaticResource CaptionText}"
+                       HorizontalAlignment="Right" VerticalAlignment="Center" />
+          </Grid>
+          <ItemsControl ItemsSource="{x:Bind Fleet, Mode=OneWay}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate><StackPanel Spacing="2" /></ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="local:FleetRow">
+                <Button Style="{StaticResource RowButton}" Command="{x:Bind Select}" CommandParameter="{x:Bind Id}"
+                        AutomationProperties.Name="{x:Bind Name}">
+                  <!-- xaml-lint: allow card - the selected-row highlight, not a card -->
+                  <Border Background="{x:Bind Background}" CornerRadius="{StaticResource RadiusControl}" Padding="10,8">
+                    <Grid ColumnSpacing="10" RowSpacing="3">
                       <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="44" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                       </Grid.ColumnDefinitions>
-                      <TextBlock Text="{x:Bind Time}" FontFamily="{StaticResource MonoMediumFont}" FontSize="12"
-                                 Foreground="{StaticResource TextFaintBrush}" VerticalAlignment="Center" />
-                      <TextBlock Grid.Column="1" Style="{StaticResource BodyText}" VerticalAlignment="Center">
-                        <Run Text="{x:Bind Lock}" FontFamily="{StaticResource BodyStrongFont}" /><Run Text=" · " /><Run Text="{x:Bind Vessel}" />
-                      </TextBlock>
-                      <Border Grid.Column="2" Background="{x:Bind Background}" CornerRadius="99" Padding="8,3">
-                        <TextBlock Text="{x:Bind State}" FontFamily="{StaticResource BodyMediumFont}" FontSize="11"
-                                   Foreground="{x:Bind Foreground}" />
-                      </Border>
-                    </Grid>
-                  </DataTemplate>
-                </ItemsControl.ItemTemplate>
-              </ItemsControl>
-            </StackPanel>
-          </controls:Card>
-
-          <controls:Card Grid.Column="1">
-            <StackPanel Spacing="12">
-              <Grid>
-                <TextBlock Text="Water levels" Style="{StaticResource CardTitleText}" />
-                <TextBlock Text="24 h · gauges" Style="{StaticResource CaptionText}" FontSize="11.5"
-                           HorizontalAlignment="Right" VerticalAlignment="Center" />
-              </Grid>
-              <ItemsControl ItemsSource="{x:Bind Gauges}">
-                <ItemsControl.ItemsPanel>
-                  <ItemsPanelTemplate><StackPanel Spacing="10" /></ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                  <DataTemplate x:DataType="local:GaugeRow">
-                    <Grid ColumnSpacing="10">
-                      <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="90" />
-                        <ColumnDefinition Width="Auto" />
-                      </Grid.ColumnDefinitions>
-                      <TextBlock Style="{StaticResource BodyText}" VerticalAlignment="Center">
-                        <Run Text="{x:Bind Name}" /><Run Text="{x:Bind Chainage}" Foreground="{StaticResource TextFaintBrush}" />
-                      </TextBlock>
-                      <shapes:Path Grid.Column="1" Data="{x:Bind Spark}" Stroke="{x:Bind Tone}"
-                                   StrokeThickness="1.6" Width="90" Height="22" Stretch="Uniform"
-                                   VerticalAlignment="Center" />
-                      <TextBlock Grid.Column="2" Text="{x:Bind Level}" FontFamily="{StaticResource MonoMediumFont}"
-                                 FontSize="12" Foreground="{x:Bind Tone}" VerticalAlignment="Center" />
-                    </Grid>
-                  </DataTemplate>
-                </ItemsControl.ItemTemplate>
-              </ItemsControl>
-            </StackPanel>
-          </controls:Card>
-
-          <controls:Card Grid.Column="2">
-            <StackPanel Spacing="12">
-              <Grid>
-                <TextBlock Text="Notices to skippers" Style="{StaticResource CardTitleText}" />
-                <TextBlock Text="{x:Bind NoticeCount}" Style="{StaticResource CaptionText}" FontSize="11.5"
-                           HorizontalAlignment="Right" VerticalAlignment="Center" />
-              </Grid>
-              <ItemsControl ItemsSource="{x:Bind Notices}">
-                <ItemsControl.ItemsPanel>
-                  <ItemsPanelTemplate><StackPanel Spacing="10" /></ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                  <DataTemplate x:DataType="local:NoticeRow">
-                    <Grid ColumnSpacing="10">
-                      <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="18" />
-                        <ColumnDefinition Width="*" />
-                      </Grid.ColumnDefinitions>
-                      <Border Width="16" Height="16" CornerRadius="8" BorderThickness="2" BorderBrush="{x:Bind Tone}"
-                              VerticalAlignment="Top" Margin="0,1,0,0">
-                        <TextBlock Text="!" FontFamily="{StaticResource BodyStrongFont}" FontSize="9"
-                                   Foreground="{x:Bind Tone}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                      </Border>
-                      <StackPanel Grid.Column="1" Spacing="2">
-                        <TextBlock Text="{x:Bind Title}" Style="{StaticResource BodyStrongText}" TextWrapping="Wrap" />
-                        <TextBlock Text="{x:Bind Detail}" Style="{StaticResource CaptionText}" TextWrapping="Wrap"
-                                   LineHeight="18" />
+                      <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                      </Grid.RowDefinitions>
+                      <StackPanel Orientation="Horizontal" Spacing="7">
+                        <Ellipse Width="6" Height="6" Fill="{x:Bind Tone}" VerticalAlignment="Center" />
+                        <TextBlock Text="{x:Bind Name}" Style="{StaticResource BodyStrongText}" TextTrimming="CharacterEllipsis" />
                       </StackPanel>
+                      <TextBlock Grid.Column="1" Text="{x:Bind Slip}" FontFamily="{StaticResource MonoMediumFont}"
+                                 FontSize="11.5" Foreground="{x:Bind SlipInk}" />
+                      <TextBlock Grid.Row="1" Text="{x:Bind Detail}" Style="{StaticResource CaptionText}"
+                                 TextTrimming="CharacterEllipsis" />
+                      <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind Eta}" Style="{StaticResource CaptionText}"
+                                 FontFamily="{StaticResource MonoFont}" />
                     </Grid>
-                  </DataTemplate>
-                </ItemsControl.ItemTemplate>
-              </ItemsControl>
+                  </Border>
+                </Button>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </Border>
+    </Grid>
+
+    <!-- ── Row 2: lockings, gauges, notices, crew ───────────────── -->
+    <Grid Grid.Row="2" ColumnSpacing="40">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="300" />
+      </Grid.ColumnDefinitions>
+
+      <Border Style="{StaticResource RuledPanel}" Padding="0,18,0,14">
+        <StackPanel Spacing="14">
+          <StackPanel Spacing="3">
+            <TextBlock Text="Lockings today" Style="{StaticResource CardTitleText}" />
+            <TextBlock Text="{x:Bind BookedLabel, Mode=OneWay}" Style="{StaticResource CaptionText}" />
+          </StackPanel>
+          <ItemsControl ItemsSource="{x:Bind Lockings}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate><StackPanel Spacing="10" /></ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="local:LockingRow">
+                <Grid ColumnSpacing="10">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="42" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                  </Grid.ColumnDefinitions>
+                  <TextBlock Text="{x:Bind Time}" FontFamily="{StaticResource MonoMediumFont}" FontSize="12"
+                             Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" />
+                  <TextBlock Grid.Column="1" Style="{StaticResource BodyText}" VerticalAlignment="Center"
+                             TextTrimming="CharacterEllipsis">
+                    <Run Text="{x:Bind Lock}" FontFamily="{StaticResource BodyStrongFont}" /><Run Text=" · " /><Run Text="{x:Bind Vessel}" />
+                  </TextBlock>
+                  <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6">
+                    <Ellipse Width="6" Height="6" Fill="{x:Bind Tone}" VerticalAlignment="Center" />
+                    <TextBlock Text="{x:Bind State}" Style="{StaticResource StatusText}" Foreground="{x:Bind Ink}" />
+                  </StackPanel>
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </Border>
+
+      <Border Grid.Column="1" Style="{StaticResource RuledPanel}" Padding="0,18,0,14">
+        <StackPanel Spacing="14">
+          <StackPanel Spacing="3">
+            <TextBlock Text="Water levels" Style="{StaticResource CardTitleText}" />
+            <TextBlock Text="Gauges · last 24 h" Style="{StaticResource CaptionText}" />
+          </StackPanel>
+          <ItemsControl ItemsSource="{x:Bind Gauges}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate><StackPanel Spacing="12" /></ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="local:GaugeRow">
+                <Grid ColumnSpacing="10">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="64" />
+                  </Grid.ColumnDefinitions>
+                  <StackPanel Spacing="1" VerticalAlignment="Center">
+                    <TextBlock Text="{x:Bind Name}" Style="{StaticResource BodyStrongText}" />
+                    <TextBlock Text="{x:Bind Chainage}" Style="{StaticResource CaptionText}" />
+                  </StackPanel>
+                  <shapes:Path Grid.Column="1" Data="{x:Bind Spark}" Stroke="{x:Bind Tone}"
+                               StrokeThickness="1.6" Width="80" Height="22" Stretch="Uniform"
+                               VerticalAlignment="Center" />
+                  <TextBlock Grid.Column="2" Text="{x:Bind Level}" FontFamily="{StaticResource MonoMediumFont}"
+                             FontSize="12" Foreground="{x:Bind Ink}" VerticalAlignment="Center" TextAlignment="Right" />
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </Border>
+
+      <Border Grid.Column="2" Style="{StaticResource RuledPanel}" Padding="0,18,0,14">
+        <StackPanel Spacing="14">
+          <StackPanel Spacing="3">
+            <TextBlock Text="Notices to skippers" Style="{StaticResource CardTitleText}" />
+            <TextBlock Text="{x:Bind NoticeCount}" Style="{StaticResource CaptionText}" />
+          </StackPanel>
+          <ItemsControl ItemsSource="{x:Bind Notices}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate><StackPanel Spacing="12" /></ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="local:NoticeRow">
+                <Grid ColumnSpacing="9">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                  </Grid.ColumnDefinitions>
+                  <Ellipse Width="6" Height="6" Fill="{x:Bind Tone}" VerticalAlignment="Top" Margin="0,6,0,0" />
+                  <StackPanel Grid.Column="1" Spacing="2">
+                    <TextBlock Text="{x:Bind Title}" Style="{StaticResource BodyStrongText}" TextWrapping="Wrap" />
+                    <TextBlock Text="{x:Bind Detail}" Style="{StaticResource CaptionText}" TextWrapping="Wrap" LineHeight="17" />
+                  </StackPanel>
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </Border>
+
+      <!-- Crew channel for the vessel selected under Underway -->
+      <Border Grid.Column="3" Style="{StaticResource RuledPanel}" Padding="0,18,0,14">
+        <StackPanel Spacing="12">
+          <Grid ColumnSpacing="10">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Spacing="3">
+              <TextBlock Text="{x:Bind CrewHeading, Mode=OneWay}" Style="{StaticResource CardTitleText}"
+                         TextTrimming="CharacterEllipsis" />
+              <TextBlock Text="{x:Bind CrewSubtitle, Mode=OneWay}" Style="{StaticResource CaptionText}"
+                         TextWrapping="Wrap" />
             </StackPanel>
-          </controls:Card>
-        </Grid>
-      </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Top" Margin="0,3,0,0">
+              <Ellipse Width="6" Height="6" Fill="{x:Bind SlipTone, Mode=OneWay}" VerticalAlignment="Center" />
+              <TextBlock Text="{x:Bind SlipLabel, Mode=OneWay}" Style="{StaticResource StatusText}"
+                         Foreground="{x:Bind SlipInk, Mode=OneWay}" />
+            </StackPanel>
+          </Grid>
 
-      <!-- ── Underway + crew ─────────────────────────────────────── -->
-      <StackPanel Grid.Column="1" Spacing="12">
-        <controls:Card Padding="18,16">
-          <StackPanel Spacing="10">
-            <Grid>
-              <TextBlock Text="Underway" Style="{StaticResource CardTitleText}" />
-              <TextBlock Text="{x:Bind FleetCount}" Style="{StaticResource CaptionText}" FontSize="11.5"
-                         HorizontalAlignment="Right" VerticalAlignment="Center" />
-            </Grid>
-            <ItemsControl ItemsSource="{x:Bind Fleet, Mode=OneWay}">
+          <ScrollViewer MaxHeight="220" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{x:Bind Thread, Mode=OneWay}">
               <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate><StackPanel Spacing="6" /></ItemsPanelTemplate>
+                <ItemsPanelTemplate><StackPanel Spacing="8" /></ItemsPanelTemplate>
               </ItemsControl.ItemsPanel>
               <ItemsControl.ItemTemplate>
-                <DataTemplate x:DataType="local:FleetRow">
-                  <Button Style="{StaticResource RowButton}" Command="{x:Bind Select}" CommandParameter="{x:Bind Id}">
-                    <Border Background="{x:Bind Background}" BorderBrush="{x:Bind Border}" BorderThickness="1"
-                            CornerRadius="12" Padding="12,10">
-                      <Grid ColumnSpacing="10" RowSpacing="4">
-                        <Grid.ColumnDefinitions>
-                          <ColumnDefinition Width="*" />
-                          <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                          <RowDefinition Height="Auto" />
-                          <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <StackPanel Orientation="Horizontal" Spacing="7">
-                          <Ellipse Width="7" Height="7" Fill="{x:Bind Tone}" VerticalAlignment="Center" />
-                          <TextBlock Text="{x:Bind Name}" FontFamily="{StaticResource BodyStrongFont}" FontSize="13" />
-                        </StackPanel>
-                        <TextBlock Grid.Column="1" Text="{x:Bind Slip}" FontFamily="{StaticResource MonoMediumFont}"
-                                   FontSize="12" Foreground="{x:Bind Tone}" />
-                        <TextBlock Grid.Row="1" Text="{x:Bind Detail}" Style="{StaticResource CaptionText}" />
-                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind Eta}" Style="{StaticResource MicroText}" />
-                      </Grid>
+                <DataTemplate x:DataType="local:ChatBubble">
+                  <StackPanel HorizontalAlignment="{x:Bind Align}" Spacing="3">
+                    <!-- xaml-lint: allow card - a chat bubble, not a card -->
+                    <Border Background="{x:Bind Background}" CornerRadius="{StaticResource RadiusPanel}" Padding="11,8" MaxWidth="240">
+                      <TextBlock Text="{x:Bind Text}" Style="{StaticResource BodyText}" Foreground="{x:Bind Foreground}"
+                                 TextWrapping="Wrap" LineHeight="18" />
                     </Border>
-                  </Button>
+                    <TextBlock Text="{x:Bind Meta}" FontFamily="{StaticResource MonoFont}" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}" HorizontalAlignment="{x:Bind Align}" />
+                  </StackPanel>
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
             </ItemsControl>
-          </StackPanel>
-        </controls:Card>
+          </ScrollViewer>
 
-        <controls:Card Padding="18,16" Background="{StaticResource InkBrush}" BorderBrush="{StaticResource InkBrush}">
-          <StackPanel Spacing="12">
-            <Grid>
-              <StackPanel Spacing="3">
-                <TextBlock Text="{x:Bind CrewHeading, Mode=OneWay}" Style="{StaticResource CardTitleText}"
-                           Foreground="{StaticResource PaperBrush}" />
-                <TextBlock Text="{x:Bind CrewSubtitle, Mode=OneWay}" Style="{StaticResource CaptionText}"
-                           Foreground="{StaticResource TextOnDarkMutedBrush}" />
-              </StackPanel>
-              <Border Background="{x:Bind SlipBackground, Mode=OneWay}" CornerRadius="99" Padding="9,4"
-                      HorizontalAlignment="Right" VerticalAlignment="Top">
-                <TextBlock Text="{x:Bind SlipLabel, Mode=OneWay}" FontFamily="{StaticResource BodyMediumFont}"
-                           FontSize="11" Foreground="{x:Bind SlipTone, Mode=OneWay}" />
-              </Border>
-            </Grid>
+          <ItemsControl ItemsSource="{x:Bind QuickMessages, Mode=OneWay}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate><StackPanel Spacing="6" /></ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="local:QuickMessage">
+                <Button Style="{StaticResource GhostButton}" Command="{x:Bind Send}" CommandParameter="{x:Bind Text}"
+                        Content="{x:Bind Label}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                        Padding="12,8" CornerRadius="{StaticResource RadiusControl}" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
 
-            <ScrollViewer MaxHeight="230" VerticalScrollBarVisibility="Auto">
-              <ItemsControl ItemsSource="{x:Bind Thread, Mode=OneWay}">
-                <ItemsControl.ItemsPanel>
-                  <ItemsPanelTemplate><StackPanel Spacing="8" /></ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                  <DataTemplate x:DataType="local:ChatBubble">
-                    <StackPanel HorizontalAlignment="{x:Bind Align}" Spacing="3">
-                      <Border Background="{x:Bind Background}" CornerRadius="12" Padding="11,8" MaxWidth="240">
-                        <TextBlock Text="{x:Bind Text}" Style="{StaticResource BodyText}" Foreground="{x:Bind Foreground}"
-                                   TextWrapping="Wrap" LineHeight="18" />
-                      </Border>
-                      <TextBlock Text="{x:Bind Meta}" FontFamily="{StaticResource MonoFont}" FontSize="10"
-                                 Foreground="{StaticResource TextFaintBrush}" HorizontalAlignment="{x:Bind Align}" />
-                    </StackPanel>
-                  </DataTemplate>
-                </ItemsControl.ItemTemplate>
-              </ItemsControl>
-            </ScrollViewer>
-
-            <ItemsControl ItemsSource="{x:Bind QuickMessages, Mode=OneWay}">
-              <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate><controls:TileGridPanel MinTileWidth="130" Gap="6" /></ItemsPanelTemplate>
-              </ItemsControl.ItemsPanel>
-              <ItemsControl.ItemTemplate>
-                <DataTemplate x:DataType="local:QuickMessage">
-                  <Button Style="{StaticResource BareButton}" Command="{x:Bind Send}" CommandParameter="{x:Bind Text}">
-                    <Border BorderBrush="{StaticResource HairlineOnDarkBrush}" BorderThickness="1" CornerRadius="99"
-                            Padding="10,6">
-                      <TextBlock Text="{x:Bind Label}" FontFamily="{StaticResource BodyMediumFont}" FontSize="11.5"
-                                 Foreground="{StaticResource TealPaleBrush}" HorizontalAlignment="Center" />
-                    </Border>
-                  </Button>
-                </DataTemplate>
-              </ItemsControl.ItemTemplate>
-            </ItemsControl>
-
-            <Grid ColumnSpacing="8">
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-              </Grid.ColumnDefinitions>
-              <TextBox x:Name="ChatBox" PlaceholderText="Message the crew…" CornerRadius="10"
-                       Background="{StaticResource HairlineOnDarkBrush}" Foreground="{StaticResource PaperBrush}"
-                       BorderBrush="{StaticResource HairlineOnDarkBrush}" FontSize="12.5" Padding="12,10"
-                       KeyDown="OnChatKeyDown" />
-              <Button Grid.Column="1" Style="{StaticResource AccentButton}" Content="Send" Click="OnSendClick"
-                      Padding="16,10" />
-            </Grid>
-          </StackPanel>
-        </controls:Card>
-      </StackPanel>
+          <Grid ColumnSpacing="8">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="ChatBox" PlaceholderText="Message the crew…" CornerRadius="{StaticResource RadiusControl}"
+                     FontSize="12.5" Padding="12,9" KeyDown="OnChatKeyDown" AutomationProperties.Name="Message the crew" />
+            <Button Grid.Column="1" Style="{StaticResource PrimaryButton}" Content="Send" Click="OnSendClick"
+                    CornerRadius="{StaticResource RadiusControl}" />
+          </Grid>
+        </StackPanel>
+      </Border>
     </Grid>
   </Grid>
 </UserControl>

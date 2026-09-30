@@ -121,6 +121,43 @@
     <Setter Property="BorderThickness" Value="1" />
   </Style>
 
+  <!-- ============================================================
+       Page template — every section page follows the Overview:
+       one frame, a masthead over a hairline, then flat ruled sections.
+       ============================================================ -->
+  <Style x:Key="PageFrame" TargetType="Grid">
+    <Setter Property="Padding" Value="{StaticResource PagePadding}" />
+    <Setter Property="MinWidth" Value="1000" />
+    <Setter Property="MaxWidth" Value="1520" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="RowSpacing" Value="28" />
+  </Style>
+
+  <Style x:Key="Masthead" TargetType="Grid">
+    <Setter Property="BorderBrush" Value="{StaticResource HairlineStrongBrush}" />
+    <Setter Property="BorderThickness" Value="0,0,0,1" />
+    <Setter Property="Padding" Value="0,0,0,18" />
+    <Setter Property="ColumnSpacing" Value="24" />
+  </Style>
+
+  <Style x:Key="PageSubtitleText" TargetType="TextBlock" BasedOn="{StaticResource CaptionText}">
+    <Setter Property="FontSize" Value="14" />
+  </Style>
+
+  <!-- Masthead figures: a number and what it counts, baseline-aligned -->
+  <Style x:Key="MetricLabelText" TargetType="TextBlock" BasedOn="{StaticResource CaptionText}">
+    <Setter Property="FontSize" Value="12.5" />
+    <Setter Property="VerticalAlignment" Value="Bottom" />
+    <Setter Property="Margin" Value="0,0,0,3" />
+  </Style>
+
+  <!-- Status as a dot and a word; the word takes the ink variant of the status colour -->
+  <Style x:Key="StatusText" TargetType="TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource BodyMediumFont}" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
   <!-- Flat panel: the overview uses a 2px ink rule instead of a box -->
   <Style x:Key="RuledPanel" TargetType="Border">
     <Setter Property="BorderBrush" Value="{StaticResource InkBrush}" />

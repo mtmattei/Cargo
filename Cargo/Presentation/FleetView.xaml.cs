@@ -13,8 +13,8 @@ public sealed class LockingRow
     public required string Lock { get; init; }
     public required string Vessel { get; init; }
     public required string State { get; init; }
-    public required Brush Background { get; init; }
-    public required Brush Foreground { get; init; }
+    public required Brush Tone { get; init; }
+    public required Brush Ink { get; init; }
 }
 
 public sealed class GaugeRow
@@ -24,6 +24,7 @@ public sealed class GaugeRow
     public required string Level { get; init; }
     public required Geometry Spark { get; init; }
     public required Brush Tone { get; init; }
+    public required Brush Ink { get; init; }
 }
 
 public sealed class NoticeRow
@@ -41,8 +42,8 @@ public sealed class FleetRow
     public required string Eta { get; init; }
     public required string Slip { get; init; }
     public required Brush Tone { get; init; }
+    public required Brush SlipInk { get; init; }
     public required Brush Background { get; init; }
-    public required Brush Border { get; init; }
     public required ICommand Select { get; init; }
 }
 
@@ -83,12 +84,12 @@ public sealed partial class FleetView : UserControl
 
         Lockings = PortData.Lockings.Select(l =>
         {
-            var (background, foreground) = l.State switch
+            var (tone, ink) = l.State switch
             {
-                "Done" => ("InkColor", "TextMutedColor"),
-                "Queued" or "At risk" => ("OrangeColor", "OrangeInkColor"),
-                "After maintenance" => ("AlertColor", "AlertColor"),
-                _ => ("SeaGreenColor", "TealColor")
+                "Done" => ("TextFaintBrush", "TextMutedBrush"),
+                "Queued" or "At risk" => ("OrangeBrush", "OrangeInkBrush"),
+                "After maintenance" => ("AlertBrush", "AlertBrush"),
+                _ => ("SeaGreenBrush", "SeaGreenInkBrush")
             };
 
             return new LockingRow
@@ -97,18 +98,19 @@ public sealed partial class FleetView : UserControl
                 Lock = l.Lock,
                 Vessel = l.Vessel,
                 State = l.State,
-                Background = Tokens.Brush(background, 0.15),
-                Foreground = Tokens.Brush(foreground)
+                Tone = Tokens.Brush(tone),
+                Ink = Tokens.Brush(ink)
             };
         }).ToList();
 
         Gauges = PortData.Gauges.Select((g, i) => new GaugeRow
         {
             Name = g.Name,
-            Chainage = $" · km {g.Km:0}",
+            Chainage = $"km {g.Km:0}",
             Level = $"{g.Level:0.0} m {g.Trend}",
             Spark = Spark(g, i),
-            Tone = Tokens.Brush(g.Tone)
+            Tone = Tokens.Brush(g.Tone),
+            Ink = Tokens.Brush(InkFor(g.Tone))
         }).ToList();
 
         Notices = PortData.Notices.Select(n => new NoticeRow
@@ -142,11 +144,28 @@ public sealed partial class FleetView : UserControl
     public string NoticeCount => $"{PortData.Notices.Count} active";
     public string FleetCount => $"{PortData.RiverFleet.Count} vessels";
 
+    // Masthead figures
+    public string UnderwayCount => PortData.RiverFleet.Count.ToString();
+    public string LateCount => PortData.RiverFleet.Count(v => v.SlipMinutes > 0).ToString();
+    public string LockCount => PortData.Lockings.Count.ToString();
+    public string NoticeTotal => PortData.Notices.Count.ToString();
+
+    public Brush SlipInk { get; private set; } = Tokens.Transparent;
+
+    /// <summary>Status colours are fills; the text beside them takes the darker ink variant.</summary>
+    private static string InkFor(string tone) => tone switch
+    {
+        var t when t.StartsWith("Orange") => "OrangeInkBrush",
+        var t when t.StartsWith("Amber") => "AmberInkBrush",
+        var t when t.StartsWith("SeaGreen") || t.StartsWith("Teal") => "SeaGreenInkBrush",
+        var t when t.StartsWith("Alert") => "AlertBrush",
+        _ => "InkBrush"
+    };
+
     public string CrewHeading { get; private set; } = string.Empty;
     public string CrewSubtitle { get; private set; } = string.Empty;
     public string SlipLabel { get; private set; } = string.Empty;
     public Brush SlipTone { get; private set; } = Tokens.Transparent;
-    public Brush SlipBackground { get; private set; } = Tokens.Transparent;
 
     /// <summary>A 12-point trace that drifts with the gauge's trend arrow.</summary>
     private static Geometry Spark(GaugeDef gauge, int index)
@@ -188,8 +207,8 @@ public sealed partial class FleetView : UserControl
                 Eta = $"ETA {PortState.Format(vessel.Eta + vessel.SlipMinutes / 60d)}",
                 Slip = late ? $"+{vessel.SlipMinutes} min" : "On time",
                 Tone = Tokens.Brush(late ? "OrangeBrush" : "SeaGreenBrush"),
-                Background = current ? Tokens.Brush("SurfaceBrush") : Tokens.Brush("PaperBrush"),
-                Border = current ? Tokens.Brush("InkBrush") : Tokens.Brush("HairlineBrush"),
+                SlipInk = Tokens.Brush(late ? "OrangeInkBrush" : "SeaGreenInkBrush"),
+                Background = current ? Tokens.Brush("SurfaceSunkAltBrush") : Tokens.Transparent,
                 Select = new RelayCommand<string>(id => State.FleetSelection = id ?? selected.Id)
             });
         }
@@ -200,7 +219,7 @@ public sealed partial class FleetView : UserControl
                        (selected.Direction > 0 ? "upbound · " : "downbound · ") + selected.Next;
         SlipLabel = isLate ? $"+{selected.SlipMinutes} min" : "On time";
         SlipTone = Tokens.Brush(isLate ? "OrangeBrush" : "SeaGreenBrush");
-        SlipBackground = Tokens.Brush(isLate ? "OrangeColor" : "SeaGreenColor", 0.18);
+        SlipInk = Tokens.Brush(isLate ? "OrangeInkBrush" : "SeaGreenInkBrush");
 
         Thread.Clear();
         foreach (var line in State.ThreadFor(selected.Id))
@@ -211,8 +230,8 @@ public sealed partial class FleetView : UserControl
                 Text = line.Text,
                 Meta = $"{(fromCrew ? selected.Master.Split(' ').Last() : "Dispatch")} · {PortState.Format(line.Hour)}",
                 Align = fromCrew ? HorizontalAlignment.Left : HorizontalAlignment.Right,
-                Background = fromCrew ? Tokens.Brush("DeckWhiteColor", 0.08) : Tokens.Brush("TealBrightBrush"),
-                Foreground = fromCrew ? Tokens.Brush("PaperBrush") : Tokens.Brush("InkDeepBrush")
+                Background = fromCrew ? Tokens.Brush("SurfaceSunkAltBrush") : Tokens.Brush("InkBrush"),
+                Foreground = fromCrew ? Tokens.Brush("InkBrush") : Tokens.Brush("PaperBrush")
             });
         }
 
