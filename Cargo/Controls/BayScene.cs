@@ -5,11 +5,27 @@ namespace Cargo.Controls;
 /// <summary>Cross-section through one bay, looking forward from the bridge.</summary>
 public sealed partial class BayScene : SceneHost
 {
+    public static readonly DependencyProperty BayProperty = DependencyProperty.Register(
+        nameof(Bay), typeof(BayView), typeof(BayScene),
+        new PropertyMetadata(null, (d, e) =>
+        {
+            if (e.NewValue is BayView bay)
+            {
+                ((BayScene)d).Show(bay);
+            }
+        }));
+
     public BayScene() : base(360, 190)
     {
     }
 
-    public void Show(BayView bay)
+    public BayView? Bay
+    {
+        get => (BayView?)GetValue(BayProperty);
+        set => SetValue(BayProperty, value);
+    }
+
+    private void Show(BayView bay)
     {
         Scene.Children.Clear();
 

@@ -20,13 +20,30 @@ public sealed partial class CargoOpsScene : SceneHost
     private DateTimeOffset _origin = DateTimeOffset.Now;
     private bool _loading;
 
+    public static readonly DependencyProperty VesselProperty = DependencyProperty.Register(
+        nameof(Vessel), typeof(Vessel), typeof(CargoOpsScene),
+        new PropertyMetadata(null, (d, e) =>
+        {
+            // Only a different vessel restarts the crane loop; the same one keeps its place
+            if (e.NewValue is Vessel vessel && (e.OldValue as Vessel)?.Id != vessel.Id)
+            {
+                ((CargoOpsScene)d).Show(vessel);
+            }
+        }));
+
     public CargoOpsScene() : base(420, 175)
     {
         _timer.Tick += (_, _) => Advance();
         this.TrackShown(shown => { if (shown) { _timer.Start(); } else { _timer.Stop(); } });
     }
 
-    public void Show(Vessel vessel)
+    public Vessel? Vessel
+    {
+        get => (Vessel?)GetValue(VesselProperty);
+        set => SetValue(VesselProperty, value);
+    }
+
+    private void Show(Vessel vessel)
     {
         Scene.Children.Clear();
         _origin = DateTimeOffset.Now;

@@ -14,8 +14,8 @@
     </Grid.RowDefinitions>
 
     <StackPanel Spacing="4">
-      <TextBlock Text="{x:Bind VesselName, Mode=OneWay}" Style="{StaticResource SectionHeadText}" />
-      <TextBlock Text="{x:Bind Eyebrow}" Style="{StaticResource CaptionText}" />
+      <TextBlock Text="{x:Bind ViewModel.VesselName, Mode=OneWay}" Style="{StaticResource SectionHeadText}" />
+      <TextBlock Text="{x:Bind ViewModel.Eyebrow, Mode=OneWay}" Style="{StaticResource CaptionText}" />
     </StackPanel>
 
     <Grid Grid.Row="1" ColumnSpacing="16">
@@ -27,15 +27,14 @@
 
       <!-- ── Vessels in port ────────────────────────────────────── -->
       <StackPanel Spacing="10">
-        <ItemsControl ItemsSource="{x:Bind Vessels, Mode=OneWay}">
+        <ItemsControl ItemsSource="{x:Bind ViewModel.Vessels, Mode=OneWay}">
           <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate><StackPanel Spacing="10" /></ItemsPanelTemplate>
           </ItemsControl.ItemsPanel>
           <ItemsControl.ItemTemplate>
             <DataTemplate x:DataType="local:VesselRow">
               <Button Style="{StaticResource RowButton}" Command="{x:Bind Select}" CommandParameter="{x:Bind Id}">
-                <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{x:Bind Border}" BorderThickness="1.5"
-                        CornerRadius="14" Padding="14">
+                <utu:CardContentControl Style="{StaticResource OutlinedPanel}" BorderBrush="{x:Bind Border}" BorderThickness="1.5" Padding="14">
                   <Grid ColumnSpacing="10">
                     <Grid.ColumnDefinitions>
                       <ColumnDefinition Width="*" />
@@ -54,13 +53,13 @@
                     <Image Grid.Column="1" Source="{x:Bind Silhouette}" Width="84" Height="30"
                            Stretch="Uniform" VerticalAlignment="Center" />
                   </Grid>
-                </Border>
+                </utu:CardContentControl>
               </Button>
             </DataTemplate>
           </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <Button Style="{StaticResource GhostButton}" Command="{x:Bind State.OpenDockingCommand}"
+        <Button Style="{StaticResource GhostButton}" Command="{x:Bind ViewModel.State.OpenDockingCommand}"
                 Background="{StaticResource SurfaceBrush}" CornerRadius="12" Padding="16,12"
                 HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
           <Grid>
@@ -78,13 +77,13 @@
               <Grid>
                 <StackPanel Spacing="4">
                   <TextBlock Text="Side profile" Style="{StaticResource CardTitleText}" />
-                  <TextBlock Text="{x:Bind ProfileHint, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12" />
+                  <TextBlock Text="{x:Bind ViewModel.ProfileHint, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12" />
                 </StackPanel>
-                <TextBlock Text="{x:Bind BayLabel, Mode=OneWay}" Style="{StaticResource BodyStrongText}" FontSize="12"
+                <TextBlock Text="{x:Bind ViewModel.BayLabel, Mode=OneWay}" Style="{StaticResource BodyStrongText}" FontSize="12"
                            Foreground="{StaticResource TealBrush}" HorizontalAlignment="Right" VerticalAlignment="Top" />
               </Grid>
               <ContentControl x:Name="ProfileHost" HorizontalContentAlignment="Stretch" Margin="0,4,0,0" />
-              <ItemsControl ItemsSource="{x:Bind CargoLegend}" Margin="0,10,0,2">
+              <ItemsControl ItemsSource="{x:Bind ViewModel.CargoLegend, Mode=OneWay}" Margin="0,10,0,2">
                 <ItemsControl.ItemsPanel>
                   <ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="18" /></ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
@@ -101,16 +100,16 @@
             </StackPanel>
 
             <!-- Key figures, floated over the empty water at the bow -->
-            <ItemsControl ItemsSource="{x:Bind MiniCards, Mode=OneWay}" Width="250"
+            <ItemsControl ItemsSource="{x:Bind ViewModel.MiniCards, Mode=OneWay}" Width="250"
                           HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,52,0,0">
               <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate><controls:TwoColumnPanel ColumnSpacing="8" RowSpacing="8" /></ItemsPanelTemplate>
               </ItemsControl.ItemsPanel>
               <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="local:MiniCard">
-                  <Border Background="{StaticResource PaperBrush}" BorderBrush="{StaticResource HairlineBrush}"
-                          BorderThickness="1" CornerRadius="12" Padding="12,10,12,9">
+                  <utu:CardContentControl Style="{StaticResource OutlinedPanel}" Background="{StaticResource PaperBrush}" Padding="12,10,12,9">
                     <StackPanel Spacing="3">
+                      <!-- xaml-lint: allow card - icon disc -->
                       <Border Width="22" Height="22" CornerRadius="11" BorderThickness="1" Margin="0,0,0,5"
                               BorderBrush="{StaticResource HairlineStrongBrush}">
                         <shapes:Path Data="{x:Bind Icon}" Stroke="{StaticResource InkBrush}"
@@ -121,7 +120,7 @@
                                  Foreground="{x:Bind Tone}" />
                       <TextBlock Text="{x:Bind Detail, Mode=OneWay}" Style="{StaticResource MicroText}" FontSize="10.5" />
                     </StackPanel>
-                  </Border>
+                  </utu:CardContentControl>
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -140,11 +139,12 @@
                 <TextBlock Text="Cargo operations" Style="{StaticResource CardTitleText}" />
                 <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right" VerticalAlignment="Center">
                   <Ellipse Width="6" Height="6" Fill="{StaticResource AlertBrush}" VerticalAlignment="Center" />
-                  <TextBlock Text="{x:Bind MovesLabel, Mode=OneWay}" Style="{StaticResource CaptionText}" />
+                  <TextBlock Text="{x:Bind ViewModel.MovesLabel, Mode=OneWay}" Style="{StaticResource CaptionText}" />
                 </StackPanel>
               </Grid>
+              <!-- xaml-lint: allow card - clips the scene -->
               <Border CornerRadius="12" Background="{StaticResource SurfaceBrush}">
-                <ContentControl x:Name="OpsHost" HorizontalContentAlignment="Stretch" />
+                <controls:CargoOpsScene Vessel="{x:Bind ViewModel.Vessel, Mode=OneWay}" />
               </Border>
               <Grid ColumnSpacing="14" Margin="0,4,0,0">
                 <Grid.ColumnDefinitions>
@@ -154,21 +154,21 @@
                 <StackPanel Spacing="8">
                   <Grid>
                     <TextBlock Text="Unloading" Style="{StaticResource BodyStrongText}" />
-                    <TextBlock Text="{x:Bind UnloadLive, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}"
+                    <TextBlock Text="{x:Bind ViewModel.UnloadLive, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}"
                                FontSize="12.5" Foreground="{StaticResource SeaGreenBrush}" HorizontalAlignment="Right" />
                   </Grid>
-                  <ItemsControl x:Name="UnloadTicks" Height="14" />
+                  <controls:TickBar Height="14" LitToken="SeaGreenBrush" Percent="{x:Bind ViewModel.UnloadPercent, Mode=OneWay}" />
                 </StackPanel>
                 <StackPanel Grid.Column="1" Spacing="8">
                   <Grid>
                     <TextBlock Text="Loading" Style="{StaticResource BodyStrongText}" />
-                    <TextBlock Text="{x:Bind LoadLive, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}"
+                    <TextBlock Text="{x:Bind ViewModel.LoadLive, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}"
                                FontSize="12.5" Foreground="{StaticResource TealBrush}" HorizontalAlignment="Right" />
                   </Grid>
-                  <ItemsControl x:Name="LoadTicks" Height="14" />
+                  <controls:TickBar Height="14" LitToken="TealBrush" Percent="{x:Bind ViewModel.LoadPercent, Mode=OneWay}" />
                 </StackPanel>
               </Grid>
-              <TextBlock Text="{x:Bind OpsNote, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12"
+              <TextBlock Text="{x:Bind ViewModel.OpsNote, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12"
                          TextWrapping="Wrap" Margin="0,2,0,0" />
             </StackPanel>
           </utu:CardContentControl>
@@ -176,13 +176,13 @@
           <utu:CardContentControl Style="{StaticResource PanelCard}" Grid.Column="1">
             <StackPanel Spacing="14">
               <TextBlock Text="Cargo composition" Style="{StaticResource PanelTitleText}" />
-              <ItemsControl x:Name="CompositionBar" Height="14" />
+              <controls:CompositionBar Height="14" Slices="{x:Bind ViewModel.CompositionSlices, Mode=OneWay}" />
               <Grid ColumnSpacing="12">
                 <Grid.ColumnDefinitions>
                   <ColumnDefinition Width="*" />
                   <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <ItemsControl ItemsSource="{x:Bind Composition, Mode=OneWay}" VerticalAlignment="Center">
+                <ItemsControl ItemsSource="{x:Bind ViewModel.Composition, Mode=OneWay}" VerticalAlignment="Center">
                   <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate><StackPanel Spacing="7" /></ItemsPanelTemplate>
                   </ItemsControl.ItemsPanel>
@@ -201,9 +201,9 @@
                   </ItemsControl.ItemTemplate>
                 </ItemsControl>
                 <Grid Grid.Column="1" Width="104" Height="104">
-                  <ContentControl x:Name="CompositionDonut" />
+                  <controls:DonutChart Radius="38" Thickness="14" Slices="{x:Bind ViewModel.CompositionSlices, Mode=OneWay}" />
                   <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <TextBlock Text="{x:Bind TeuLabel, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}"
+                    <TextBlock Text="{x:Bind ViewModel.TeuLabel, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}"
                                FontSize="15" HorizontalAlignment="Center" />
                     <TextBlock Text="TEU" Style="{StaticResource MicroText}" FontSize="10" HorizontalAlignment="Center" />
                   </StackPanel>
@@ -219,16 +219,17 @@
         <StackPanel Spacing="16">
           <Grid>
             <TextBlock Text="Voyage" Style="{StaticResource PanelTitleText}" FontSize="15" VerticalAlignment="Center" />
-            <Border Background="{x:Bind SecurityBackground, Mode=OneWay}" CornerRadius="99" Padding="10,4"
+            <!-- xaml-lint: allow card - status pill; half-height radius (99 draws an oval on Skia) -->
+            <Border Background="{x:Bind ViewModel.SecurityBackground, Mode=OneWay}" CornerRadius="11" Padding="10,4"
                     HorizontalAlignment="Right">
-              <TextBlock Text="{x:Bind Security, Mode=OneWay}" FontFamily="{StaticResource BodyMediumFont}"
-                         FontSize="11" Foreground="{x:Bind SecurityForeground, Mode=OneWay}" />
+              <TextBlock Text="{x:Bind ViewModel.Security, Mode=OneWay}" FontFamily="{StaticResource BodyMediumFont}"
+                         FontSize="11" Foreground="{x:Bind ViewModel.SecurityForeground, Mode=OneWay}" />
             </Border>
           </Grid>
-          <TextBlock Text="{x:Bind Voyage, Mode=OneWay}" Style="{StaticResource BodyText}" FontSize="13.5"
+          <TextBlock Text="{x:Bind ViewModel.Voyage, Mode=OneWay}" Style="{StaticResource BodyText}" FontSize="13.5"
                      TextWrapping="Wrap" LineHeight="20" />
 
-          <ItemsControl ItemsSource="{x:Bind Facts, Mode=OneWay}">
+          <ItemsControl ItemsSource="{x:Bind ViewModel.Facts, Mode=OneWay}">
             <ItemsControl.ItemsPanel>
               <ItemsPanelTemplate><controls:TwoColumnPanel ColumnSpacing="14" RowSpacing="14" /></ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
@@ -245,7 +246,7 @@
           <Border Height="1" Background="{StaticResource HairlineBrush}" />
           <StackPanel Spacing="10">
             <TextBlock Text="Security clearance" Style="{StaticResource BodyStrongText}" FontSize="13.5" />
-            <ItemsControl ItemsSource="{x:Bind Checks, Mode=OneWay}">
+            <ItemsControl ItemsSource="{x:Bind ViewModel.Checks, Mode=OneWay}">
               <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate><StackPanel Spacing="8" /></ItemsPanelTemplate>
               </ItemsControl.ItemsPanel>
@@ -268,7 +269,7 @@
             </ItemsControl>
           </StackPanel>
 
-          <Button Style="{StaticResource GhostButton}" Command="{x:Bind State.OpenDockingCommand}"
+          <Button Style="{StaticResource GhostButton}" Command="{x:Bind ViewModel.State.OpenDockingCommand}"
                   Content="Open in Docking →" HorizontalAlignment="Stretch" Margin="0,4,0,0" />
         </StackPanel>
       </utu:CardContentControl>
@@ -278,10 +279,10 @@
     <utu:CardContentControl Style="{StaticResource PanelCard}" Grid.Row="2" Padding="22,18">
       <StackPanel Spacing="12">
         <StackPanel Orientation="Horizontal" Spacing="14">
-          <TextBlock Text="{x:Bind BayHeading, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}" FontSize="17" />
-          <TextBlock Text="{x:Bind BayTotal, Mode=OneWay}" Style="{StaticResource BodyText}"
+          <TextBlock Text="{x:Bind ViewModel.BayHeading, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}" FontSize="17" />
+          <TextBlock Text="{x:Bind ViewModel.BayTotal, Mode=OneWay}" Style="{StaticResource BodyText}"
                      Foreground="{StaticResource TealBrush}" VerticalAlignment="Bottom" Margin="0,0,0,2" />
-          <TextBlock Text="{x:Bind BayRemaining, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12.5"
+          <TextBlock Text="{x:Bind ViewModel.BayRemaining, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12.5"
                      VerticalAlignment="Bottom" Margin="0,0,0,2" />
         </StackPanel>
 
@@ -293,12 +294,13 @@
             <ColumnDefinition Width="1.1*" />
           </Grid.ColumnDefinitions>
 
+          <!-- xaml-lint: allow card - clips the scene -->
           <Border CornerRadius="12" Background="{StaticResource SurfaceBrush}">
-            <ContentControl x:Name="BayHost" HorizontalContentAlignment="Stretch" />
+            <controls:BayScene Bay="{x:Bind ViewModel.Bay, Mode=OneWay}" />
           </Border>
 
           <StackPanel Grid.Column="1" Spacing="14" Padding="4,6">
-            <TextBlock Text="{x:Bind BayOpsHeading, Mode=OneWay}" Style="{StaticResource BodyStrongText}" FontSize="13.5" />
+            <TextBlock Text="{x:Bind ViewModel.BayOpsHeading, Mode=OneWay}" Style="{StaticResource BodyStrongText}" FontSize="13.5" />
             <Grid ColumnSpacing="16">
               <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -309,31 +311,31 @@
                      Stretch="Uniform" VerticalAlignment="Top" />
               <StackPanel Grid.Column="1" Spacing="4">
                 <TextBlock Text="Unloaded" Style="{StaticResource CaptionText}" Foreground="{StaticResource SeaGreenBrush}" />
-                <TextBlock Text="{x:Bind BayUnloaded, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}"
+                <TextBlock Text="{x:Bind ViewModel.BayUnloaded, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}"
                            FontSize="22" Foreground="{StaticResource SeaGreenBrush}" />
               </StackPanel>
               <StackPanel Grid.Column="2" Spacing="4">
                 <TextBlock Text="Remaining" Style="{StaticResource CaptionText}" />
-                <TextBlock Text="{x:Bind BayLeft, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}"
+                <TextBlock Text="{x:Bind ViewModel.BayLeft, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}"
                            FontSize="22" Foreground="{StaticResource TealBrush}" />
               </StackPanel>
             </Grid>
             <StackPanel Spacing="2">
               <TextBlock Text="Next move" Style="{StaticResource CaptionText}" FontSize="12" />
-              <TextBlock Text="{x:Bind BayNextMove, Mode=OneWay}" Style="{StaticResource BodyStrongText}" FontSize="14" />
-              <TextBlock Text="{x:Bind BayNextEta, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12" />
+              <TextBlock Text="{x:Bind ViewModel.BayNextMove, Mode=OneWay}" Style="{StaticResource BodyStrongText}" FontSize="14" />
+              <TextBlock Text="{x:Bind ViewModel.BayNextEta, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12" />
             </StackPanel>
           </StackPanel>
 
           <StackPanel Grid.Column="2" Spacing="12" Padding="4,6">
-            <TextBlock Text="{x:Bind BayCompositionHeading, Mode=OneWay}" Style="{StaticResource BodyStrongText}" FontSize="13.5" />
+            <TextBlock Text="{x:Bind ViewModel.BayCompositionHeading, Mode=OneWay}" Style="{StaticResource BodyStrongText}" FontSize="13.5" />
             <Grid ColumnSpacing="12">
               <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="92" />
                 <ColumnDefinition Width="*" />
               </Grid.ColumnDefinitions>
-              <ContentControl x:Name="BayDonut" Width="92" Height="92" VerticalAlignment="Top" />
-              <ItemsControl Grid.Column="1" ItemsSource="{x:Bind BayComposition, Mode=OneWay}" VerticalAlignment="Center">
+              <controls:DonutChart Width="92" Height="92" VerticalAlignment="Top" Radius="36" Thickness="16" Slices="{x:Bind ViewModel.BaySlices, Mode=OneWay}" />
+              <ItemsControl Grid.Column="1" ItemsSource="{x:Bind ViewModel.BayComposition, Mode=OneWay}" VerticalAlignment="Center">
                 <ItemsControl.ItemsPanel>
                   <ItemsPanelTemplate><StackPanel Spacing="7" /></ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
@@ -360,11 +362,11 @@
               <ColumnDefinition Width="110" />
               <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Image x:Name="BayContainer" Width="110" Height="80" Stretch="Uniform"
+            <Image Source="{x:Bind ViewModel.BayContainerImage, Mode=OneWay}" Width="110" Height="80" Stretch="Uniform"
                    VerticalAlignment="Top" Margin="0,6,0,0" />
             <StackPanel Grid.Column="1" Spacing="4">
-              <TextBlock Text="{x:Bind BayContainerId, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}" FontSize="14" />
-              <TextBlock Text="{x:Bind BayContainerType, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12"
+              <TextBlock Text="{x:Bind ViewModel.BayContainerId, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}" FontSize="14" />
+              <TextBlock Text="{x:Bind ViewModel.BayContainerType, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12"
                          TextWrapping="Wrap" />
               <Grid ColumnSpacing="14" RowSpacing="6" Margin="0,8,0,0">
                 <Grid.ColumnDefinitions>
@@ -376,10 +378,10 @@
                   <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <TextBlock Text="Weight" Style="{StaticResource MicroText}" />
-                <TextBlock Grid.Column="1" Text="{x:Bind BayContainerWeight, Mode=OneWay}"
+                <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.BayContainerWeight, Mode=OneWay}"
                            Style="{StaticResource BodyStrongText}" FontSize="12" HorizontalAlignment="Right" />
                 <TextBlock Grid.Row="1" Text="Status" Style="{StaticResource MicroText}" />
-                <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind BayContainerStatus, Mode=OneWay}"
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind ViewModel.BayContainerStatus, Mode=OneWay}"
                            Style="{StaticResource BodyStrongText}" FontSize="12" HorizontalAlignment="Right"
                            Foreground="{StaticResource TealBrush}" />
               </Grid>
