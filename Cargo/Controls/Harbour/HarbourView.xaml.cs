@@ -1,4 +1,6 @@
 using System.Windows.Input;
+using Microsoft.UI.Xaml.Automation;
+using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using SkiaSharp;
@@ -340,6 +342,40 @@ public sealed partial class HarbourView : UserControl
         }
 
         DispatcherQueue.TryEnqueue(PlaceOverlays);
+        UpdateSummary();
+    }
+
+    // ── Screen readers ─────────────────────────────────────────────────────────
+
+    private string _viewName = "Overview";
+
+    /// <summary>
+    /// The canvas itself is opaque to assistive tech, so the harbour describes itself in one line:
+    /// the view, the layer, what is alongside and what is selected. It is the view's description
+    /// on focus, and a polite live region announces it when a preset, layer or selection changes.
+    /// </summary>
+    private void UpdateSummary()
+    {
+        if (_state is null)
+        {
+            return;
+        }
+
+        var vessels = _tags.Select(t => PortData.Vessel(t.Tag.Id)).ToList();
+        var alongside = vessels.Count(v => v.Status is "Docked" or "Departing");
+        var arriving = vessels.Count(v => v.Status == "Arriving");
+        var selected = vessels.FirstOrDefault(v => v.Id == EffectiveSelection);
+        var layer = EffectiveLayer switch { "yard" => "Yard", "security" => "Security", "traffic" => "Traffic", _ => "Map" };
+        var text = $"{_viewName} view, {layer} layer. {alongside} vessels alongside, {arriving} arriving."
+            + (selected is null ? string.Empty : $" Selected: {selected.Name}, {selected.StatusLine}.");
+        if (text == Summary.Text)
+        {
+            return;
+        }
+
+        Summary.Text = text;
+        AutomationProperties.SetFullDescription(this, text);
+        FrameworkElementAutomationPeer.FromElement(Summary)?.RaiseAutomationEvent(AutomationEvents.LiveRegionChanged);
     }
 
     /// <summary>
@@ -432,6 +468,16 @@ public sealed partial class HarbourView : UserControl
 
     private void MarkView(string? name)
     {
+        _viewName = name switch
+        {
+            "overview" => "Overview",
+            "sea" => "From sea",
+            "land" => "From land",
+            "plan" => "Plan",
+            _ => "Custom"
+        };
+        UpdateSummary();
+
         var current = (Style)Application.Current.Resources["HarbourSegmentCurrent"];
         var normal = (Style)Application.Current.Resources["HarbourSegment"];
         OverviewButton.Style = name == "overview" ? current : normal;
