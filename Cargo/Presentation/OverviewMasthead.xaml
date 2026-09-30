@@ -1,0 +1,49 @@
+<UserControl x:Class="Cargo.Presentation.OverviewMasthead"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!-- The Overview greeting and the shift's headline figures, shown above the harbour -->
+  <Grid BorderBrush="{StaticResource HairlineStrongBrush}" BorderThickness="0,0,0,1"
+        Padding="0,0,0,18" ColumnSpacing="24">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="Auto" />
+    </Grid.ColumnDefinitions>
+
+    <StackPanel VerticalAlignment="Bottom" Spacing="8">
+      <TextBlock Style="{StaticResource GreetingText}">
+        <Run Text="Good evening, " /><Run Text="Operations." Foreground="{StaticResource TealBrush}" />
+      </TextBlock>
+      <TextBlock Text="{x:Bind ViewModel.Subtitle, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="14" />
+    </StackPanel>
+
+    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="26" VerticalAlignment="Bottom">
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <TextBlock Text="3" Style="{StaticResource MetricText}" />
+        <TextBlock Text="alongside" Style="{StaticResource CaptionText}" FontSize="12.5" VerticalAlignment="Bottom" Margin="0,0,0,3" />
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <TextBlock Text="2" Style="{StaticResource MetricText}" Foreground="{StaticResource AmberBrush}" />
+        <TextBlock Text="inbound" Style="{StaticResource CaptionText}" FontSize="12.5" VerticalAlignment="Bottom" Margin="0,0,0,3" />
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <TextBlock Text="{x:Bind ViewModel.MovesNow, Mode=OneWay}" Style="{StaticResource MetricText}" Foreground="{StaticResource TealBrush}" />
+        <TextBlock Text="moves / h" Style="{StaticResource CaptionText}" FontSize="12.5" VerticalAlignment="Bottom" Margin="0,0,0,3" />
+      </StackPanel>
+      <Button Style="{StaticResource BareButton}" Command="{x:Bind ViewModel.State.GoCommand}" CommandParameter="fleet"
+              ToolTipService.ToolTip="Open Fleet &amp; Waterways">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <TextBlock Text="2" Style="{StaticResource MetricText}" Foreground="{StaticResource OrangeBrush}" />
+          <TextBlock Text="orders late" Style="{StaticResource CaptionText}" FontSize="12.5" VerticalAlignment="Bottom" Margin="0,0,0,3" />
+        </StackPanel>
+      </Button>
+      <Button Style="{StaticResource BareButton}" Command="{x:Bind ViewModel.State.OpenSecurityCommand}"
+              ToolTipService.ToolTip="Open Security">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <TextBlock Text="1" Style="{StaticResource MetricText}" Foreground="{StaticResource OrangeBrush}" />
+          <TextBlock Text="hold · 0 incidents" Style="{StaticResource CaptionText}" FontSize="12.5" VerticalAlignment="Bottom" Margin="0,0,0,3" />
+        </StackPanel>
+      </Button>
+    </StackPanel>
+  </Grid>
+</UserControl>

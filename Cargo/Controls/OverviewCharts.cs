@@ -117,6 +117,7 @@ public sealed partial class VolumeChart : SceneHost
     private readonly Canvas _settled = new();
     private readonly Canvas _live = new();
     private int _hour = -1;
+    private (int Blocks, bool Partial) _liveDrawn = (-1, false);
 
     public VolumeChart() : base(300, 120)
     {
@@ -153,8 +154,18 @@ public sealed partial class VolumeChart : SceneHost
                 alignment: TextAlignment.Right, width: 80));
         }
 
+        // The live column only changes when a block fills or starts, a few times an hour:
+        // rebuilding its shapes every second was the bulk of the clock tick's cost
+        var moves = PortState.MovesAt(Now);
+        var live = ((int)Math.Ceiling(moves / 20d), moves % 20 != 0);
+        if (live == _liveDrawn)
+        {
+            return;
+        }
+
+        _liveDrawn = live;
         _live.Children.Clear();
-        DrawColumn(_live, 6 + 6 * 42, PortState.MovesAt(Now), live: true);
+        DrawColumn(_live, 6 + 6 * 42, moves, live: true);
     }
 
     private static void DrawColumn(Canvas layer, double x, double value, bool live)

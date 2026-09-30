@@ -9,56 +9,10 @@
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
-      <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
-    <!-- ── Masthead ─────────────────────────────────────────────── -->
-    <Grid Grid.Row="0" BorderBrush="{StaticResource HairlineStrongBrush}" BorderThickness="0,0,0,1"
-          Padding="0,0,0,18" ColumnSpacing="24">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*" />
-        <ColumnDefinition Width="Auto" />
-      </Grid.ColumnDefinitions>
-
-      <StackPanel VerticalAlignment="Bottom" Spacing="8">
-        <TextBlock Style="{StaticResource GreetingText}">
-          <Run Text="Good evening, " /><Run Text="Operations." Foreground="{StaticResource TealBrush}" />
-        </TextBlock>
-        <TextBlock Text="{x:Bind ViewModel.Subtitle, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="14" />
-      </StackPanel>
-
-      <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="26" VerticalAlignment="Bottom">
-        <StackPanel Orientation="Horizontal" Spacing="8">
-          <TextBlock Text="3" Style="{StaticResource MetricText}" />
-          <TextBlock Text="alongside" Style="{StaticResource CaptionText}" FontSize="12.5" VerticalAlignment="Bottom" Margin="0,0,0,3" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Spacing="8">
-          <TextBlock Text="2" Style="{StaticResource MetricText}" Foreground="{StaticResource AmberBrush}" />
-          <TextBlock Text="inbound" Style="{StaticResource CaptionText}" FontSize="12.5" VerticalAlignment="Bottom" Margin="0,0,0,3" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Spacing="8">
-          <TextBlock Text="{x:Bind ViewModel.MovesNow, Mode=OneWay}" Style="{StaticResource MetricText}" Foreground="{StaticResource TealBrush}" />
-          <TextBlock Text="moves / h" Style="{StaticResource CaptionText}" FontSize="12.5" VerticalAlignment="Bottom" Margin="0,0,0,3" />
-        </StackPanel>
-        <Button Style="{StaticResource BareButton}" Command="{x:Bind ViewModel.State.GoCommand}" CommandParameter="fleet"
-                ToolTipService.ToolTip="Open Fleet &amp; Waterways">
-          <StackPanel Orientation="Horizontal" Spacing="8">
-            <TextBlock Text="2" Style="{StaticResource MetricText}" Foreground="{StaticResource OrangeBrush}" />
-            <TextBlock Text="orders late" Style="{StaticResource CaptionText}" FontSize="12.5" VerticalAlignment="Bottom" Margin="0,0,0,3" />
-          </StackPanel>
-        </Button>
-        <Button Style="{StaticResource BareButton}" Command="{x:Bind ViewModel.State.OpenSecurityCommand}"
-                ToolTipService.ToolTip="Open Security">
-          <StackPanel Orientation="Horizontal" Spacing="8">
-            <TextBlock Text="1" Style="{StaticResource MetricText}" Foreground="{StaticResource OrangeBrush}" />
-            <TextBlock Text="hold · 0 incidents" Style="{StaticResource CaptionText}" FontSize="12.5" VerticalAlignment="Bottom" Margin="0,0,0,3" />
-          </StackPanel>
-        </Button>
-      </StackPanel>
-    </Grid>
-
-    <!-- ── Row 1: movements + what's next ───────────────────────── -->
-    <Grid Grid.Row="1" ColumnSpacing="40">
+    <!-- ── Row 0: movements + what's next ───────────────────────── -->
+    <Grid Grid.Row="0" ColumnSpacing="40">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*" />
         <ColumnDefinition Width="300" />
@@ -142,8 +96,8 @@
       </Border>
     </Grid>
 
-    <!-- ── Row 2: throughput, flow, weather ─────────────────────── -->
-    <Grid Grid.Row="2" ColumnSpacing="40">
+    <!-- ── Row 1: throughput, flow, weather ─────────────────────── -->
+    <Grid Grid.Row="1" ColumnSpacing="40">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*" />
         <ColumnDefinition Width="*" />
@@ -217,15 +171,15 @@
               <TextBlock Text="1.1 kn flood" Style="{StaticResource BodyStrongText}" VerticalAlignment="Bottom" />
             </StackPanel>
 
-            <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="7">
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="7">
               <TextBlock Text="Visibility" Style="{StaticResource MicroText}" VerticalAlignment="Bottom" />
               <TextBlock Text="10 km · no fog" Style="{StaticResource BodyStrongText}" VerticalAlignment="Bottom" />
             </StackPanel>
-            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="7">
+            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="7">
               <TextBlock Text="Channel depth" Style="{StaticResource MicroText}" VerticalAlignment="Bottom" />
               <TextBlock Text="16.9 m at HW" Style="{StaticResource BodyStrongText}" VerticalAlignment="Bottom" />
             </StackPanel>
-            <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" Spacing="7">
+            <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" Spacing="7">
               <TextBlock Text="Pilotage" Style="{StaticResource MicroText}" VerticalAlignment="Bottom" />
               <TextBlock Text="Open · no restrictions" Style="{StaticResource BodyStrongText}"
                          Foreground="{StaticResource SeaGreenBrush}" VerticalAlignment="Bottom" />
@@ -246,8 +200,8 @@
       </Border>
     </Grid>
 
-    <!-- ── Row 3: the shift log ─────────────────────────────────── -->
-    <Border Grid.Row="3" Style="{StaticResource SectionRule}">
+    <!-- ── Row 2: the shift log ─────────────────────────────────── -->
+    <Border Grid.Row="2" Style="{StaticResource SectionRule}">
       <local:ActivityView />
     </Border>
   </Grid>

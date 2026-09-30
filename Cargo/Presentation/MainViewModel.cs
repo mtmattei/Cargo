@@ -55,6 +55,9 @@ public sealed partial class MainViewModel : ObservableObject
     public FleetViewModel Fleet { get; }
     public SecurityViewModel Security { get; }
 
+    /// <summary>The Overview greeting and figures sit above the harbour, on Overview only.</summary>
+    public bool IsOverview => State.Section == "overview";
+
     public ObservableCollection<NavItem> NavItems { get; } = new();
 
     public ObservableCollection<LayerItem> Layers { get; } = new();
@@ -72,6 +75,7 @@ public sealed partial class MainViewModel : ObservableObject
         switch (e.PropertyName)
         {
             case nameof(PortState.Section):
+                OnPropertyChanged(nameof(IsOverview));
                 BuildNav();
                 _ = ShowSectionAsync(State.Section);
                 break;

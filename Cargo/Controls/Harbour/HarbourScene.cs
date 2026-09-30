@@ -136,7 +136,9 @@ public sealed class HarbourScene : SKCanvasElement
 
     // ── Camera ─────────────────────────────────────────────────────────────────
 
-    public void GoTo(HarbourCameraPose pose, double ms = 800)
+    // Camera moves are short and ease out hard (quartic): they read as responsive rather than as a
+    // sequence to wait through. Section framing 420 ms, presets 450, fly-to 480, nudges 180.
+    public void GoTo(HarbourCameraPose pose, double ms = 450)
     {
         _yawVelocity = 0;
         if (!_animate || ms <= 0)
@@ -151,7 +153,7 @@ public sealed class HarbourScene : SKCanvasElement
     }
 
     public void FlyTo(double x, double y) =>
-        GoTo(_camera.Pose with { TargetX = x, TargetY = y, Zoom = Math.Max(_camera.Zoom, 3.6) }, 900);
+        GoTo(_camera.Pose with { TargetX = x, TargetY = y, Zoom = Math.Max(_camera.Zoom, 3.6) }, 480);
 
     public void Nudge(double yawDegrees = 0, double pitchDegrees = 0, double zoomFactor = 1)
     {
@@ -161,7 +163,7 @@ public sealed class HarbourScene : SKCanvasElement
             Yaw = pose.Yaw + yawDegrees * Math.PI / 180,
             Pitch = Math.Clamp(pose.Pitch + pitchDegrees * Math.PI / 180, HarbourCamera.MinPitch, HarbourCamera.MaxPitch),
             Zoom = Math.Clamp(pose.Zoom * zoomFactor, HarbourCamera.MinZoom, HarbourCamera.MaxZoom)
-        }, 260);
+        }, 180);
     }
 
     private void Moved()

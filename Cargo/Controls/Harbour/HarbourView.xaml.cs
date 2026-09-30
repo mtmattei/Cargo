@@ -202,7 +202,7 @@ public sealed partial class HarbourView : UserControl
         }
 
         static double Rad(double d) => d * Math.PI / 180;
-        var ms = animate ? 900 : 0;
+        var ms = animate ? 420 : 0;
 
         if (!Compact)
         {
@@ -442,7 +442,7 @@ public sealed partial class HarbourView : UserControl
 
         var target = _scene.Camera.Pose;
         _scene.Camera.Apply(target with { Yaw = target.Yaw - 40 * Math.PI / 180 });
-        _scene.GoTo(target, 1300);
+        _scene.GoTo(target, 700);
     }
 
     /// <summary>Lets a verification run photograph a preset without synthesised input.</summary>

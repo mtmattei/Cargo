@@ -21,6 +21,7 @@
     <Grid.RowDefinitions>
       <RowDefinition Height="56" />
       <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />
     </Grid.RowDefinitions>
 
@@ -130,7 +131,13 @@
     </Grid>
 
     <!-- ══ SHARED HARBOUR STAGE ════════════════════════════════════════ -->
-    <Grid x:Name="StageHost" Grid.Row="1" Background="{StaticResource HarbourStageBrush}"
+    <!-- ══ OVERVIEW MASTHEAD: the greeting and headline figures sit above the harbour ══ -->
+    <Grid Grid.Row="1" Background="{StaticResource PaperBrush}" Visibility="{x:Bind ViewModel.IsOverview, Mode=OneWay}">
+      <local:OverviewMasthead DataContext="{x:Bind ViewModel.Overview, Mode=OneWay}"
+                              Margin="40,24,40,20" MaxWidth="1440" />
+    </Grid>
+
+    <Grid x:Name="StageHost" Grid.Row="2" Background="{StaticResource HarbourStageBrush}"
           Visibility="{x:Bind ViewModel.State.ShowStage, Mode=OneWay}">
       <!-- One harbour for every harbour page: the wide stage on Overview, a strip framed by the section elsewhere -->
       <harbour:HarbourView x:Name="Harbour" Compact="{x:Bind ViewModel.State.StageCompact, Mode=OneWay}" />
@@ -169,7 +176,7 @@
     </Grid>
 
     <!-- ══ SECTION ═════════════════════════════════════════════════════ -->
-    <ScrollViewer x:Name="SectionScroll" Grid.Row="2" HorizontalScrollBarVisibility="Auto" HorizontalScrollMode="Auto"
+    <ScrollViewer x:Name="SectionScroll" Grid.Row="3" HorizontalScrollBarVisibility="Auto" HorizontalScrollMode="Auto"
                   VerticalScrollBarVisibility="Auto" ZoomMode="Disabled">
       <!-- Section region: one pane per route in App.RegisterRoutes. Each pane is x:Load'ed, so
            startup pays for the section you open on; the rest are realized one per idle turn after
