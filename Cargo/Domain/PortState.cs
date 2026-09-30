@@ -299,6 +299,19 @@ public sealed partial class PortState : ObservableObject
 
     public Vessel SelectedVessel => PortData.Vessel(SelectedVesselId);
 
+    /// <summary>A berth picked in the Berths status list with no vessel on it; null when a vessel is picked.</summary>
+    [ObservableProperty]
+    private string? _selectedBerth;
+
+    partial void OnSelectedBerthChanged(string? value) => NotifyStructureChanged();
+
+    /// <summary>Picks a vessel on the Berths page (the harbour frames it), clearing any berth pick.</summary>
+    public void PickVessel(string vesselId)
+    {
+        SelectedBerth = null;
+        SelectedVesselId = vesselId;
+    }
+
     [ObservableProperty]
     private int? _selectedBay;
 

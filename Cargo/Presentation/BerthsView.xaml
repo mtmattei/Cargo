@@ -1,52 +1,194 @@
 <Page x:Class="Cargo.Presentation.BerthsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="using:Cargo.Presentation">
+             xmlns:local="using:Cargo.Presentation"
+             xmlns:utu="using:Uno.Toolkit.UI">
 
-  <!-- Ships and the berths they sit on: plan the arrivals, then work the vessel in front of you -->
+  <Page.Resources>
+    <!-- Status and detail sit side by side from 1040 px and stack below it -->
+    <utu:ResponsiveLayout x:Key="BerthsBreakpoints" Narrowest="0" Narrow="0" Normal="1040" Wide="100000" Widest="100000" />
+  </Page.Resources>
+
+  <!-- The decision waiting on you, what every berth holds, then the plan and the vessel you are working -->
   <Grid Style="{StaticResource PageFrame}">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
-    <Grid Style="{StaticResource Masthead}">
+    <!-- Below the breakpoint the needs-you bar takes its own full-width row under the title -->
+    <Grid Style="{StaticResource Masthead}"
+          RowSpacing="{utu:Responsive Layout={StaticResource BerthsBreakpoints}, Narrow=16, Normal=0}">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*" />
         <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
 
       <StackPanel VerticalAlignment="Bottom" Spacing="8">
         <TextBlock Text="Berths" Style="{StaticResource PageTitleText}" />
         <TextBlock Text="North Quay · 8 berths · alongside depth 12.0 to 16.0 m" Style="{StaticResource PageSubtitleText}" />
+        <StackPanel Orientation="Horizontal" Spacing="26" Margin="0,6,0,0">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <TextBlock Text="{x:Bind ViewModel.Alongside, Mode=OneWay}" Style="{StaticResource MetricText}" />
+            <TextBlock Text="alongside" Style="{StaticResource MetricLabelText}" />
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <TextBlock Text="{x:Bind ViewModel.Arriving, Mode=OneWay}" Style="{StaticResource MetricText}" Foreground="{StaticResource AmberInkInvariantBrush}" />
+            <TextBlock Text="arriving" Style="{StaticResource MetricLabelText}" />
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <TextBlock Text="{x:Bind ViewModel.AtAnchor, Mode=OneWay}" Style="{StaticResource MetricText}" />
+            <TextBlock Text="at anchor" Style="{StaticResource MetricLabelText}" />
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <TextBlock Text="{x:Bind ViewModel.Conflicts, Mode=OneWay}" Style="{StaticResource MetricText}" Foreground="{x:Bind ViewModel.ConflictInk, Mode=OneWay}" />
+            <TextBlock Text="conflicts in 36 h" Style="{StaticResource MetricLabelText}" />
+          </StackPanel>
+        </StackPanel>
       </StackPanel>
 
-      <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="26" VerticalAlignment="Bottom">
-        <StackPanel Orientation="Horizontal" Spacing="8">
-          <TextBlock Text="{x:Bind ViewModel.Alongside, Mode=OneWay}" Style="{StaticResource MetricText}" />
-          <TextBlock Text="alongside" Style="{StaticResource MetricLabelText}" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Spacing="8">
-          <TextBlock Text="{x:Bind ViewModel.Arriving, Mode=OneWay}" Style="{StaticResource MetricText}" Foreground="{StaticResource AmberInkInvariantBrush}" />
-          <TextBlock Text="arriving" Style="{StaticResource MetricLabelText}" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Spacing="8">
-          <TextBlock Text="{x:Bind ViewModel.AtAnchor, Mode=OneWay}" Style="{StaticResource MetricText}" />
-          <TextBlock Text="at anchor" Style="{StaticResource MetricLabelText}" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Spacing="8">
-          <TextBlock Text="{x:Bind ViewModel.Conflicts, Mode=OneWay}" Style="{StaticResource MetricText}" Foreground="{x:Bind ViewModel.ConflictInk, Mode=OneWay}" />
-          <TextBlock Text="conflicts in 36 h" Style="{StaticResource MetricLabelText}" />
-        </StackPanel>
-      </StackPanel>
+      <local:NeedsYouBar VerticalAlignment="Bottom"
+                         Grid.Row="{utu:Responsive Layout={StaticResource BerthsBreakpoints}, Narrow=1, Normal=0}"
+                         Grid.Column="{utu:Responsive Layout={StaticResource BerthsBreakpoints}, Narrow=0, Normal=1}"
+                         Grid.ColumnSpan="{utu:Responsive Layout={StaticResource BerthsBreakpoints}, Narrow=2, Normal=1}"
+                         Width="{utu:Responsive Layout={StaticResource BerthsBreakpoints}, Narrow=NaN, Normal=600}"
+                         DataContext="{x:Bind ViewModel.NeedsYou, Mode=OneWay}" />
     </Grid>
 
-    <Border Grid.Row="1" Style="{StaticResource SectionRule}">
+    <!-- ── Berth status · Selected vessel ───────────────────────── -->
+    <Grid Grid.Row="1"
+          ColumnSpacing="{utu:Responsive Layout={StaticResource BerthsBreakpoints}, Narrow=0, Normal=24}"
+          RowSpacing="{utu:Responsive Layout={StaticResource BerthsBreakpoints}, Narrow=28, Normal=0}">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="1.55*" />
+        <ColumnDefinition Width="{utu:Responsive Layout={StaticResource BerthsBreakpoints}, Narrow='0', Normal='1*'}" />
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+
+      <Border Style="{StaticResource SectionRule}">
+        <StackPanel Spacing="10">
+          <Grid>
+            <TextBlock Text="Berth status" Style="{StaticResource SectionHeadText}" />
+            <TextBlock Text="{x:Bind ViewModel.Status.Count, Mode=OneWay}" Style="{StaticResource PageSubtitleText}"
+                       HorizontalAlignment="Right" VerticalAlignment="Bottom" />
+          </Grid>
+
+          <ItemsControl ItemsSource="{x:Bind ViewModel.Status.Rows, Mode=OneWay}" IsTabStop="False">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="local:BerthStatusRow">
+                <Border BorderBrush="{StaticResource HairlineInvariantBrush}" BorderThickness="0,1,0,0" Padding="0,1">
+                  <Button Style="{StaticResource RowButton}" Command="{x:Bind Select}" CommandParameter="{x:Bind Slot}"
+                          AutomationProperties.Name="{x:Bind AccessibleName, Mode=OneWay}">
+                    <!-- xaml-lint: allow card - a list row whose ground and outline carry its state (needs you, selected) -->
+                    <Border Padding="10" CornerRadius="{StaticResource RadiusRow}" BorderThickness="2"
+                            Background="{x:Bind RowBackground, Mode=OneWay}" BorderBrush="{x:Bind Outline, Mode=OneWay}">
+                      <Grid ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition Width="34" />
+                          <ColumnDefinition Width="*" />
+                          <ColumnDefinition Width="Auto" />
+                          <ColumnDefinition Width="12" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- xaml-lint: allow card - the berth chip, the list's version of the harbour's painted number -->
+                        <Border Width="34" Height="30" CornerRadius="5" BorderThickness="1"
+                                Background="{x:Bind PlateBackground, Mode=OneWay}" BorderBrush="{x:Bind PlateBorder, Mode=OneWay}">
+                          <TextBlock Text="{x:Bind Plate, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}" FontSize="13"
+                                     Foreground="{x:Bind PlateForeground, Mode=OneWay}"
+                                     HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+
+                        <StackPanel Grid.Column="1" Spacing="1" VerticalAlignment="Center">
+                          <TextBlock Text="{x:Bind StateLabel, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}" FontSize="11"
+                                     Foreground="{x:Bind StateForeground, Mode=OneWay}" />
+                          <TextBlock Text="{x:Bind Name, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}" FontSize="15"
+                                     Foreground="{x:Bind NameForeground, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                          <TextBlock Text="{x:Bind Meta, Mode=OneWay}" FontFamily="{StaticResource BodyFont}" FontSize="13"
+                                     Foreground="{StaticResource TextMutedInvariantBrush}" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+
+                        <TextBlock Grid.Column="2" Text="{x:Bind When, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}" FontSize="14"
+                                   Foreground="{x:Bind WhenForeground, Mode=OneWay}" VerticalAlignment="Center" />
+
+                        <FontIcon Grid.Column="3" Glyph="&#xE76C;" FontSize="11" Foreground="{StaticResource TextMutedInvariantBrush}"
+                                  VerticalAlignment="Center" AutomationProperties.AccessibilityView="Raw" />
+                      </Grid>
+                    </Border>
+                  </Button>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </Border>
+
+      <Border Grid.Row="{utu:Responsive Layout={StaticResource BerthsBreakpoints}, Narrow=1, Normal=0}"
+              Grid.Column="{utu:Responsive Layout={StaticResource BerthsBreakpoints}, Narrow=0, Normal=1}"
+              Style="{StaticResource SectionRule}"
+              AutomationProperties.LiveSetting="Polite"
+              AutomationProperties.Name="{x:Bind ViewModel.Detail.Name, Mode=OneWay}">
+        <StackPanel Spacing="16">
+          <Grid>
+            <TextBlock Text="{x:Bind ViewModel.Detail.Name, Mode=OneWay}" Style="{StaticResource SectionHeadText}" TextTrimming="CharacterEllipsis" />
+            <TextBlock Text="{x:Bind ViewModel.Detail.Where, Mode=OneWay}" Style="{StaticResource PageSubtitleText}"
+                       HorizontalAlignment="Right" VerticalAlignment="Bottom" />
+          </Grid>
+
+          <StackPanel Spacing="8">
+            <TextBlock Text="{x:Bind ViewModel.Detail.StateLabel, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}" FontSize="11"
+                       Foreground="{x:Bind ViewModel.Detail.Accent, Mode=OneWay}" />
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="{x:Bind ViewModel.Detail.Big, Mode=OneWay}" FontFamily="{StaticResource DisplayFont}" FontSize="32"
+                         Foreground="{x:Bind ViewModel.Detail.Accent, Mode=OneWay}" />
+              <TextBlock Text="{x:Bind ViewModel.Detail.BigSub, Mode=OneWay}" FontFamily="{StaticResource BodyFont}" FontSize="14"
+                         Foreground="{StaticResource TextMutedInvariantBrush}" VerticalAlignment="Bottom" Margin="0,0,0,5" />
+            </StackPanel>
+            <TextBlock Text="{x:Bind ViewModel.Detail.Note, Mode=OneWay}" FontFamily="{StaticResource BodyFont}" FontSize="14"
+                       Foreground="{StaticResource TextMutedInvariantBrush}" TextWrapping="WrapWholeWords" />
+          </StackPanel>
+
+          <StackPanel Spacing="6" Visibility="{x:Bind ViewModel.Detail.CargoVisibility, Mode=OneWay}">
+            <ProgressBar Value="{x:Bind ViewModel.Detail.CargoPercent, Mode=OneWay}" Maximum="100" Height="6" MinHeight="6" CornerRadius="3"
+                         Foreground="{StaticResource TextMutedInvariantBrush}" Background="{StaticResource HairlineInvariantBrush}"
+                         AutomationProperties.Name="{x:Bind ViewModel.Detail.CargoLabel, Mode=OneWay}" />
+            <TextBlock Text="{x:Bind ViewModel.Detail.CargoLabel, Mode=OneWay}" FontFamily="{StaticResource BodyFont}" FontSize="12"
+                       Foreground="{StaticResource TextMutedInvariantBrush}" />
+          </StackPanel>
+
+          <ItemsRepeater ItemsSource="{x:Bind ViewModel.Detail.Facts, Mode=OneWay}">
+            <ItemsRepeater.Layout>
+              <UniformGridLayout MaximumRowsOrColumns="2" ItemsStretch="Fill" MinColumnSpacing="16" MinRowSpacing="8" />
+            </ItemsRepeater.Layout>
+            <ItemsRepeater.ItemTemplate>
+              <DataTemplate x:DataType="local:Fact">
+                <StackPanel Spacing="2">
+                  <TextBlock Text="{x:Bind Key}" FontFamily="{StaticResource BodyFont}" FontSize="12" Foreground="{StaticResource TextMutedInvariantBrush}" />
+                  <TextBlock Text="{x:Bind Value}" FontFamily="{StaticResource MonoMediumFont}" FontSize="15" Foreground="{x:Bind Tone}" />
+                </StackPanel>
+              </DataTemplate>
+            </ItemsRepeater.ItemTemplate>
+          </ItemsRepeater>
+
+          <Button Content="Show on map" Style="{StaticResource GhostButton}" MinHeight="40" HorizontalAlignment="Left"
+                  Command="{x:Bind ViewModel.Detail.ShowOnMapCommand, Mode=OneWay}" />
+        </StackPanel>
+      </Border>
+    </Grid>
+
+    <Border Grid.Row="2" Style="{StaticResource SectionRule}">
       <local:DockingView DataContext="{x:Bind ViewModel.Plan, Mode=OneWay}" />
     </Border>
 
-    <Border Grid.Row="2" Style="{StaticResource SectionRule}">
+    <Border Grid.Row="3" Style="{StaticResource SectionRule}">
       <local:VesselsView DataContext="{x:Bind ViewModel.Vessel, Mode=OneWay}" />
     </Border>
   </Grid>

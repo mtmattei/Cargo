@@ -3,8 +3,8 @@ using Microsoft.UI.Xaml.Media;
 namespace Cargo.Presentation;
 
 /// <summary>
-/// Berths: the berth plan above the vessel you are working. The masthead counts live here;
-/// the plan and the vessel panel each have their own model.
+/// Berths: the decision waiting on you, the status of every berth, then the berth plan and the
+/// vessel you are working. The masthead counts live here; each panel has its own model.
 /// </summary>
 public sealed partial class BerthsViewModel : ObservableObject
 {
@@ -16,6 +16,9 @@ public sealed partial class BerthsViewModel : ObservableObject
         // images as they start, so they are created on it.
         dispatcher.TryEnqueue(() =>
         {
+            NeedsYou = new NeedsYouViewModel(state);
+            Status = new BerthStatusViewModel(state);
+            Detail = new VesselDetailViewModel(state);
             Plan = new DockingViewModel(state);
             Vessel = new VesselsViewModel(state);
             RefreshMasthead();
@@ -24,6 +27,15 @@ public sealed partial class BerthsViewModel : ObservableObject
     }
 
     public PortState State { get; }
+
+    [ObservableProperty]
+    private NeedsYouViewModel? _needsYou;
+
+    [ObservableProperty]
+    private BerthStatusViewModel? _status;
+
+    [ObservableProperty]
+    private VesselDetailViewModel? _detail;
 
     [ObservableProperty]
     private DockingViewModel? _plan;
@@ -42,6 +54,14 @@ public sealed partial class BerthsViewModel : ObservableObject
 
     [ObservableProperty]
     private Brush? _conflictInk;
+
+    /// <summary>The decision, status and detail panels; the page runs this only while it is shown.</summary>
+    public void RefreshPanels()
+    {
+        NeedsYou?.Refresh();
+        Status?.Refresh();
+        Detail?.Refresh();
+    }
 
     private void RefreshMasthead()
     {

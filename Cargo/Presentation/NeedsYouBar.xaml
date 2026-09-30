@@ -1,0 +1,56 @@
+<UserControl x:Class="Cargo.Presentation.NeedsYouBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!-- The one decision waiting on the dispatcher. A polite live region: the title and meta are
+       announced as the bar moves from needs to done and back. -->
+  <!-- xaml-lint: allow card - a status callout whose ground changes with its state (amber while it needs you, surface once done) -->
+  <Border MinHeight="48" Padding="14,4,4,4" CornerRadius="{StaticResource RadiusPanel}"
+          Background="{x:Bind ViewModel.Ground, Mode=OneWay}"
+          BorderBrush="{x:Bind ViewModel.Edge, Mode=OneWay}" BorderThickness="1"
+          AutomationProperties.LiveSetting="Polite"
+          AutomationProperties.Name="{x:Bind ViewModel.Title, Mode=OneWay}">
+    <Grid ColumnSpacing="12">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="10" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
+
+      <!-- Needs: an amber square, the legend's "reserved · arriving" swatch. Done: a check. -->
+      <Grid VerticalAlignment="Center" AutomationProperties.AccessibilityView="Raw">
+        <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2" Fill="{StaticResource AmberInvariantBrush}"
+                   Visibility="{x:Bind ViewModel.NeedsMark, Mode=OneWay}" />
+        <FontIcon Glyph="&#xE73E;" FontSize="11" Foreground="{StaticResource InkInvariantBrush}"
+                  Visibility="{x:Bind ViewModel.DoneMark, Mode=OneWay}" />
+      </Grid>
+
+      <StackPanel Grid.Column="1" Spacing="1" Padding="0,6" VerticalAlignment="Center">
+        <TextBlock Text="{x:Bind ViewModel.Title, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}" FontSize="15"
+                   Foreground="{StaticResource InkInvariantBrush}" TextTrimming="CharacterEllipsis" />
+        <TextBlock Text="{x:Bind ViewModel.Meta, Mode=OneWay}" FontFamily="{StaticResource BodyFont}" FontSize="13"
+                   Foreground="{x:Bind ViewModel.MetaForeground, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+      </StackPanel>
+
+      <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+        <Button Content="Review" Style="{StaticResource GhostButton}" MinHeight="40"
+                Command="{x:Bind ViewModel.ReviewCommand, Mode=OneWay}"
+                Visibility="{x:Bind ViewModel.ReviewVisibility, Mode=OneWay}" />
+        <Button Style="{StaticResource PrimaryButton}" MinHeight="40" MinWidth="148"
+                Background="{StaticResource AmberInvariantBrush}" Foreground="{StaticResource InkInvariantBrush}"
+                Command="{x:Bind ViewModel.ConfirmCommand, Mode=OneWay}"
+                Visibility="{x:Bind ViewModel.ConfirmVisibility, Mode=OneWay}"
+                AutomationProperties.Name="{x:Bind ViewModel.ConfirmLabel, Mode=OneWay}">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <ProgressRing Width="12" Height="12" MinWidth="12" MinHeight="12" IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}"
+                          Foreground="{StaticResource InkInvariantBrush}" />
+            <TextBlock Text="{x:Bind ViewModel.ConfirmLabel, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}" FontSize="13" />
+          </StackPanel>
+        </Button>
+        <Button Content="Undo" Style="{StaticResource GhostButton}" MinHeight="40"
+                Command="{x:Bind ViewModel.UndoCommand, Mode=OneWay}"
+                Visibility="{x:Bind ViewModel.UndoVisibility, Mode=OneWay}" />
+      </StackPanel>
+    </Grid>
+  </Border>
+</UserControl>
