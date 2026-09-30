@@ -13,7 +13,7 @@
 
     <StackPanel VerticalAlignment="Bottom" Spacing="8">
       <TextBlock Style="{StaticResource GreetingText}">
-        <Run Text="Good evening, " /><Run Text="Operations." Foreground="{StaticResource TealBrush}" />
+        <Run Text="Good evening, " /><Run Text="Operations." Foreground="{StaticResource TealInvariantBrush}" />
       </TextBlock>
       <TextBlock Text="{x:Bind ViewModel.Subtitle, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="14" />
     </StackPanel>
@@ -26,7 +26,7 @@
 
       <StackPanel Style="{StaticResource FigureStack}">
         <StackPanel Orientation="Horizontal" Spacing="6">
-          <Ellipse Style="{StaticResource StatusDot}" Fill="{StaticResource AmberBrush}" />
+          <Ellipse Style="{StaticResource StatusDot}" Fill="{StaticResource AmberInvariantBrush}" />
           <TextBlock Text="Inbound" Style="{StaticResource FigureLabelText}" />
         </StackPanel>
         <TextBlock Text="2" Style="{StaticResource MetricText}" />
@@ -41,7 +41,7 @@
               ToolTipService.ToolTip="Open Waterways" AutomationProperties.Name="2 orders late, open Waterways">
         <StackPanel Style="{StaticResource FigureStack}">
           <StackPanel Orientation="Horizontal" Spacing="6">
-            <Ellipse Style="{StaticResource StatusDot}" Fill="{StaticResource OrangeBrush}" />
+            <Ellipse Style="{StaticResource StatusDot}" Fill="{StaticResource OrangeInvariantBrush}" />
             <TextBlock Text="Orders late" Style="{StaticResource FigureLabelText}" />
           </StackPanel>
           <TextBlock Text="2" Style="{StaticResource MetricText}" />
@@ -52,7 +52,7 @@
               ToolTipService.ToolTip="Open Security" AutomationProperties.Name="1 hold, open Security">
         <StackPanel Style="{StaticResource FigureStack}">
           <StackPanel Orientation="Horizontal" Spacing="6">
-            <Ellipse Style="{StaticResource StatusDot}" Fill="{StaticResource OrangeBrush}" />
+            <Ellipse Style="{StaticResource StatusDot}" Fill="{StaticResource OrangeInvariantBrush}" />
             <TextBlock Text="Holds" Style="{StaticResource FigureLabelText}" />
           </StackPanel>
           <TextBlock Text="1" Style="{StaticResource MetricText}" />

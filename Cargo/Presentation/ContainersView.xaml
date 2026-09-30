@@ -69,15 +69,15 @@
                       <Image Source="{x:Bind Render}" Height="72" Stretch="Uniform" />
                     </Border>
                     <!-- xaml-lint: allow card - container id tag over the image -->
-                    <Border Background="{StaticResource SurfaceBrush}" CornerRadius="4" Padding="7,2"
+                    <Border Background="{StaticResource SurfaceInvariantBrush}" CornerRadius="4" Padding="7,2"
                             HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10">
                       <TextBlock Text="{x:Bind IdPretty}" FontFamily="{StaticResource MonoMediumFont}" FontSize="12" />
                     </Border>
                     <!-- xaml-lint: allow card - size and carrier tag over the image -->
-                    <Border Background="{StaticResource SurfaceBrush}" CornerRadius="4" Padding="6,2"
+                    <Border Background="{StaticResource SurfaceInvariantBrush}" CornerRadius="4" Padding="6,2"
                             HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,0,10,8">
                       <TextBlock Text="{x:Bind Meta}" FontFamily="{StaticResource MonoMediumFont}" FontSize="10"
-                                 Foreground="{StaticResource TextMutedBrush}" />
+                                 Foreground="{StaticResource TextMutedInvariantBrush}" />
                     </Border>
                   </Grid>
                   <TextBlock Text="{x:Bind Route}" Style="{StaticResource BodyStrongText}" FontSize="13"
@@ -107,7 +107,7 @@
 
           <StackPanel Spacing="10">
             <TextBlock Text="JOURNEY" FontFamily="{StaticResource BodyStrongFont}" FontSize="12"
-                       Foreground="{StaticResource TextMutedBrush}" />
+                       Foreground="{StaticResource TextMutedInvariantBrush}" />
             <ItemsControl ItemsSource="{x:Bind ViewModel.Journey, Mode=OneWay}">
               <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate><controls:EvenRowPanel /></ItemsPanelTemplate>
@@ -137,7 +137,7 @@
             </ItemsControl>
           </StackPanel>
 
-          <Border Height="1" Background="{StaticResource HairlineBrush}" />
+          <Border Height="1" Background="{StaticResource HairlineInvariantBrush}" />
           <ItemsControl ItemsSource="{x:Bind ViewModel.Facts, Mode=OneWay}">
             <ItemsControl.ItemsPanel>
               <ItemsPanelTemplate><controls:TwoColumnPanel ColumnSpacing="14" RowSpacing="11" /></ItemsPanelTemplate>
@@ -156,10 +156,10 @@
           <Button Style="{StaticResource PrimaryButton}" Command="{x:Bind ViewModel.OpenScannerCommand, Mode=OneWay}" HorizontalAlignment="Stretch">
             <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
               <shapes:Path Data="M4 8V5a1 1 0 011-1h3M16 4h3a1 1 0 011 1v3M20 16v3a1 1 0 01-1 1h-3M8 20H5a1 1 0 01-1-1v-3M3 12h18"
-                           Stroke="{StaticResource PaperBrush}" StrokeThickness="2" Width="14" Height="14"
+                           Stroke="{StaticResource PaperInvariantBrush}" StrokeThickness="2" Width="14" Height="14"
                            Stretch="Uniform" VerticalAlignment="Center" />
               <TextBlock Text="Scan container" FontFamily="{StaticResource BodyMediumFont}" FontSize="12.5"
-                         Foreground="{StaticResource PaperBrush}" />
+                         Foreground="{StaticResource PaperInvariantBrush}" />
             </StackPanel>
           </Button>
           <Button Style="{StaticResource GhostButton}" Content="Inspection record →"

@@ -6,7 +6,7 @@
       xmlns:shapes="using:Microsoft.UI.Xaml.Shapes"
       xmlns:uen="using:Uno.Extensions.Navigation.UI"
       xmlns:utu="using:Uno.Toolkit.UI"
-      Background="{StaticResource PaperBrush}">
+      Background="{StaticResource PaperInvariantBrush}">
 
   <Page.Resources>
     <!-- Header breakpoints: below 1040 only the section chips; from 1040 the current section's name
@@ -25,7 +25,7 @@
     </Grid.RowDefinitions>
 
     <!-- ══ HEADER ══════════════════════════════════════════════════════ -->
-    <Grid Grid.Row="0" Background="{StaticResource InkDeepBrush}" Padding="24,0" ColumnSpacing="32">
+    <Grid Grid.Row="0" Background="{StaticResource InkDeepInvariantBrush}" Padding="24,0" ColumnSpacing="32">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="*" />
@@ -35,13 +35,13 @@
       <!-- Wordmark -->
       <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
         <shapes:Path Data="M5 13c4-5 8-5 12 0s8 5 12 0M5 21c4-5 8-5 12 0s8 5 12 0"
-                     Stroke="{StaticResource TealBrightBrush}" StrokeThickness="2.6"
+                     Stroke="{StaticResource TealBrightInvariantBrush}" StrokeThickness="2.6"
                      StrokeStartLineCap="Round" StrokeEndLineCap="Round"
                      Width="26" Height="26" Stretch="Uniform" VerticalAlignment="Center" />
         <TextBlock Text="Westhaven" FontFamily="{StaticResource DisplayBoldFont}" FontSize="15"
-                   Foreground="{StaticResource PaperBrush}" VerticalAlignment="Center" />
+                   Foreground="{StaticResource PaperInvariantBrush}" VerticalAlignment="Center" />
         <TextBlock Text="SHIPPING · DISPATCH" FontFamily="{StaticResource MonoMediumFont}" FontSize="10"
-                   Foreground="{StaticResource TealBrightBrush}" VerticalAlignment="Center" Margin="2,1,0,0" />
+                   Foreground="{StaticResource TealBrightInvariantBrush}" VerticalAlignment="Center" Margin="2,1,0,0" />
       </StackPanel>
 
       <!-- Sections -->
@@ -66,7 +66,7 @@
                                  HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <!-- Attention: a dot on the chip's corner, ringed in the header's ink so it reads on any chip -->
-                    <Ellipse Width="8" Height="8" Fill="{x:Bind BadgeBrush, Mode=OneWay}" Stroke="{StaticResource InkDeepBrush}"
+                    <Ellipse Width="8" Height="8" Fill="{x:Bind BadgeBrush, Mode=OneWay}" Stroke="{StaticResource InkDeepInvariantBrush}"
                              StrokeThickness="1.5" Opacity="{x:Bind BadgeOpacity, Mode=OneWay}"
                              HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-3,-3,0" />
                   </Grid>
@@ -83,7 +83,7 @@
                   </Grid>
                 </StackPanel>
                 <Rectangle Height="2" Margin="12,0,12,0" VerticalAlignment="Bottom"
-                           Fill="{StaticResource TealBrightBrush}" Opacity="{x:Bind UnderlineOpacity, Mode=OneWay}" />
+                           Fill="{StaticResource TealBrightInvariantBrush}" Opacity="{x:Bind UnderlineOpacity, Mode=OneWay}" />
               </Grid>
             </Button>
           </DataTemplate>
@@ -94,7 +94,7 @@
       <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="20" VerticalAlignment="Center">
         <StackPanel x:Name="IspsBadge" Orientation="Horizontal" Spacing="7" VerticalAlignment="Center"
                     Visibility="{utu:Responsive Layout={StaticResource HeaderBreakpoints}, Narrow=Collapsed, Normal=Visible}">
-          <Ellipse Width="6" Height="6" Fill="{StaticResource SeaGreenBrush}" VerticalAlignment="Center" />
+          <Ellipse Width="6" Height="6" Fill="{StaticResource SeaGreenInvariantBrush}" VerticalAlignment="Center" />
           <TextBlock Text="ISPS 1" Style="{StaticResource CaptionText}" Foreground="{StaticResource TextOnDarkMutedBrush}" />
         </StackPanel>
 
@@ -105,7 +105,7 @@
                        Fill="{StaticResource TextOnDarkMutedBrush}" Width="18" Height="15" Stretch="Uniform"
                        VerticalAlignment="Center" />
           <TextBlock Text="18 °C" FontFamily="{StaticResource BodyMediumFont}" FontSize="12.5"
-                     Foreground="{StaticResource PaperBrush}" VerticalAlignment="Center" />
+                     Foreground="{StaticResource PaperInvariantBrush}" VerticalAlignment="Center" />
           <TextBlock Text="· sea 15 °C" Style="{StaticResource CaptionText}"
                      Foreground="{StaticResource TextOnDarkMutedBrush}" VerticalAlignment="Center" />
         </StackPanel>
@@ -114,7 +114,7 @@
                     Visibility="{utu:Responsive Layout={StaticResource HeaderBreakpoints}, Narrow=Collapsed, Wide=Visible}"
                     ToolTipService.ToolTip="{x:Bind ViewModel.Tide.Tooltip, Mode=OneWay}">
           <Grid Width="34" Height="16">
-            <shapes:Path Data="{x:Bind ViewModel.Tide.Spark, Mode=OneWay}" Stroke="{StaticResource TealBrightBrush}"
+            <shapes:Path Data="{x:Bind ViewModel.Tide.Spark, Mode=OneWay}" Stroke="{StaticResource TealBrightInvariantBrush}"
                          StrokeThickness="3" Stretch="Uniform" />
           </Grid>
           <TextBlock Text="{x:Bind ViewModel.Tide.Label, Mode=OneWay}" Style="{StaticResource CaptionText}"
@@ -124,19 +124,19 @@
         <Rectangle Width="1" Height="20" Fill="{StaticResource HairlineOnDarkBrush}" VerticalAlignment="Center" />
 
         <TextBlock Text="{x:Bind ViewModel.State.Now, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}"
-                   FontSize="13" Foreground="{StaticResource PaperBrush}" VerticalAlignment="Center" />
+                   FontSize="13" Foreground="{StaticResource PaperInvariantBrush}" VerticalAlignment="Center" />
 
         <!-- xaml-lint: allow card - user avatar -->
-        <Border Width="28" Height="28" CornerRadius="14" Background="{StaticResource TealDeepBrush}">
+        <Border Width="28" Height="28" CornerRadius="14" Background="{StaticResource TealDeepInvariantBrush}">
           <TextBlock Text="EL" FontFamily="{StaticResource BodyStrongFont}" FontSize="10.5"
-                     Foreground="{StaticResource SurfaceBrush}"
+                     Foreground="{StaticResource SurfaceInvariantBrush}"
                      HorizontalAlignment="Center" VerticalAlignment="Center" />
         </Border>
       </StackPanel>
     </Grid>
 
     <!-- ══ SHARED HARBOUR STAGE ════════════════════════════════════════ -->
-    <Grid x:Name="StageHost" Grid.Row="1" Background="{StaticResource HarbourStageBrush}"
+    <Grid x:Name="StageHost" Grid.Row="1" Background="{StaticResource HarbourStageInvariantBrush}"
           Visibility="{x:Bind ViewModel.State.ShowStage, Mode=OneWay}">
       <!-- One harbour for every harbour page: the wide stage on Overview, a strip framed by the section elsewhere -->
       <harbour:HarbourView x:Name="Harbour" Compact="{x:Bind ViewModel.State.StageCompact, Mode=OneWay}" />
@@ -176,7 +176,7 @@
               Content="{x:Bind ViewModel.State.StageToggleLabel, Mode=OneWay}"
               Visibility="{x:Bind ViewModel.State.ShowStageToggle, Mode=OneWay}"
               HorizontalAlignment="Right" VerticalAlignment="Top" Margin="12"
-              Background="{StaticResource SurfaceBrush}" Padding="11,7" CornerRadius="{StaticResource RadiusControl}" />
+              Background="{StaticResource SurfaceInvariantBrush}" Padding="11,7" CornerRadius="{StaticResource RadiusControl}" />
     </Grid>
 
     <!-- ══ SECTION ═════════════════════════════════════════════════════ -->

@@ -88,11 +88,11 @@ public sealed partial class BerthMap : SceneHost
 
     private void DrawGround()
     {
-        Scene.Place(Draw.Rect(0, 0, 1200, 460, Tokens.Brush("LandBrush")));
-        Scene.Place(Draw.Rect(0, 140, 1200, 320, Tokens.Brush("ShallowsBrush")));
+        Scene.Place(Draw.Rect(0, 0, 1200, 460, Tokens.Brush("LandInvariantBrush")));
+        Scene.Place(Draw.Rect(0, 140, 1200, 320, Tokens.Brush("ShallowsInvariantBrush")));
 
         // Terminal apron behind the quay
-        Scene.Place(Draw.Rect(0, 0, 1200, 128, Tokens.Brush("LandBrush")));
+        Scene.Place(Draw.Rect(0, 0, 1200, 128, Tokens.Brush("LandInvariantBrush")));
         for (var g = 0; g < 12; g++)
         {
             for (var i = 0; i < 5; i++)
@@ -110,8 +110,8 @@ public sealed partial class BerthMap : SceneHost
             }
         }
 
-        Scene.Place(Draw.Rect(0, 128, 1200, 8, Tokens.Brush("QuayBrush")));
-        Scene.Place(Draw.Rect(0, 135, 1200, 2, Tokens.Brush("QuayEdgeBrush")));
+        Scene.Place(Draw.Rect(0, 128, 1200, 8, Tokens.Brush("QuayInvariantBrush")));
+        Scene.Place(Draw.Rect(0, 135, 1200, 2, Tokens.Brush("QuayEdgeInvariantBrush")));
 
         // Swell in the basin
         var swell = Tokens.Brush("DeckWhiteColor", 0.35);
@@ -122,11 +122,11 @@ public sealed partial class BerthMap : SceneHost
         }
 
         // Anchorage
-        Scene.Place(Draw.Text("ANCHORAGE", 700, 346, 12, Tokens.Brush("TextMutedBrush"), "BodyMediumFont"));
-        Scene.Place(Draw.Rule(700, 440, 1170, 440, Tokens.Brush("TextFaintBrush"), 1, dash: Draw.Dash(3, 5)));
+        Scene.Place(Draw.Text("ANCHORAGE", 700, 346, 12, Tokens.Brush("TextMutedInvariantBrush"), "BodyMediumFont"));
+        Scene.Place(Draw.Rule(700, 440, 1170, 440, Tokens.Brush("TextFaintInvariantBrush"), 1, dash: Draw.Dash(3, 5)));
 
         // Nordic Star's approach
-        var approach = Draw.Shape("M700 392 C 760 330 860 260 930 222", null, Tokens.Brush("AmberDeepBrush"), 1.5);
+        var approach = Draw.Shape("M700 392 C 760 330 860 260 930 222", null, Tokens.Brush("AmberDeepInvariantBrush"), 1.5);
         approach.StrokeDashArray = Draw.Dash(6, 8);
         Scene.Place(approach);
     }
@@ -150,11 +150,11 @@ public sealed partial class BerthMap : SceneHost
             _berthInfo[i] = (status, conflict, selected);
 
             _boxes[i] = Scene.Place(Draw.Rect(x, 146, 132, 70, Tokens.Transparent, 8, Tokens.Transparent, 1.2));
-            Scene.Place(Draw.Text(berth.Number, x, 228, 16, Tokens.Brush("InkBrush"),
+            Scene.Place(Draw.Text(berth.Number, x, 228, 16, Tokens.Brush("InkInvariantBrush"),
                 "MonoMediumFont", TextAlignment.Center, 132));
             _statusLabels[i] = Scene.Place(Draw.Text(conflict ? "Conflict" : char.ToUpperInvariant(status[0]) + status[1..],
                 x, 248, 14, Tokens.Transparent, "BodyMediumFont", TextAlignment.Center, 132));
-            Scene.Place(Draw.Text($"{berth.Depth:0.0} m", x, 218, 10.5, Tokens.Brush("TextFaintBrush"),
+            Scene.Place(Draw.Text($"{berth.Depth:0.0} m", x, 218, 10.5, Tokens.Brush("TextFaintInvariantBrush"),
                 "BodyFont", TextAlignment.Center, 132));
         }
     }
@@ -268,7 +268,7 @@ public sealed partial class BerthMap : SceneHost
                 RadiusY = 20,
                 Margin = new Thickness(-6),
                 Stroke = selected || dragging
-                    ? Tokens.Brush("InkBrush")
+                    ? Tokens.Brush("InkInvariantBrush")
                     : movable ? Tokens.Brush("InkColor", 0.35) : Tokens.Transparent,
                 StrokeThickness = selected || dragging ? 2.5 : movable ? 1.2 : 0,
                 StrokeDashArray = movable && !selected && !dragging ? Draw.Dash(5, 4) : null
@@ -285,7 +285,7 @@ public sealed partial class BerthMap : SceneHost
             host.PointerPressed += (_, e) => BeginDrag(vessel, movable, e, Canvas.GetLeft(host), Canvas.GetTop(host));
             Scene.Place(host.At(x, y));
 
-            var name = Scene.Place(Draw.Label(vessel.Name, x + 80, y + 36, 15, Tokens.Brush("InkBrush"),
+            var name = Scene.Place(Draw.Label(vessel.Name, x + 80, y + 36, 15, Tokens.Brush("InkInvariantBrush"),
                 "BodyStrongFont", TextAlignment.Center, 220));
             _hulls[vessel.Id] = (host, name);
         }

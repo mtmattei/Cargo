@@ -61,9 +61,9 @@ public sealed partial class CargoOpsScene : SceneHost
         }));
 
         // Water and quay
-        Scene.Place(Draw.Rect(0, 150, 420, 25, Tokens.Brush("SeaFlatBrush")));
-        Scene.Place(Draw.Rect(0, 140, 140, 12, Tokens.Brush("QuayBrush")));
-        Scene.Place(Draw.Rect(0, 138, 140, 3, Tokens.Brush("QuayEdgeBrush")));
+        Scene.Place(Draw.Rect(0, 150, 420, 25, Tokens.Brush("SeaFlatInvariantBrush")));
+        Scene.Place(Draw.Rect(0, 140, 140, 12, Tokens.Brush("QuayInvariantBrush")));
+        Scene.Place(Draw.Rect(0, 138, 140, 3, Tokens.Brush("QuayEdgeInvariantBrush")));
 
         // The stack already landed, then the boxes that fill in as discharge proceeds
         Scene.Place(Sprites.Fit("cont-stack", 4, 98, 58, 44, anchorY: 1));
@@ -79,13 +79,13 @@ public sealed partial class CargoOpsScene : SceneHost
         Scene.Place(Sprites.Fit(Sprites.Side(vessel.Id), 140, 40, 280, 112, anchorY: 1));
 
         var trolley = new Canvas { RenderTransform = _trolley };
-        trolley.Place(Draw.Rect(58, 8, 24, 7, Tokens.Brush("SteelBrush"), 1.5));
-        trolley.Place(Draw.Rule(70, 15, 70, 22, Tokens.Brush("SteelBrush"), 1.5));
+        trolley.Place(Draw.Rect(58, 8, 24, 7, Tokens.Brush("SteelInvariantBrush"), 1.5));
+        trolley.Place(Draw.Rule(70, 15, 70, 22, Tokens.Brush("SteelInvariantBrush"), 1.5));
         Scene.Place(trolley);
 
         _hookGroup.Children.Clear();
         _hookGroup.RenderTransform = _hook;
-        _hookGroup.Place(Draw.Rect(-4, -2, 42, 4, Tokens.Brush("CargoOversizeBrush"), 1));
+        _hookGroup.Place(Draw.Rect(-4, -2, 42, 4, Tokens.Brush("CargoOversizeInvariantBrush"), 1));
         _hookGroup.Place(Sprites.Fill(
             Sprites.ContainerSide(vessel.Mix.Hazard > 5 ? CargoClass.Hazard : CargoClass.Standard),
             0, 2, 34, 16));
@@ -95,9 +95,9 @@ public sealed partial class CargoOpsScene : SceneHost
         Scene.Place(Sprites.Fit("crane-side", 36, -4, 150, 148, anchorY: 1, opacity: 0.96));
 
         Scene.Place(Draw.Text($"Quay · {Math.Round(vessel.Containers * vessel.UnloadPercent / 100d):N0} discharged",
-            8, 158, 10.5, Tokens.Brush("TextMutedBrush")));
+            8, 158, 10.5, Tokens.Brush("TextMutedInvariantBrush")));
         Scene.Place(Draw.Text($"Aboard · {vessel.Containers - Math.Round(vessel.Containers * vessel.UnloadPercent / 100d):N0} TEU",
-            212, 158, 10.5, Tokens.Brush("TextMutedBrush"), alignment: TextAlignment.Right, width: 200));
+            212, 158, 10.5, Tokens.Brush("TextMutedInvariantBrush"), alignment: TextAlignment.Right, width: 200));
     }
 
     private void Advance()

@@ -125,8 +125,8 @@ public sealed partial class ScannerViewModel : ObservableObject
 
         ScanMode = State.Xray ? "X-RAY · 160 kV · SCANNING" : "OPTICAL · 3D INSPECTION";
         XrayBackground = State.Xray ? Tokens.Brush("TealBrightColor", 0.2) : Tokens.Transparent;
-        XrayBorder = State.Xray ? Tokens.Brush("TealBrightBrush") : Tokens.Brush("HairlineOnDarkBrush");
-        XrayForeground = State.Xray ? Tokens.Brush("TealPaleBrush") : Tokens.Brush("TextOnDarkBrush");
+        XrayBorder = State.Xray ? Tokens.Brush("TealBrightInvariantBrush") : Tokens.Brush("HairlineOnDarkBrush");
+        XrayForeground = State.Xray ? Tokens.Brush("TealPaleInvariantBrush") : Tokens.Brush("TextOnDarkBrush");
 
         Verdict = container.Warn ? "Anomaly detected" : container.Stage == 3 ? "Under review" : "Clear";
         VerdictTone = Tokens.Brush(container.SecurityToken);

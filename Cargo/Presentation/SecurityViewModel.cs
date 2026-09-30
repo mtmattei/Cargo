@@ -162,8 +162,8 @@ public sealed partial class SecurityViewModel : ObservableObject
             {
                 Label = label,
                 Route = $"./{id}",
-                Background = current ? Tokens.Brush("SurfaceBrush") : Tokens.Transparent,
-                Foreground = current ? Tokens.Brush("InkBrush") : Tokens.Brush("TextMutedBrush")
+                Background = current ? Tokens.Brush("SurfaceInvariantBrush") : Tokens.Transparent,
+                Foreground = current ? Tokens.Brush("InkInvariantBrush") : Tokens.Brush("TextMutedInvariantBrush")
             });
         }
     }
@@ -182,7 +182,7 @@ public sealed partial class SecurityViewModel : ObservableObject
                 Credential = person.Credential,
                 Initials = string.Concat(person.Name.Split(' ').Select(part => part[0])),
                 Avatar = Tokens.Brush(person.AvatarToken),
-                Border = State.SelectedPerson == i ? Tokens.Brush("InkBrush") : Tokens.Brush("HairlineBrush"),
+                Border = State.SelectedPerson == i ? Tokens.Brush("InkInvariantBrush") : Tokens.Brush("HairlineInvariantBrush"),
                 Select = SelectPersonCommand
             });
         }
@@ -203,14 +203,14 @@ public sealed partial class SecurityViewModel : ObservableObject
             Mark = "✓",
             Label = label,
             Time = string.Empty,
-            Tone = Tokens.Brush("TealBrush")
+            Tone = Tokens.Brush("TealInvariantBrush")
         }).ToList();
 
         HeldChecks = new[]
         {
-            ("✓", "Seal verified", "TealBrush"),
-            ("✓", "Manifest matched", "TealBrush"),
-            ("⚠", "Weight variance +1.8 t · manual inspection required", "OrangeBrush")
+            ("✓", "Seal verified", "TealInvariantBrush"),
+            ("✓", "Manifest matched", "TealInvariantBrush"),
+            ("⚠", "Weight variance +1.8 t · manual inspection required", "OrangeInvariantBrush")
         }.Select(entry => new CheckRow
         {
             Mark = entry.Item1,

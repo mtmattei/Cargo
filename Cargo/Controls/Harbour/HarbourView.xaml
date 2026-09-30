@@ -28,7 +28,7 @@
                   <StackPanel Spacing="2">
                     <TextBlock Text="{x:Bind Key}" Style="{StaticResource CaptionText}" />
                     <TextBlock Text="{x:Bind Value}" FontFamily="{StaticResource BodyMediumFont}" FontSize="12"
-                               Foreground="{StaticResource InkBrush}" />
+                               Foreground="{StaticResource InkInvariantBrush}" />
                   </StackPanel>
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
@@ -55,7 +55,7 @@
     </DataTemplate>
   </UserControl.Resources>
 
-  <Grid Background="{StaticResource HarbourStageBrush}">
+  <Grid Background="{StaticResource HarbourStageInvariantBrush}">
     <Border x:Name="SceneHost" Background="Transparent" />
 
     <Canvas x:Name="TagLayer" />
@@ -65,20 +65,20 @@
             Margin="{x:Bind LegendMargin, Mode=OneWay}" IsHitTestVisible="False">
       <StackPanel Orientation="Horizontal" Spacing="14">
         <StackPanel Orientation="Horizontal" Spacing="6">
-          <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2" Fill="{StaticResource AmberBrush}" VerticalAlignment="Center" />
+          <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2" Fill="{StaticResource AmberInvariantBrush}" VerticalAlignment="Center" />
           <TextBlock Text="Reserved · arriving" Style="{StaticResource CaptionText}" VerticalAlignment="Center" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Spacing="6">
-          <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2" Stroke="{StaticResource InkBrush}" StrokeThickness="2" VerticalAlignment="Center" />
+          <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2" Stroke="{StaticResource InkInvariantBrush}" StrokeThickness="2" VerticalAlignment="Center" />
           <TextBlock Text="Selected" Style="{StaticResource CaptionText}" VerticalAlignment="Center" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Spacing="6">
-          <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2" Stroke="{StaticResource AlertBrush}" StrokeThickness="1"
+          <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2" Stroke="{StaticResource AlertInvariantBrush}" StrokeThickness="1"
                      StrokeDashArray="2,1.5" VerticalAlignment="Center" />
           <TextBlock Text="Restricted" Style="{StaticResource CaptionText}" VerticalAlignment="Center" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Spacing="6">
-          <Rectangle Width="14" Height="1.5" Fill="{StaticResource TextMutedBrush}" VerticalAlignment="Center" />
+          <Rectangle Width="14" Height="1.5" Fill="{StaticResource TextMutedInvariantBrush}" VerticalAlignment="Center" />
           <TextBlock Text="Depth contour (m)" Style="{StaticResource CaptionText}" VerticalAlignment="Center" />
         </StackPanel>
       </StackPanel>
@@ -103,9 +103,9 @@
       <Border Style="{StaticResource HarbourHudPanel}" VerticalAlignment="Stretch" IsHitTestVisible="False">
         <StackPanel Spacing="3" VerticalAlignment="Center">
           <Border x:Name="ScaleBar" Height="5" Width="100" HorizontalAlignment="Left"
-                  BorderBrush="{StaticResource InkBrush}" BorderThickness="1.5,0,1.5,1.5" />
+                  BorderBrush="{StaticResource InkInvariantBrush}" BorderThickness="1.5,0,1.5,1.5" />
           <TextBlock x:Name="ScaleLabel" Text="200 m" FontFamily="{StaticResource MonoMediumFont}" FontSize="11"
-                     Foreground="{StaticResource TextMutedBrush}" />
+                     Foreground="{StaticResource TextMutedInvariantBrush}" />
         </StackPanel>
       </Border>
       <Border Style="{StaticResource HarbourHudPanel}" Width="34" Height="34" Padding="0" IsHitTestVisible="False"
@@ -115,8 +115,8 @@
             <Canvas.RenderTransform>
               <RotateTransform x:Name="Needle" CenterX="13" CenterY="13" />
             </Canvas.RenderTransform>
-            <shapes:Path Data="M13 3 L16.6 14 L13 12 L9.4 14 Z" Fill="{StaticResource AlertBrush}" />
-            <shapes:Path Data="M13 23 L16.6 12 L13 14 L9.4 12 Z" Fill="{StaticResource HairlineStrongBrush}" />
+            <shapes:Path Data="M13 3 L16.6 14 L13 12 L9.4 14 Z" Fill="{StaticResource AlertInvariantBrush}" />
+            <shapes:Path Data="M13 23 L16.6 12 L13 14 L9.4 12 Z" Fill="{StaticResource HairlineStrongInvariantBrush}" />
           </Canvas>
         </Viewbox>
       </Border>

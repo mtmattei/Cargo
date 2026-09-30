@@ -290,8 +290,8 @@ public sealed partial class HarbourView : UserControl
                 Title = vessel.Name.ToUpperInvariant(),
                 Line = TagLine(vessel),
                 AccessibleName = $"{vessel.Name}, {vessel.StatusLine}",
-                Foreground = Tokens.Brush("InkBrush"),
-                SubForeground = needs ? Tokens.Brush("InkBrush") : Tokens.Brush("TextMutedBrush"),
+                Foreground = Tokens.Brush("InkInvariantBrush"),
+                SubForeground = needs ? Tokens.Brush("InkInvariantBrush") : Tokens.Brush("TextMutedInvariantBrush"),
                 Facts = new[]
                 {
                     new Fact { Key = "Arrival", Value = vessel.Eta },
@@ -330,11 +330,11 @@ public sealed partial class HarbourView : UserControl
         {
             var needs = PortData.Vessel(tag.Id).Status == "Arriving";
             var selected = EffectiveSelection == tag.Id;
-            tag.Background = needs ? Tokens.Brush("AmberBrush") : Tokens.Brush("SurfaceBrush");
+            tag.Background = needs ? Tokens.Brush("AmberInvariantBrush") : Tokens.Brush("SurfaceInvariantBrush");
             // The hairline comes straight from the resource: Tokens.Brush() drops brush opacity (audit C1).
-            tag.Edge = selected ? Tokens.Brush("InkBrush")
-                : needs ? Tokens.Brush("AmberDeepBrush")
-                : (Brush)Application.Current.Resources["HairlineStrongBrush"];
+            tag.Edge = selected ? Tokens.Brush("InkInvariantBrush")
+                : needs ? Tokens.Brush("AmberDeepInvariantBrush")
+                : (Brush)Application.Current.Resources["HairlineStrongInvariantBrush"];
             tag.EdgeThickness = new Thickness(selected ? 2 : 1);
             tag.Expanded = selected && !Compact ? Visibility.Visible : Visibility.Collapsed;
         }

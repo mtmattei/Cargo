@@ -13,38 +13,38 @@
     <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
     <Setter Property="FontSize" Value="44" />
     <Setter Property="LineHeight" Value="46" />
-    <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />
   </Style>
 
   <Style x:Key="PageTitleText" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
     <Setter Property="FontSize" Value="40" />
     <Setter Property="LineHeight" Value="42" />
-    <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />
   </Style>
 
   <Style x:Key="EyebrowText" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource MonoMediumFont}" />
     <Setter Property="FontSize" Value="11" />
-    <Setter Property="Foreground" Value="{StaticResource TealBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource TealInvariantBrush}" />
   </Style>
 
   <Style x:Key="CardTitleText" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
     <Setter Property="FontSize" Value="15" />
-    <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />
   </Style>
 
   <Style x:Key="PanelTitleText" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource BodyStrongFont}" />
     <Setter Property="FontSize" Value="14" />
-    <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />
   </Style>
 
   <Style x:Key="BodyText" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
     <Setter Property="FontSize" Value="12.5" />
-    <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />
   </Style>
 
   <Style x:Key="BodyStrongText" TargetType="TextBlock" BasedOn="{StaticResource BodyText}">
@@ -54,20 +54,20 @@
   <Style x:Key="CaptionText" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
     <Setter Property="FontSize" Value="11.5" />
-    <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource TextMutedInvariantBrush}" />
   </Style>
 
   <Style x:Key="MicroText" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
     <Setter Property="FontSize" Value="11" />
-    <Setter Property="Foreground" Value="{StaticResource TextFaintBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource TextFaintInvariantBrush}" />
   </Style>
 
   <Style x:Key="MetricText" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
     <Setter Property="FontSize" Value="32" />
     <Setter Property="LineHeight" Value="32" />
-    <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />
   </Style>
 
   <!-- ============================================================
@@ -83,7 +83,7 @@
     <Setter Property="CornerRadius" Value="{StaticResource RadiusCard}" />
     <Setter Property="BorderThickness" Value="1" />
     <!-- The Simple template reads BorderBrush from the control; the ElevatedCardContentBorderBrush key had no effect -->
-    <Setter Property="BorderBrush" Value="{StaticResource HairlineBrush}" />
+    <Setter Property="BorderBrush" Value="{StaticResource HairlineInvariantBrush}" />
     <Setter Property="HorizontalAlignment" Value="Stretch" />
     <Setter Property="VerticalAlignment" Value="Stretch" />
     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -92,8 +92,8 @@
     <Setter Property="utu:ResourceExtensions.Resources">
       <Setter.Value>
         <ResourceDictionary>
-          <StaticResource x:Key="ElevatedCardContentBackground" ResourceKey="SurfaceBrush" />
-          <StaticResource x:Key="CardContentBackgroundPointerOver" ResourceKey="SurfaceBrush" />
+          <StaticResource x:Key="ElevatedCardContentBackground" ResourceKey="SurfaceInvariantBrush" />
+          <StaticResource x:Key="CardContentBackgroundPointerOver" ResourceKey="SurfaceInvariantBrush" />
         </ResourceDictionary>
       </Setter.Value>
     </Setter>
@@ -103,7 +103,7 @@
     <Setter Property="Padding" Value="16,14" />
     <Setter Property="CornerRadius" Value="{StaticResource RadiusPanel}" />
     <Setter Property="BorderThickness" Value="1" />
-    <Setter Property="BorderBrush" Value="{StaticResource HairlineBrush}" />
+    <Setter Property="BorderBrush" Value="{StaticResource HairlineInvariantBrush}" />
     <Setter Property="HorizontalAlignment" Value="Stretch" />
     <Setter Property="VerticalAlignment" Value="Stretch" />
     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -112,8 +112,8 @@
     <Setter Property="utu:ResourceExtensions.Resources">
       <Setter.Value>
         <ResourceDictionary>
-          <StaticResource x:Key="OutlinedCardContentBackground" ResourceKey="SurfaceBrush" />
-          <StaticResource x:Key="CardContentBackgroundPointerOver" ResourceKey="SurfaceBrush" />
+          <StaticResource x:Key="OutlinedCardContentBackground" ResourceKey="SurfaceInvariantBrush" />
+          <StaticResource x:Key="CardContentBackgroundPointerOver" ResourceKey="SurfaceInvariantBrush" />
         </ResourceDictionary>
       </Setter.Value>
     </Setter>
@@ -132,7 +132,7 @@
   </Style>
 
   <Style x:Key="Masthead" TargetType="Grid">
-    <Setter Property="BorderBrush" Value="{StaticResource HairlineStrongBrush}" />
+    <Setter Property="BorderBrush" Value="{StaticResource HairlineStrongInvariantBrush}" />
     <Setter Property="BorderThickness" Value="0,0,0,1" />
     <Setter Property="Padding" Value="0,0,0,18" />
     <Setter Property="ColumnSpacing" Value="24" />
@@ -146,7 +146,7 @@
 
   <!-- Each part starts under a 2px ink rule, like the Overview's panels -->
   <Style x:Key="SectionRule" TargetType="Border">
-    <Setter Property="BorderBrush" Value="{StaticResource InkBrush}" />
+    <Setter Property="BorderBrush" Value="{StaticResource InkInvariantBrush}" />
     <Setter Property="BorderThickness" Value="0,2,0,0" />
     <Setter Property="Padding" Value="0,18,0,0" />
   </Style>
@@ -154,7 +154,7 @@
   <Style x:Key="SectionHeadText" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
     <Setter Property="FontSize" Value="24" />
-    <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />
   </Style>
 
   <Style x:Key="PageSubtitleText" TargetType="TextBlock" BasedOn="{StaticResource CaptionText}">
@@ -195,7 +195,7 @@
 
   <!-- Flat panel: the overview uses a 2px ink rule instead of a box -->
   <Style x:Key="RuledPanel" TargetType="Border">
-    <Setter Property="BorderBrush" Value="{StaticResource InkBrush}" />
+    <Setter Property="BorderBrush" Value="{StaticResource InkInvariantBrush}" />
     <Setter Property="BorderThickness" Value="0,2,0,0" />
     <Setter Property="Padding" Value="0,18,22,14" />
   </Style>
@@ -205,8 +205,8 @@
        ============================================================ -->
 
   <Style x:Key="PrimaryButton" TargetType="Button">
-    <Setter Property="Background" Value="{StaticResource InkBrush}" />
-    <Setter Property="Foreground" Value="{StaticResource PaperBrush}" />
+    <Setter Property="Background" Value="{StaticResource InkInvariantBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource PaperInvariantBrush}" />
     <Setter Property="FontFamily" Value="{StaticResource BodyMediumFont}" />
     <Setter Property="FontSize" Value="12.5" />
     <Setter Property="Padding" Value="14,10" />
@@ -257,15 +257,15 @@
   </Style>
 
   <Style x:Key="GhostButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
-    <Setter Property="Background" Value="{StaticResource SurfaceSunkBrush}" />
-    <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
-    <Setter Property="BorderBrush" Value="{StaticResource HairlineStrongBrush}" />
+    <Setter Property="Background" Value="{StaticResource SurfaceSunkInvariantBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />
+    <Setter Property="BorderBrush" Value="{StaticResource HairlineStrongInvariantBrush}" />
     <Setter Property="BorderThickness" Value="1" />
   </Style>
 
   <Style x:Key="AccentButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
-    <Setter Property="Background" Value="{StaticResource TealBrightBrush}" />
-    <Setter Property="Foreground" Value="{StaticResource InkDeepBrush}" />
+    <Setter Property="Background" Value="{StaticResource TealBrightInvariantBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource InkDeepInvariantBrush}" />
     <Setter Property="FontFamily" Value="{StaticResource BodyStrongFont}" />
   </Style>
 
@@ -276,7 +276,7 @@
     <Setter Property="Padding" Value="0" />
     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
     <Setter Property="VerticalContentAlignment" Value="Stretch" />
-    <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />
     <Setter Property="UseSystemFocusVisuals" Value="True" />
     <Setter Property="Template">
       <Setter.Value>
@@ -319,8 +319,8 @@
        Harbour stage HUD — flat surface chips over the 3D scene
        ============================================================ -->
   <Style x:Key="HarbourHudPanel" TargetType="Border">
-    <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
-    <Setter Property="BorderBrush" Value="{StaticResource HairlineStrongBrush}" />
+    <Setter Property="Background" Value="{StaticResource SurfaceInvariantBrush}" />
+    <Setter Property="BorderBrush" Value="{StaticResource HairlineStrongInvariantBrush}" />
     <Setter Property="BorderThickness" Value="1" />
     <Setter Property="CornerRadius" Value="{StaticResource RadiusControl}" />
     <Setter Property="Padding" Value="10,7" />
@@ -328,18 +328,18 @@
 
   <Style x:Key="HarbourSegment" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
     <Setter Property="Background" Value="Transparent" />
-    <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource TextMutedInvariantBrush}" />
     <Setter Property="Padding" Value="11,7" />
     <Setter Property="CornerRadius" Value="6" />
   </Style>
 
   <Style x:Key="HarbourSegmentCurrent" TargetType="Button" BasedOn="{StaticResource HarbourSegment}">
-    <Setter Property="Background" Value="{StaticResource InkBrush}" />
-    <Setter Property="Foreground" Value="{StaticResource PaperBrush}" />
+    <Setter Property="Background" Value="{StaticResource InkInvariantBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource PaperInvariantBrush}" />
   </Style>
 
   <Style x:Key="HarbourIconButton" TargetType="Button" BasedOn="{StaticResource GhostButton}">
-    <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
+    <Setter Property="Background" Value="{StaticResource SurfaceInvariantBrush}" />
     <Setter Property="Width" Value="34" />
     <Setter Property="Height" Value="34" />
     <Setter Property="Padding" Value="0" />
@@ -349,8 +349,8 @@
 
   <!-- Slider used by the docking timeline scrubber -->
   <Style x:Key="ScrubSlider" TargetType="Slider">
-    <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
-    <Setter Property="Background" Value="{StaticResource SurfaceSunkAltBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />
+    <Setter Property="Background" Value="{StaticResource SurfaceSunkAltInvariantBrush}" />
     <Setter Property="IsThumbToolTipEnabled" Value="False" />
   </Style>
 

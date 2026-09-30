@@ -36,7 +36,7 @@
           <TextBlock Text="moves today" Style="{StaticResource MetricLabelText}" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Spacing="8">
-          <TextBlock Text="1" Style="{StaticResource MetricText}" Foreground="{StaticResource OrangeInkBrush}" />
+          <TextBlock Text="1" Style="{StaticResource MetricText}" Foreground="{StaticResource OrangeInkInvariantBrush}" />
           <TextBlock Text="hold" Style="{StaticResource MetricLabelText}" />
         </StackPanel>
       </StackPanel>

@@ -146,68 +146,69 @@
   <Color x:Key="ScanAnomalyColor">#FFFF4D4D</Color>
 
   <!-- ── Brushes ──────────────────────────────────────────────── -->
-  <SolidColorBrush x:Key="InkBrush" Color="{StaticResource InkColor}" />
-  <SolidColorBrush x:Key="InkDeepBrush" Color="{StaticResource InkDeepColor}" />
-  <SolidColorBrush x:Key="PaperBrush" Color="{StaticResource PaperColor}" />
-  <SolidColorBrush x:Key="PaperWarmBrush" Color="{StaticResource PaperWarmColor}" />
-  <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource SurfaceColor}" />
-  <SolidColorBrush x:Key="SurfaceSunkBrush" Color="{StaticResource SurfaceSunkColor}" />
-  <SolidColorBrush x:Key="SurfaceSunkAltBrush" Color="{StaticResource SurfaceSunkAltColor}" />
-  <SolidColorBrush x:Key="LandBrush" Color="{StaticResource LandColor}" />
-  <SolidColorBrush x:Key="RoadBrush" Color="{StaticResource RoadColor}" />
-  <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource TextMutedColor}" />
-  <SolidColorBrush x:Key="TextFaintBrush" Color="{StaticResource TextFaintColor}" />
+  <!-- The app is light-only on purpose (App.xaml RequestedTheme="Light"; the design defines one palette),
+       so every brush has one value and says so in its name: *InvariantBrush. A dark theme would move
+       these into ThemeDictionaries and drop the suffix. -->
+  <SolidColorBrush x:Key="InkInvariantBrush" Color="{StaticResource InkColor}" />
+  <SolidColorBrush x:Key="InkDeepInvariantBrush" Color="{StaticResource InkDeepColor}" />
+  <SolidColorBrush x:Key="PaperInvariantBrush" Color="{StaticResource PaperColor}" />
+  <SolidColorBrush x:Key="PaperWarmInvariantBrush" Color="{StaticResource PaperWarmColor}" />
+  <SolidColorBrush x:Key="SurfaceInvariantBrush" Color="{StaticResource SurfaceColor}" />
+  <SolidColorBrush x:Key="SurfaceSunkInvariantBrush" Color="{StaticResource SurfaceSunkColor}" />
+  <SolidColorBrush x:Key="SurfaceSunkAltInvariantBrush" Color="{StaticResource SurfaceSunkAltColor}" />
+  <SolidColorBrush x:Key="LandInvariantBrush" Color="{StaticResource LandColor}" />
+  <SolidColorBrush x:Key="RoadInvariantBrush" Color="{StaticResource RoadColor}" />
+  <SolidColorBrush x:Key="TextMutedInvariantBrush" Color="{StaticResource TextMutedColor}" />
+  <SolidColorBrush x:Key="TextFaintInvariantBrush" Color="{StaticResource TextFaintColor}" />
   <SolidColorBrush x:Key="TextOnDarkMutedBrush" Color="{StaticResource TextOnDarkMutedColor}" />
   <SolidColorBrush x:Key="TextOnDarkBrush" Color="{StaticResource TextOnDarkColor}" />
 
-  <SolidColorBrush x:Key="TealBrush" Color="{StaticResource TealColor}" />
-  <SolidColorBrush x:Key="TealBrightBrush" Color="{StaticResource TealBrightColor}" />
-  <SolidColorBrush x:Key="TealDeepBrush" Color="{StaticResource TealDeepColor}" />
-  <SolidColorBrush x:Key="TealPaleBrush" Color="{StaticResource TealPaleColor}" />
-  <SolidColorBrush x:Key="SeaGreenBrush" Color="{StaticResource SeaGreenColor}" />
-  <SolidColorBrush x:Key="ShallowsBrush" Color="{StaticResource ShallowsColor}" />
-  <SolidColorBrush x:Key="QuayBrush" Color="{StaticResource QuayColor}" />
-  <SolidColorBrush x:Key="QuayEdgeBrush" Color="{StaticResource QuayEdgeColor}" />
+  <SolidColorBrush x:Key="TealInvariantBrush" Color="{StaticResource TealColor}" />
+  <SolidColorBrush x:Key="TealBrightInvariantBrush" Color="{StaticResource TealBrightColor}" />
+  <SolidColorBrush x:Key="TealDeepInvariantBrush" Color="{StaticResource TealDeepColor}" />
+  <SolidColorBrush x:Key="TealPaleInvariantBrush" Color="{StaticResource TealPaleColor}" />
+  <SolidColorBrush x:Key="SeaGreenInvariantBrush" Color="{StaticResource SeaGreenColor}" />
+  <SolidColorBrush x:Key="ShallowsInvariantBrush" Color="{StaticResource ShallowsColor}" />
+  <SolidColorBrush x:Key="QuayInvariantBrush" Color="{StaticResource QuayColor}" />
+  <SolidColorBrush x:Key="QuayEdgeInvariantBrush" Color="{StaticResource QuayEdgeColor}" />
 
-  <SolidColorBrush x:Key="AmberBrush" Color="{StaticResource AmberColor}" />
-  <SolidColorBrush x:Key="AmberDeepBrush" Color="{StaticResource AmberDeepColor}" />
-  <!-- xaml-lint: allow TOKENTHEME - the app is single-theme (audit H11); the harbour scene is light-only by design (SPEC.md) -->
-  <SolidColorBrush x:Key="HarbourStageBrush" Color="{StaticResource HarbourStageColor}" />
-  <SolidColorBrush x:Key="OrangeBrush" Color="{StaticResource OrangeColor}" />
-  <SolidColorBrush x:Key="OrangeInkBrush" Color="{StaticResource OrangeInkColor}" />
-  <!-- xaml-lint: allow TOKENTHEME - the app is pinned to Light (App.xaml RequestedTheme) -->
-  <SolidColorBrush x:Key="AmberInkBrush" Color="{StaticResource AmberInkColor}" />
-  <SolidColorBrush x:Key="SeaGreenInkBrush" Color="{StaticResource SeaGreenInkColor}" />
-  <SolidColorBrush x:Key="AlertBrush" Color="{StaticResource AlertColor}" />
-  <SolidColorBrush x:Key="RestrictedBrush" Color="{StaticResource RestrictedColor}" />
+  <SolidColorBrush x:Key="AmberInvariantBrush" Color="{StaticResource AmberColor}" />
+  <SolidColorBrush x:Key="AmberDeepInvariantBrush" Color="{StaticResource AmberDeepColor}" />
+  <SolidColorBrush x:Key="HarbourStageInvariantBrush" Color="{StaticResource HarbourStageColor}" />
+  <SolidColorBrush x:Key="OrangeInvariantBrush" Color="{StaticResource OrangeColor}" />
+  <SolidColorBrush x:Key="OrangeInkInvariantBrush" Color="{StaticResource OrangeInkColor}" />
+  <SolidColorBrush x:Key="AmberInkInvariantBrush" Color="{StaticResource AmberInkColor}" />
+  <SolidColorBrush x:Key="SeaGreenInkInvariantBrush" Color="{StaticResource SeaGreenInkColor}" />
+  <SolidColorBrush x:Key="AlertInvariantBrush" Color="{StaticResource AlertColor}" />
+  <SolidColorBrush x:Key="RestrictedInvariantBrush" Color="{StaticResource RestrictedColor}" />
 
-  <SolidColorBrush x:Key="CargoStandardBrush" Color="{StaticResource CargoStandardColor}" />
-  <SolidColorBrush x:Key="CargoReeferBrush" Color="{StaticResource CargoReeferColor}" />
-  <SolidColorBrush x:Key="CargoHazardBrush" Color="{StaticResource CargoHazardColor}" />
-  <SolidColorBrush x:Key="CargoOversizeBrush" Color="{StaticResource CargoOversizeColor}" />
-  <SolidColorBrush x:Key="HullBrush" Color="{StaticResource HullColor}" />
-  <SolidColorBrush x:Key="BootToppingBrush" Color="{StaticResource BootToppingColor}" />
-  <SolidColorBrush x:Key="DeckWhiteBrush" Color="{StaticResource DeckWhiteColor}" />
-  <SolidColorBrush x:Key="BridgeBrush" Color="{StaticResource BridgeColor}" />
-  <SolidColorBrush x:Key="SteelBrush" Color="{StaticResource SteelColor}" />
-  <SolidColorBrush x:Key="SeaFlatBrush" Color="{StaticResource SeaFlatColor}" />
-  <SolidColorBrush x:Key="RiverBankBrush" Color="{StaticResource RiverBankColor}" />
+  <SolidColorBrush x:Key="CargoStandardInvariantBrush" Color="{StaticResource CargoStandardColor}" />
+  <SolidColorBrush x:Key="CargoReeferInvariantBrush" Color="{StaticResource CargoReeferColor}" />
+  <SolidColorBrush x:Key="CargoHazardInvariantBrush" Color="{StaticResource CargoHazardColor}" />
+  <SolidColorBrush x:Key="CargoOversizeInvariantBrush" Color="{StaticResource CargoOversizeColor}" />
+  <SolidColorBrush x:Key="HullInvariantBrush" Color="{StaticResource HullColor}" />
+  <SolidColorBrush x:Key="BootToppingInvariantBrush" Color="{StaticResource BootToppingColor}" />
+  <SolidColorBrush x:Key="DeckWhiteInvariantBrush" Color="{StaticResource DeckWhiteColor}" />
+  <SolidColorBrush x:Key="BridgeInvariantBrush" Color="{StaticResource BridgeColor}" />
+  <SolidColorBrush x:Key="SteelInvariantBrush" Color="{StaticResource SteelColor}" />
+  <SolidColorBrush x:Key="SeaFlatInvariantBrush" Color="{StaticResource SeaFlatColor}" />
+  <SolidColorBrush x:Key="RiverBankInvariantBrush" Color="{StaticResource RiverBankColor}" />
   <!-- Water-level charts share the river map's water: the deep water as the line, a fade below it -->
-  <SolidColorBrush x:Key="WaterLineBrush" Color="{StaticResource RiverDeepColor}" />
+  <SolidColorBrush x:Key="WaterLineInvariantBrush" Color="{StaticResource RiverDeepColor}" />
   <Color x:Key="RiverDeepClearColor">#004F8F8A</Color>
-  <LinearGradientBrush x:Key="WaterFadeBrush" StartPoint="0,0" EndPoint="0,1" Opacity="0.34">
+  <LinearGradientBrush x:Key="WaterFadeInvariantBrush" StartPoint="0,0" EndPoint="0,1" Opacity="0.34">
     <GradientStop Offset="0" Color="{StaticResource RiverDeepColor}" />
     <GradientStop Offset="1" Color="{StaticResource RiverDeepClearColor}" />
   </LinearGradientBrush>
-  <SolidColorBrush x:Key="RiverEdgeBrush" Color="{StaticResource RiverEdgeColor}" />
+  <SolidColorBrush x:Key="RiverEdgeInvariantBrush" Color="{StaticResource RiverEdgeColor}" />
 
   <!-- Hairlines: the design leans on 8–14% ink rules rather than boxes -->
-  <SolidColorBrush x:Key="HairlineBrush" Color="{StaticResource InkColor}" Opacity="0.08" />
-  <SolidColorBrush x:Key="HairlineStrongBrush" Color="{StaticResource InkColor}" Opacity="0.14" />
+  <SolidColorBrush x:Key="HairlineInvariantBrush" Color="{StaticResource InkColor}" Opacity="0.08" />
+  <SolidColorBrush x:Key="HairlineStrongInvariantBrush" Color="{StaticResource InkColor}" Opacity="0.14" />
   <SolidColorBrush x:Key="HairlineOnDarkBrush" Color="#FFFFFFFF" Opacity="0.10" />
-  <SolidColorBrush x:Key="ScrimBrush" Color="{StaticResource InkDeepColor}" Opacity="0.86" />
+  <SolidColorBrush x:Key="ScrimInvariantBrush" Color="{StaticResource InkDeepColor}" Opacity="0.86" />
   <!-- Dims the page behind a floating panel (the container scanner) without hiding where you were -->
-  <SolidColorBrush x:Key="PageDimBrush" Color="{StaticResource InkDeepColor}" Opacity="0.55" />
+  <SolidColorBrush x:Key="PageDimInvariantBrush" Color="{StaticResource InkDeepColor}" Opacity="0.55" />
 
   <!-- ── Type ─────────────────────────────────────────────────── -->
   <FontFamily x:Key="DisplayFont">ms-appx:///Assets/Fonts/BricolageGrotesque-SemiBold.ttf#Bricolage Grotesque SemiBold</FontFamily>

@@ -169,9 +169,9 @@ public sealed partial class MainViewModel : ObservableObject
             var (sub, badge) = meta[item.Id];
 
             item.Tooltip = $"{item.Label} · {sub}";
-            item.ChipBackground = current ? Tokens.Brush("TealBrightBrush") : Tokens.Brush("DeckWhiteColor", 0.08);
-            item.ChipForeground = current ? Tokens.Brush("InkDeepBrush") : Tokens.Brush("TextOnDarkMutedBrush");
-            item.LabelForeground = current ? Tokens.Brush("SurfaceBrush") : Tokens.Brush("TextOnDarkBrush");
+            item.ChipBackground = current ? Tokens.Brush("TealBrightInvariantBrush") : Tokens.Brush("DeckWhiteColor", 0.08);
+            item.ChipForeground = current ? Tokens.Brush("InkDeepInvariantBrush") : Tokens.Brush("TextOnDarkMutedBrush");
+            item.LabelForeground = current ? Tokens.Brush("SurfaceInvariantBrush") : Tokens.Brush("TextOnDarkBrush");
             item.BadgeBrush = badge is null ? Tokens.Transparent : Tokens.Brush(badge);
             item.BadgeOpacity = badge is null ? 0 : 1;
             item.UnderlineOpacity = current ? 1 : 0;
@@ -208,8 +208,8 @@ public sealed partial class MainViewModel : ObservableObject
                 Id = id,
                 Label = label,
                 Icon = Geo.Path(icon),
-                Background = current ? Tokens.Brush("InkBrush") : Tokens.Transparent,
-                Foreground = current ? Tokens.Brush("PaperBrush") : Tokens.Brush("TextMutedBrush"),
+                Background = current ? Tokens.Brush("InkInvariantBrush") : Tokens.Transparent,
+                Foreground = current ? Tokens.Brush("PaperInvariantBrush") : Tokens.Brush("TextMutedInvariantBrush"),
                 Command = State.SetLayerCommand
             });
         }

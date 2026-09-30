@@ -10,20 +10,20 @@ public sealed partial class SecurityZoneMap : SceneHost
 
     private void Build()
     {
-        Scene.Place(Draw.Rect(0, 0, 1100, 484, Tokens.Brush("LandBrush")));
-        Scene.Place(Draw.Rect(0, 0, 1100, 90, Tokens.Brush("ShallowsBrush")));
-        Scene.Place(Draw.Rect(0, 88, 1100, 6, Tokens.Brush("RoadBrush")));
+        Scene.Place(Draw.Rect(0, 0, 1100, 484, Tokens.Brush("LandInvariantBrush")));
+        Scene.Place(Draw.Rect(0, 0, 1100, 90, Tokens.Brush("ShallowsInvariantBrush")));
+        Scene.Place(Draw.Rect(0, 88, 1100, 6, Tokens.Brush("RoadInvariantBrush")));
 
         // Two ships alongside
         Scene.Place(Sprites.Fill(Sprites.Plan("aurora"), 160, 26, 220, 40));
         Scene.Place(Sprites.Fill(Sprites.Plan("kaida"), 640, 28, 190, 34));
 
         // Roads
-        Scene.Place(Draw.Rect(0, 400, 1100, 26, Tokens.Brush("RoadBrush")));
-        Scene.Place(Draw.Rule(0, 413, 1100, 413, Tokens.Brush("PaperWarmBrush"), 1.5, dash: Draw.Dash(9, 8)));
+        Scene.Place(Draw.Rect(0, 400, 1100, 26, Tokens.Brush("RoadInvariantBrush")));
+        Scene.Place(Draw.Rule(0, 413, 1100, 413, Tokens.Brush("PaperWarmInvariantBrush"), 1.5, dash: Draw.Dash(9, 8)));
         foreach (var x in new[] { 60d, 540, 1020 })
         {
-            Scene.Place(Draw.Rect(x, 94, 20, 310, Tokens.Brush("RoadBrush")));
+            Scene.Place(Draw.Rect(x, 94, 20, 310, Tokens.Brush("RoadInvariantBrush")));
         }
 
         foreach (var zone in PortData.SecurityZones)
@@ -37,10 +37,10 @@ public sealed partial class SecurityZoneMap : SceneHost
             }
 
             Scene.Place(box);
-            Scene.Place(Draw.Text(zone.Label, zone.X + 12, zone.Y + 8, 15, Tokens.Brush("InkBrush"), "BodyStrongFont"));
+            Scene.Place(Draw.Text(zone.Label, zone.X + 12, zone.Y + 8, 15, Tokens.Brush("InkInvariantBrush"), "BodyStrongFont"));
             if (!string.IsNullOrEmpty(zone.Sub))
             {
-                Scene.Place(Draw.Text(zone.Sub, zone.X + 12, zone.Y + 28, 13, Tokens.Brush("TextMutedBrush")));
+                Scene.Place(Draw.Text(zone.Sub, zone.X + 12, zone.Y + 28, 13, Tokens.Brush("TextMutedInvariantBrush")));
             }
         }
 
@@ -49,27 +49,27 @@ public sealed partial class SecurityZoneMap : SceneHost
         {
             var group = new Canvas();
             group.Place(Draw.Shape("M0 0 L-38 -70 A80 80 0 0 1 38 -70 Z", Tokens.Brush("TealColor", 0.13)));
-            group.Place(Draw.Dot(0, 0, 4, Tokens.Brush("TealBrush")));
+            group.Place(Draw.Dot(0, 0, 4, Tokens.Brush("TealInvariantBrush")));
             Scene.Place(group.At(camera.X, camera.Y));
         }
 
         foreach (var (label, x, y) in PortData.Gates)
         {
             var main = label == "Main";
-            Scene.Place(Draw.Rect(x, y, 44, 18, Tokens.Brush("SurfaceBrush"), 4,
-                Tokens.Brush(main ? "TealBrush" : "AmberDeepBrush"), 1.5));
-            Scene.Place(Draw.Text(label, x, y + 22, 11.5, Tokens.Brush(main ? "TealBrush" : "AmberDeepBrush"),
+            Scene.Place(Draw.Rect(x, y, 44, 18, Tokens.Brush("SurfaceInvariantBrush"), 4,
+                Tokens.Brush(main ? "TealInvariantBrush" : "AmberDeepInvariantBrush"), 1.5));
+            Scene.Place(Draw.Text(label, x, y + 22, 11.5, Tokens.Brush(main ? "TealInvariantBrush" : "AmberDeepInvariantBrush"),
                 "BodyStrongFont", TextAlignment.Center, 44));
         }
 
         foreach (var point in PortData.AccessPoints)
         {
-            Scene.Place(Draw.Dot(point.X, point.Y, 5, Tokens.Brush("SurfaceBrush"), Tokens.Brush("TealBrush"), 2));
+            Scene.Place(Draw.Dot(point.X, point.Y, 5, Tokens.Brush("SurfaceInvariantBrush"), Tokens.Brush("TealInvariantBrush"), 2));
         }
 
         // The active hold
         Scene.Place(Draw.Dot(700, 320, 22, Tokens.Brush("OrangeColor", 0.18)));
-        Scene.Place(Draw.Dot(700, 320, 7, Tokens.Brush("OrangeBrush"), Tokens.Brush("SurfaceBrush"), 2));
+        Scene.Place(Draw.Dot(700, 320, 7, Tokens.Brush("OrangeInvariantBrush"), Tokens.Brush("SurfaceInvariantBrush"), 2));
     }
 }
 
@@ -86,7 +86,7 @@ public sealed partial class SecurityTimeline : SceneHost
     {
         Scene.Place(Draw.Rule(0, 60, 1000, 60, Tokens.Brush("InkColor", 0.12)));
         Scene.Place(Draw.Rule(0, 138, 1000, 138, Tokens.Brush("InkColor", 0.06)));
-        Scene.Place(Draw.Rule(832, 0, 832, 136, Tokens.Brush("InkBrush"), 1, dash: Draw.Dash(3, 3)));
+        Scene.Place(Draw.Rule(832, 0, 832, 136, Tokens.Brush("InkInvariantBrush"), 1, dash: Draw.Dash(3, 3)));
 
         var lanes = new Dictionary<bool, List<(double X, int Lane)>>
         {
@@ -104,7 +104,7 @@ public sealed partial class SecurityTimeline : SceneHost
             var radius = item.Tone is "OrangeColor" or "RestrictedColor" ? 6 : 4.5;
 
             Scene.Place(Draw.Rule(x, 60, x, y, tone, 1));
-            Scene.Place(Draw.Dot(x, y, radius, tone, Tokens.Brush("SurfaceBrush"), 2));
+            Scene.Place(Draw.Dot(x, y, radius, tone, Tokens.Brush("SurfaceInvariantBrush"), 2));
 
             var lane = 0;
             while (lanes[up].Any(p => p.Lane == lane && Math.Abs(p.X - x) < 130))
@@ -116,7 +116,7 @@ public sealed partial class SecurityTimeline : SceneHost
 
             var labelY = up ? 24 - lane * 16 : 86 + lane * 16;
             var alignment = x < 60 ? TextAlignment.Left : x > 940 ? TextAlignment.Right : TextAlignment.Center;
-            Scene.Place(Draw.Label(item.Label, x, labelY, 15, Tokens.Brush("InkBrush"),
+            Scene.Place(Draw.Label(item.Label, x, labelY, 15, Tokens.Brush("InkInvariantBrush"),
                 "BodyMediumFont", alignment, 180));
         }
 
@@ -128,7 +128,7 @@ public sealed partial class SecurityTimeline : SceneHost
                      ("24:00", 1000d, TextAlignment.Right)
                  })
         {
-            Scene.Place(Draw.Label(label, x, 144, 14, Tokens.Brush("TextFaintBrush"), "BodyFont", alignment, 120));
+            Scene.Place(Draw.Label(label, x, 144, 14, Tokens.Brush("TextFaintInvariantBrush"), "BodyFont", alignment, 120));
         }
     }
 }
@@ -154,8 +154,8 @@ public sealed partial class AccessZoneMap : SceneHost
     private void Show(IReadOnlyList<int> allowed)
     {
         Scene.Children.Clear();
-        Scene.Place(Draw.Rect(0, 0, 520, 220, Tokens.Brush("LandBrush"), 10));
-        Scene.Place(Draw.Rect(0, 0, 520, 40, Tokens.Brush("ShallowsBrush")));
+        Scene.Place(Draw.Rect(0, 0, 520, 220, Tokens.Brush("LandInvariantBrush"), 10));
+        Scene.Place(Draw.Rect(0, 0, 520, 40, Tokens.Brush("ShallowsInvariantBrush")));
 
         for (var i = 0; i < PortData.AccessZones.Count; i++)
         {
@@ -172,7 +172,7 @@ public sealed partial class AccessZoneMap : SceneHost
 
             Scene.Place(box);
             Scene.Place(Draw.Text(zone.Label, zone.X + 10, zone.Y + zone.H / 2 - 8, 10.5,
-                Tokens.Brush(ok ? "InkBrush" : "TextFaintBrush"), ok ? "BodyStrongFont" : "BodyFont"));
+                Tokens.Brush(ok ? "InkInvariantBrush" : "TextFaintInvariantBrush"), ok ? "BodyStrongFont" : "BodyFont"));
         }
     }
 }
@@ -201,21 +201,21 @@ public sealed partial class InspectionDiagram : SceneHost
         Scene.Place(Sprites.Fit("cont-red", 150, 125, 640, 300));
 
         // Markings sit on the long side face of the box, where a real one carries them
-        Scene.Place(Draw.Rect(340, 266, 152, 22, Tokens.Brush("SurfaceBrush", 0.92), 4));
-        Scene.Place(Draw.Text("CMAU 918204 4", 349, 269, 13, Tokens.Brush("InkBrush"), "MonoMediumFont"));
+        Scene.Place(Draw.Rect(340, 266, 152, 22, Tokens.Brush("SurfaceInvariantBrush", 0.92), 4));
+        Scene.Place(Draw.Text("CMAU 918204 4", 349, 269, 13, Tokens.Brush("InkInvariantBrush"), "MonoMediumFont"));
         Scene.Place(Draw.Text("MAX GROSS 32,500 KG · TARE 3,940 KG", 349, 293, 10.5,
             Tokens.Brush("DeckWhiteColor", 0.85)));
 
         // Seal callout
-        Scene.Place(Draw.Dot(212, 318, 5, Tokens.Brush("CargoOversizeBrush"), Tokens.Brush("SurfaceBrush"), 2));
-        Scene.Place(Draw.Rule(207, 318, 150, 340, Tokens.Brush("AmberDeepBrush"), 1.2));
-        Scene.Place(Draw.Text("Seal CGM-77201-A", 0, 332, 10.5, Tokens.Brush("TextMutedBrush"),
+        Scene.Place(Draw.Dot(212, 318, 5, Tokens.Brush("CargoOversizeInvariantBrush"), Tokens.Brush("SurfaceInvariantBrush"), 2));
+        Scene.Place(Draw.Rule(207, 318, 150, 340, Tokens.Brush("AmberDeepInvariantBrush"), 1.2));
+        Scene.Place(Draw.Text("Seal CGM-77201-A", 0, 332, 10.5, Tokens.Brush("TextMutedInvariantBrush"),
             "MonoFont", TextAlignment.Right, 146));
 
         // The variance itself
         Scene.Place(Draw.Dot(600, 306, 30, Tokens.Brush("OrangeColor", 0.16)));
-        Scene.Place(Draw.Dot(600, 306, 12, Tokens.Brush("OrangeBrush"), Tokens.Brush("SurfaceBrush"), 2.5));
-        Scene.Place(Draw.Label("!", 600, 297, 13, Tokens.Brush("SurfaceBrush"), "BodyStrongFont", TextAlignment.Center, 40));
+        Scene.Place(Draw.Dot(600, 306, 12, Tokens.Brush("OrangeInvariantBrush"), Tokens.Brush("SurfaceInvariantBrush"), 2.5));
+        Scene.Place(Draw.Label("!", 600, 297, 13, Tokens.Brush("SurfaceInvariantBrush"), "BodyStrongFont", TextAlignment.Center, 40));
 
         foreach (var step in PortData.InspectionSteps)
         {
@@ -224,15 +224,15 @@ public sealed partial class InspectionDiagram : SceneHost
             var badge = ok ? "TealColor" : warn ? "OrangeColor" : "SurfaceSunkAltColor";
             var border = warn ? "OrangeColor" : ok ? "TealColor" : "InkColor";
 
-            Scene.Place(Draw.Rect(step.X - 110, step.Y - 32, 220, 64, Tokens.Brush("SurfaceBrush"), 12,
+            Scene.Place(Draw.Rect(step.X - 110, step.Y - 32, 220, 64, Tokens.Brush("SurfaceInvariantBrush"), 12,
                 Tokens.Brush(border, warn ? 1 : ok ? 0.4 : 0.1), 1.5));
             Scene.Place(Draw.Dot(step.X - 82, step.Y, 14, Tokens.Brush(badge)));
             Scene.Place(Draw.Text(ok ? "✓" : warn ? "!" : "○", step.X - 102, step.Y - 9, 14,
-                Tokens.Brush(step.Kind == "pending" ? "TextFaintBrush" : "SurfaceBrush"),
+                Tokens.Brush(step.Kind == "pending" ? "TextFaintInvariantBrush" : "SurfaceInvariantBrush"),
                 "BodyStrongFont", TextAlignment.Center, 40));
-            Scene.Place(Draw.Text(step.Label, step.X - 58, step.Y - 16, 13.5, Tokens.Brush("InkBrush"), "BodyStrongFont"));
+            Scene.Place(Draw.Text(step.Label, step.X - 58, step.Y - 16, 13.5, Tokens.Brush("InkInvariantBrush"), "BodyStrongFont"));
             Scene.Place(Draw.Text(step.Detail, step.X - 58, step.Y + 3, 11.5,
-                Tokens.Brush(warn ? "OrangeInkBrush" : "TextMutedBrush")));
+                Tokens.Brush(warn ? "OrangeInkInvariantBrush" : "TextMutedInvariantBrush")));
         }
     }
 }

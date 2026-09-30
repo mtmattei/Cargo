@@ -55,7 +55,7 @@
           <TextBlock Style="{StaticResource CaptionText}" VerticalAlignment="Center">
             <Run Text="Viewing " /><Run Text="{x:Bind ViewModel.PlanLabel, Mode=OneWay}"
                                         FontFamily="{StaticResource MonoMediumFont}"
-                                        Foreground="{StaticResource InkBrush}" />
+                                        Foreground="{StaticResource InkInvariantBrush}" />
           </TextBlock>
         </StackPanel>
 
@@ -76,10 +76,10 @@
                      MaxWidth="360" TextWrapping="Wrap" />
           <Button Style="{StaticResource PrimaryButton}" Command="{x:Bind ViewModel.OptimizeCommand, Mode=OneWay}" CornerRadius="9" Padding="14,8">
             <StackPanel Orientation="Horizontal" Spacing="7">
-              <shapes:Path Data="M4 17l5-5 4 4 7-8M15 8h5v5" Stroke="{StaticResource PaperBrush}" StrokeThickness="2"
+              <shapes:Path Data="M4 17l5-5 4 4 7-8M15 8h5v5" Stroke="{StaticResource PaperInvariantBrush}" StrokeThickness="2"
                            Width="14" Height="14" Stretch="Uniform" VerticalAlignment="Center" />
               <TextBlock Text="Optimize traffic" FontFamily="{StaticResource BodyMediumFont}" FontSize="12.5"
-                         Foreground="{StaticResource PaperBrush}" />
+                         Foreground="{StaticResource PaperInvariantBrush}" />
             </StackPanel>
           </Button>
         </StackPanel>
@@ -96,7 +96,7 @@
       <StackPanel Spacing="18">
         <Grid>
           <utu:CardContentControl Style="{StaticResource OutlinedPanel}" Padding="0"
-                                  CornerRadius="{StaticResource RadiusCard}" Background="{StaticResource LandBrush}">
+                                  CornerRadius="{StaticResource RadiusCard}" Background="{StaticResource LandInvariantBrush}">
             <ContentControl x:Name="MapHost" HorizontalContentAlignment="Stretch" />
           </utu:CardContentControl>
           <utu:CardContentControl Style="{StaticResource OutlinedPanel}" HorizontalAlignment="Left" VerticalAlignment="Bottom"
@@ -135,9 +135,9 @@
                       <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="{x:Bind Berth}" FontFamily="{StaticResource MonoMediumFont}" FontSize="12"
-                               Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" />
+                               Foreground="{StaticResource TextMutedInvariantBrush}" VerticalAlignment="Center" />
                     <!-- xaml-lint: allow card - the track of a timeline bar, not a card -->
-                    <Border Grid.Column="1" Height="26" CornerRadius="7" Background="{StaticResource SurfaceSunkBrush}">
+                    <Border Grid.Column="1" Height="26" CornerRadius="7" Background="{StaticResource SurfaceSunkInvariantBrush}">
                       <controls:ProportionalPanel Segments="{x:Bind Segments}" NowFraction="{x:Bind NowFraction}" />
                     </Border>
                   </Grid>
@@ -161,13 +161,13 @@
             <Button Style="{StaticResource BareButton}" Content="×" Command="{x:Bind ViewModel.ClearSelectionCommand, Mode=OneWay}"
                     AutomationProperties.Name="Clear selection"
                     HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="18"
-                    Foreground="{StaticResource TextFaintBrush}" />
+                    Foreground="{StaticResource TextFaintInvariantBrush}" />
           </Grid>
 
           <!-- xaml-lint: allow card - clips the vessel profile image -->
-          <Border CornerRadius="12" Background="{StaticResource SurfaceBrush}">
+          <Border CornerRadius="12" Background="{StaticResource SurfaceInvariantBrush}">
             <Grid Height="120">
-              <Rectangle Fill="{StaticResource SeaFlatBrush}" Height="16" VerticalAlignment="Bottom" />
+              <Rectangle Fill="{StaticResource SeaFlatInvariantBrush}" Height="16" VerticalAlignment="Bottom" />
               <Image Source="{x:Bind ViewModel.SelectedProfile, Mode=OneWay}" Stretch="Uniform" Margin="18,6,18,10" />
             </Grid>
           </Border>
@@ -186,7 +186,7 @@
             </ItemsControl.ItemTemplate>
           </ItemsControl>
 
-          <Border Height="1" Background="{StaticResource HairlineBrush}" />
+          <Border Height="1" Background="{StaticResource HairlineInvariantBrush}" />
           <TextBlock Text="{x:Bind ViewModel.SelectedNote, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12.5"
                      TextWrapping="Wrap" LineHeight="19" />
 

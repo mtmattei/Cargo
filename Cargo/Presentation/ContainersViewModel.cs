@@ -102,9 +102,9 @@ public sealed partial class ContainersViewModel : ObservableObject
             Filters.Add(new FilterChip
             {
                 Label = filter,
-                Background = current ? Tokens.Brush("InkBrush") : Tokens.Brush("SurfaceBrush"),
-                Foreground = current ? Tokens.Brush("PaperBrush") : Tokens.Brush("InkBrush"),
-                Border = current ? Tokens.Brush("InkBrush") : Tokens.Brush("HairlineStrongBrush"),
+                Background = current ? Tokens.Brush("InkInvariantBrush") : Tokens.Brush("SurfaceInvariantBrush"),
+                Foreground = current ? Tokens.Brush("PaperInvariantBrush") : Tokens.Brush("InkInvariantBrush"),
+                Border = current ? Tokens.Brush("InkInvariantBrush") : Tokens.Brush("HairlineStrongInvariantBrush"),
                 Apply = FilterCommand
             });
         }
@@ -126,8 +126,8 @@ public sealed partial class ContainersViewModel : ObservableObject
                 State = container.State,
                 StateTone = Tokens.Brush(container.Warn ? "OrangeColor" : "TealColor"),
                 Border = State.SelectedContainerId == container.Id
-                    ? Tokens.Brush("InkBrush")
-                    : Tokens.Brush("HairlineBrush"),
+                    ? Tokens.Brush("InkInvariantBrush")
+                    : Tokens.Brush("HairlineInvariantBrush"),
                 Render = Sprites.Source(Sprites.ContainerByTone(container.TintToken)),
                 Select = InspectCommand
             });
@@ -147,22 +147,22 @@ public sealed partial class ContainersViewModel : ObservableObject
             var current = i == container.Stage;
             var done = i < container.Stage;
             var tone = current && container.Warn
-                ? Tokens.Brush("OrangeBrush")
-                : current ? Tokens.Brush("InkBrush")
-                : done ? Tokens.Brush("TealBrush")
+                ? Tokens.Brush("OrangeInvariantBrush")
+                : current ? Tokens.Brush("InkInvariantBrush")
+                : done ? Tokens.Brush("TealInvariantBrush")
                 : Tokens.Brush("InkColor", 0.18);
 
             Journey.Add(new JourneyStep
             {
                 Label = PortData.JourneyStages[i],
                 Icon = Geo.Path(PortData.JourneyIcons[i]),
-                Background = current ? tone : done ? Tokens.Brush("TealColor", 0.1) : Tokens.Brush("SurfaceBrush"),
+                Background = current ? tone : done ? Tokens.Brush("TealColor", 0.1) : Tokens.Brush("SurfaceInvariantBrush"),
                 Border = tone,
-                Foreground = current ? Tokens.Brush("SurfaceBrush") : done ? Tokens.Brush("TealBrush") : Tokens.Brush("TextFaintBrush"),
-                LabelTone = current ? Tokens.Brush("InkBrush") : done ? Tokens.Brush("TealBrush") : Tokens.Brush("TextFaintBrush"),
+                Foreground = current ? Tokens.Brush("SurfaceInvariantBrush") : done ? Tokens.Brush("TealInvariantBrush") : Tokens.Brush("TextFaintInvariantBrush"),
+                LabelTone = current ? Tokens.Brush("InkInvariantBrush") : done ? Tokens.Brush("TealInvariantBrush") : Tokens.Brush("TextFaintInvariantBrush"),
                 Connector = i == PortData.JourneyStages.Count - 1
                     ? Tokens.Transparent
-                    : done ? Tokens.Brush("TealBrush") : Tokens.Brush("InkColor", 0.12)
+                    : done ? Tokens.Brush("TealInvariantBrush") : Tokens.Brush("InkColor", 0.12)
             });
         }
 

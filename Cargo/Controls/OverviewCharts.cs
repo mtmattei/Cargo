@@ -24,15 +24,15 @@ public sealed partial class MovementsChart : SceneHost
 
         Scene.Place(new Path { Data = arrivals.Area, Fill = Draw.Fade("TealColor", 0.24) });
         Scene.Place(new Path { Data = departures.Area, Fill = Draw.Fade("SeaGreenColor", 0.24, up: true) });
-        Scene.Place(new Path { Data = arrivals.Stroke, Stroke = Tokens.Brush("TealBrush"), StrokeThickness = 1.8 });
-        Scene.Place(new Path { Data = departures.Stroke, Stroke = Tokens.Brush("SeaGreenBrush"), StrokeThickness = 1.8 });
+        Scene.Place(new Path { Data = arrivals.Stroke, Stroke = Tokens.Brush("TealInvariantBrush"), StrokeThickness = 1.8 });
+        Scene.Place(new Path { Data = departures.Stroke, Stroke = Tokens.Brush("SeaGreenInvariantBrush"), StrokeThickness = 1.8 });
 
         Scene.Place(Draw.Rule(0, 100, 1200, 100, Tokens.Brush("InkColor", 0.18)));
 
         _future = Draw.Rect(0, 22, 0, 156, Tokens.Brush("PaperWarmColor", 0.55));
         Scene.Place(_future);
 
-        _nowLine = Draw.Rule(0, 22, 0, 178, Tokens.Brush("InkBrush"), 1.2, dash: Draw.Dash(3, 3));
+        _nowLine = Draw.Rule(0, 22, 0, 178, Tokens.Brush("InkInvariantBrush"), 1.2, dash: Draw.Dash(3, 3));
         Scene.Place(_nowLine);
 
         // Scheduled arrivals and departures, laned so neighbours do not collide
@@ -48,11 +48,11 @@ public sealed partial class MovementsChart : SceneHost
             var y = arrival ? arrivals.At(hour) : departures.At(hour);
             var future = hour > PortData.NowHours;
             var tone = future
-                ? Tokens.Brush("AmberBrush")
-                : arrival ? Tokens.Brush("TealBrush") : Tokens.Brush("SeaGreenBrush");
+                ? Tokens.Brush("AmberInvariantBrush")
+                : arrival ? Tokens.Brush("TealInvariantBrush") : Tokens.Brush("SeaGreenInvariantBrush");
 
             Scene.Place(Draw.Rule(x, y, x, arrival ? 22 : 170, tone, 1));
-            Scene.Place(Draw.Dot(x, y, 4.5, tone, Tokens.Brush("SurfaceBrush"), 2));
+            Scene.Place(Draw.Dot(x, y, 4.5, tone, Tokens.Brush("SurfaceInvariantBrush"), 2));
 
             var lane = 0;
             while (lanes[arrival].Any(p => p.Lane == lane && Math.Abs(p.X - x) < 190))
@@ -64,10 +64,10 @@ public sealed partial class MovementsChart : SceneHost
 
             var labelY = arrival ? 4 - lane * 17 : 176 + lane * 17;
             var alignment = hour < 1.5 ? TextAlignment.Left : hour > 22.5 ? TextAlignment.Right : TextAlignment.Center;
-            Scene.Place(Draw.Label(name, x, labelY, 15, Tokens.Brush("InkBrush"), "BodyMediumFont", alignment, 220));
+            Scene.Place(Draw.Label(name, x, labelY, 15, Tokens.Brush("InkInvariantBrush"), "BodyMediumFont", alignment, 220));
         }
 
-        _nowDot = Draw.Dot(0, 100, 5, Tokens.Brush("AlertBrush"), Tokens.Brush("SurfaceBrush"), 2);
+        _nowDot = Draw.Dot(0, 100, 5, Tokens.Brush("AlertInvariantBrush"), Tokens.Brush("SurfaceInvariantBrush"), 2);
         Scene.Place(_nowDot);
 
         Scene.Place(Draw.Rule(0, 198, 1200, 198, Tokens.Brush("InkColor", 0.06)));
@@ -80,7 +80,7 @@ public sealed partial class MovementsChart : SceneHost
                      ("24:00", 1200d, TextAlignment.Right)
                  })
         {
-            Scene.Place(Draw.Label(label, x, 202, 14, Tokens.Brush("TextFaintBrush"), "BodyFont", alignment, 120));
+            Scene.Place(Draw.Label(label, x, 202, 14, Tokens.Brush("TextFaintInvariantBrush"), "BodyFont", alignment, 120));
         }
     }
 
@@ -147,10 +147,10 @@ public sealed partial class VolumeChart : SceneHost
             }
 
             _settled.Place(Draw.Rule(0, 104, 300, 104, Tokens.Brush("InkColor", 0.14)));
-            _settled.Place(Draw.Text("14:00", 0, 108, 11, Tokens.Brush("TextFaintBrush")));
-            _settled.Place(Draw.Label(PortState.Format(hour - 3), 150, 108, 11, Tokens.Brush("TextFaintBrush"),
+            _settled.Place(Draw.Text("14:00", 0, 108, 11, Tokens.Brush("TextFaintInvariantBrush")));
+            _settled.Place(Draw.Label(PortState.Format(hour - 3), 150, 108, 11, Tokens.Brush("TextFaintInvariantBrush"),
                 alignment: TextAlignment.Center, width: 80));
-            _settled.Place(Draw.Label(PortState.Format(hour), 300, 108, 11, Tokens.Brush("TextFaintBrush"),
+            _settled.Place(Draw.Label(PortState.Format(hour), 300, 108, 11, Tokens.Brush("TextFaintInvariantBrush"),
                 alignment: TextAlignment.Right, width: 80));
         }
 
@@ -202,13 +202,13 @@ public sealed partial class FlowChart : SceneHost
 
         Scene.Place(new Path { Data = leaving.Area, Fill = Draw.Fade("AmberColor", 0.30) });
         Scene.Place(new Path { Data = entering.Area, Fill = Draw.Fade("TealColor", 0.26) });
-        Scene.Place(new Path { Data = leaving.Stroke, Stroke = Tokens.Brush("AmberBrush"), StrokeThickness = 1.8 });
-        Scene.Place(new Path { Data = entering.Stroke, Stroke = Tokens.Brush("TealBrush"), StrokeThickness = 1.8 });
+        Scene.Place(new Path { Data = leaving.Stroke, Stroke = Tokens.Brush("AmberInvariantBrush"), StrokeThickness = 1.8 });
+        Scene.Place(new Path { Data = entering.Stroke, Stroke = Tokens.Brush("TealInvariantBrush"), StrokeThickness = 1.8 });
 
         Scene.Place(Draw.Rule(0, 132, 300, 132, Tokens.Brush("InkColor", 0.1)));
-        Scene.Place(Draw.Text("00:00", 0, 136, 12, Tokens.Brush("TextFaintBrush")));
-        Scene.Place(Draw.Label("12:00", 150, 136, 12, Tokens.Brush("TextFaintBrush"), alignment: TextAlignment.Center, width: 80));
-        Scene.Place(Draw.Label("24:00", 300, 136, 12, Tokens.Brush("TextFaintBrush"), alignment: TextAlignment.Right, width: 80));
+        Scene.Place(Draw.Text("00:00", 0, 136, 12, Tokens.Brush("TextFaintInvariantBrush")));
+        Scene.Place(Draw.Label("12:00", 150, 136, 12, Tokens.Brush("TextFaintInvariantBrush"), alignment: TextAlignment.Center, width: 80));
+        Scene.Place(Draw.Label("24:00", 300, 136, 12, Tokens.Brush("TextFaintInvariantBrush"), alignment: TextAlignment.Right, width: 80));
     }
 }
 
@@ -223,8 +223,8 @@ public sealed partial class TideChart : SceneHost
 
         var x = Math.Clamp((PortData.NowHours - 18) / 12 * 600, 0, 600);
         var y = tide.At((PortData.NowHours - 18) * 2);
-        Scene.Place(Draw.Rule(x, 4, x, 62, Tokens.Brush("InkBrush"), 1, dash: Draw.Dash(3, 3)));
-        Scene.Place(Draw.Dot(x, y, 4, Tokens.Brush("TealBrush"), Tokens.Brush("SurfaceBrush"), 2));
+        Scene.Place(Draw.Rule(x, 4, x, 62, Tokens.Brush("InkInvariantBrush"), 1, dash: Draw.Dash(3, 3)));
+        Scene.Place(Draw.Dot(x, y, 4, Tokens.Brush("TealInvariantBrush"), Tokens.Brush("SurfaceInvariantBrush"), 2));
     }
 }
 
@@ -237,11 +237,11 @@ public sealed partial class ThroughputChart : SceneHost
         var series = Geo.MakeSeries(PortData.Volume, 1000, 100, 14);
 
         Scene.Place(new Path { Data = series.Area, Fill = Draw.Fade("TealColor", 0.22) });
-        Scene.Place(new Path { Data = series.Stroke, Stroke = Tokens.Brush("TealBrush"), StrokeThickness = 2 });
+        Scene.Place(new Path { Data = series.Stroke, Stroke = Tokens.Brush("TealInvariantBrush"), StrokeThickness = 2 });
 
         Scene.Place(Draw.Rule(0, 100, 1000, 100, Tokens.Brush("InkColor", 0.1)));
-        Scene.Place(Draw.Rule(874, 8, 874, 100, Tokens.Brush("InkBrush"), 1, dash: Draw.Dash(3, 3)));
-        Scene.Place(Draw.Label("184 now", 874, -14, 13, Tokens.Brush("InkBrush"), "BodyStrongFont",
+        Scene.Place(Draw.Rule(874, 8, 874, 100, Tokens.Brush("InkInvariantBrush"), 1, dash: Draw.Dash(3, 3)));
+        Scene.Place(Draw.Label("184 now", 874, -14, 13, Tokens.Brush("InkInvariantBrush"), "BodyStrongFont",
             TextAlignment.Center, 160));
 
         foreach (var (label, x, alignment) in new[]
@@ -253,7 +253,7 @@ public sealed partial class ThroughputChart : SceneHost
                      ("24:00", 1000d, TextAlignment.Right)
                  })
         {
-            Scene.Place(Draw.Label(label, x, 106, 14, Tokens.Brush("TextFaintBrush"), "BodyFont", alignment, 120));
+            Scene.Place(Draw.Label(label, x, 106, 14, Tokens.Brush("TextFaintInvariantBrush"), "BodyFont", alignment, 120));
         }
     }
 }

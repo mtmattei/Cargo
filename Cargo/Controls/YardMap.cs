@@ -73,12 +73,12 @@ public sealed partial class YardMap : SceneHost
     {
         Scene.Children.Clear();
 
-        Scene.Place(Draw.Rect(0, 0, 1100, 560, Tokens.Brush("LandBrush")));
+        Scene.Place(Draw.Rect(0, 0, 1100, 560, Tokens.Brush("LandInvariantBrush")));
 
         // Haul roads
-        Scene.Place(Draw.Rect(0, 270, 1100, 22, Tokens.Brush("RoadBrush")));
-        Scene.Place(Draw.Rule(0, 281, 1100, 281, Tokens.Brush("PaperWarmBrush"), 1.5, dash: Draw.Dash(9, 8)));
-        Scene.Place(Draw.Rect(540, 0, 22, 560, Tokens.Brush("RoadBrush")));
+        Scene.Place(Draw.Rect(0, 270, 1100, 22, Tokens.Brush("RoadInvariantBrush")));
+        Scene.Place(Draw.Rule(0, 281, 1100, 281, Tokens.Brush("PaperWarmInvariantBrush"), 1.5, dash: Draw.Dash(9, 8)));
+        Scene.Place(Draw.Rect(540, 0, 22, 560, Tokens.Brush("RoadInvariantBrush")));
 
         AddTruck(_truckA, "CargoHazardColor");
         AddTruck(_truckB, "CargoStandardColor");
@@ -94,8 +94,8 @@ public sealed partial class YardMap : SceneHost
             }
 
             Scene.Place(box);
-            Scene.Place(Draw.Text(zone.Name, zone.X + 14, zone.Y + 8, 13, Tokens.Brush("InkBrush"), "BodyStrongFont"));
-            Scene.Place(Draw.Text(zone.Sub, zone.X + 14, zone.Y + 26, 12, Tokens.Brush("TextMutedBrush")));
+            Scene.Place(Draw.Text(zone.Name, zone.X + 14, zone.Y + 8, 13, Tokens.Brush("InkInvariantBrush"), "BodyStrongFont"));
+            Scene.Place(Draw.Text(zone.Sub, zone.X + 14, zone.Y + 26, 12, Tokens.Brush("TextMutedInvariantBrush")));
         }
 
         AddRtg(_rtgA, 52);
@@ -170,12 +170,12 @@ public sealed partial class YardMap : SceneHost
 
         if (selected)
         {
-            elements.Add(Scene.Place(Unhit(Draw.Rect(x, y, 26, 16, null, 1.5, Tokens.Brush("InkBrush"), 2))));
+            elements.Add(Scene.Place(Unhit(Draw.Rect(x, y, 26, 16, null, 1.5, Tokens.Brush("InkInvariantBrush"), 2))));
         }
 
         if (moved)
         {
-            elements.Add(Scene.Place(Unhit(Draw.Rect(x, y, 26, 16, null, 1.5, Tokens.Brush("AmberBrush"), 2))));
+            elements.Add(Scene.Place(Unhit(Draw.Rect(x, y, 26, 16, null, 1.5, Tokens.Brush("AmberInvariantBrush"), 2))));
         }
 
         return elements;
@@ -197,11 +197,11 @@ public sealed partial class YardMap : SceneHost
     private void AddRtg(TranslateTransform transform, double x)
     {
         var rtg = new Canvas { RenderTransform = transform };
-        rtg.Place(Draw.Rect(x, 92, 100, 120, null, 4, Tokens.Brush("TealBrush", 0.9), 5));
+        rtg.Place(Draw.Rect(x, 92, 100, 120, null, 4, Tokens.Brush("TealInvariantBrush", 0.9), 5));
         rtg.Place(Draw.Rect(x + 44, 96, 14, 112, Tokens.Brush("TealColor", 0.35)));
         foreach (var (dx, dy) in new[] { (-2d, -4d), (92d, -4d), (-2d, 116d), (92d, 116d) })
         {
-            rtg.Place(Draw.Rect(x + dx, 92 + dy, 10, 8, Tokens.Brush("CargoOversizeBrush"), 2));
+            rtg.Place(Draw.Rect(x + dx, 92 + dy, 10, 8, Tokens.Brush("CargoOversizeInvariantBrush"), 2));
         }
 
         Scene.Place(rtg);
@@ -211,7 +211,7 @@ public sealed partial class YardMap : SceneHost
     {
         var truck = new Canvas { RenderTransform = transform };
         truck.Place(Draw.Rect(0, 274, 34, 14, Tokens.Brush(tintToken), 1.5));
-        truck.Place(Draw.Rect(35, 275, 10, 12, Tokens.Brush("DeckWhiteBrush"), 2, Tokens.Brush("QuayBrush"), 1));
+        truck.Place(Draw.Rect(35, 275, 10, 12, Tokens.Brush("DeckWhiteInvariantBrush"), 2, Tokens.Brush("QuayInvariantBrush"), 1));
         Scene.Place(truck);
     }
 

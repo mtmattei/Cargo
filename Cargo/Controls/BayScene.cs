@@ -44,14 +44,14 @@ public sealed partial class BayScene : SceneHost
         Scene.Place(Draw.Shape(
             "M62 20 L62 132 C62 156 84 172 116 176 L246 176 C278 172 300 156 300 132 L300 20 " +
             "L292 20 L292 130 C292 150 274 164 246 168 L116 168 C88 164 70 150 70 130 L70 20 Z",
-            Tokens.Brush("HullBrush")));
-        Scene.Place(Draw.Rect(62, 128, 238, 5, Tokens.Brush("BootToppingBrush")));
+            Tokens.Brush("HullInvariantBrush")));
+        Scene.Place(Draw.Rect(62, 128, 238, 5, Tokens.Brush("BootToppingInvariantBrush")));
 
         // Tier labels down the port side
         for (var row = 0; row < BayView.Rows; row++)
         {
             Scene.Place(Draw.Text((BayView.Rows - row).ToString("D2"), 10, 100 - row * 22, 10.5,
-                Tokens.Brush("TextMutedBrush"), "MonoMediumFont", TextAlignment.Right, 48));
+                Tokens.Brush("TextMutedInvariantBrush"), "MonoMediumFont", TextAlignment.Right, 48));
         }
 
         foreach (var (column, row, cargo, ashore) in bay.Cells)
@@ -61,8 +61,8 @@ public sealed partial class BayScene : SceneHost
 
             if (ashore)
             {
-                var slot = Draw.Rect(x, y, 36, 21, Tokens.Brush("PaperWarmBrush"), 1.5,
-                    Tokens.Brush("TextFaintBrush"), 1);
+                var slot = Draw.Rect(x, y, 36, 21, Tokens.Brush("PaperWarmInvariantBrush"), 1.5,
+                    Tokens.Brush("TextFaintInvariantBrush"), 1);
                 slot.StrokeDashArray = Draw.Dash(3, 2);
                 Scene.Place(slot);
                 continue;
@@ -74,10 +74,10 @@ public sealed partial class BayScene : SceneHost
         }
 
         // Bay badge on the hatch cover
-        Scene.Place(Draw.Rect(166, 138, 28, 18, Tokens.Brush("TealBrush"), 6));
-        Scene.Place(Draw.Text(bay.Number, 166, 140, 11, Tokens.Brush("SurfaceBrush"),
+        Scene.Place(Draw.Rect(166, 138, 28, 18, Tokens.Brush("TealInvariantBrush"), 6));
+        Scene.Place(Draw.Text(bay.Number, 166, 140, 11, Tokens.Brush("SurfaceInvariantBrush"),
             "MonoMediumFont", TextAlignment.Center, 28));
 
-        Scene.Place(Draw.Rect(0, 176, 360, 14, Tokens.Brush("SeaFlatBrush", 0.85)));
+        Scene.Place(Draw.Rect(0, 176, 360, 14, Tokens.Brush("SeaFlatInvariantBrush", 0.85)));
     }
 }

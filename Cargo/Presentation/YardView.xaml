@@ -19,7 +19,7 @@
       <StackPanel Spacing="4">
         <TextBlock Text="Yard" Style="{StaticResource SectionHeadText}" />
         <StackPanel Orientation="Horizontal" Spacing="8">
-          <Ellipse Width="6" Height="6" Fill="{StaticResource AlertBrush}" VerticalAlignment="Center" />
+          <Ellipse Width="6" Height="6" Fill="{StaticResource AlertInvariantBrush}" VerticalAlignment="Center" />
           <TextBlock Text="{x:Bind ViewModel.LiveLine, Mode=OneWay}" Style="{StaticResource CaptionText}" VerticalAlignment="Center" />
           <controls:TickBar Height="10" VerticalAlignment="Center" Count="20" TickWidth="3" Gap="1.5"
                             TallHeight="10" LitHeight="7" OffHeight="4.5"
@@ -50,7 +50,7 @@
       </Grid.ColumnDefinitions>
 
       <utu:CardContentControl Style="{StaticResource OutlinedPanel}" Padding="0" VerticalAlignment="Top"
-                              CornerRadius="{StaticResource RadiusCard}" Background="{StaticResource LandBrush}">
+                              CornerRadius="{StaticResource RadiusCard}" Background="{StaticResource LandInvariantBrush}">
         <ContentControl x:Name="MapHost" HorizontalContentAlignment="Stretch" />
       </utu:CardContentControl>
 
@@ -65,12 +65,12 @@
             <Button Style="{StaticResource BareButton}" Content="×" Command="{x:Bind ViewModel.CloseStackCommand, Mode=OneWay}"
                     AutomationProperties.Name="Close stack"
                     HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="18"
-                    Foreground="{StaticResource TextFaintBrush}" />
+                    Foreground="{StaticResource TextFaintInvariantBrush}" />
           </Grid>
 
           <controls:StackTiers Boxes="{x:Bind ViewModel.StackBoxes, Mode=OneWay}" />
 
-          <Border Height="1" Background="{StaticResource HairlineBrush}" />
+          <Border Height="1" Background="{StaticResource HairlineInvariantBrush}" />
           <ItemsControl ItemsSource="{x:Bind ViewModel.Tiers, Mode=OneWay}">
             <ItemsControl.ItemsPanel>
               <ItemsPanelTemplate><StackPanel Spacing="8" /></ItemsPanelTemplate>

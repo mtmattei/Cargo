@@ -21,11 +21,11 @@ public sealed partial class YardViewModel : ObservableObject
         State = state;
         Legend = new[]
         {
-            new LegendItem { Label = "Standard", Swatch = Tokens.Brush("CargoStandardBrush") },
-            new LegendItem { Label = "Refrigerated", Swatch = Tokens.Brush("CargoReeferBrush") },
-            new LegendItem { Label = "Hazardous", Swatch = Tokens.Brush("CargoHazardBrush") },
-            new LegendItem { Label = "Inspection", Swatch = Tokens.Brush("CargoOversizeBrush") },
-            new LegendItem { Label = "Restricted", Swatch = Tokens.Brush("RestrictedBrush") },
+            new LegendItem { Label = "Standard", Swatch = Tokens.Brush("CargoStandardInvariantBrush") },
+            new LegendItem { Label = "Refrigerated", Swatch = Tokens.Brush("CargoReeferInvariantBrush") },
+            new LegendItem { Label = "Hazardous", Swatch = Tokens.Brush("CargoHazardInvariantBrush") },
+            new LegendItem { Label = "Inspection", Swatch = Tokens.Brush("CargoOversizeInvariantBrush") },
+            new LegendItem { Label = "Restricted", Swatch = Tokens.Brush("RestrictedInvariantBrush") },
             new LegendItem { Label = "Available slot", Swatch = Tokens.Brush("InkColor", 0.12) }
         };
 

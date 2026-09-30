@@ -259,7 +259,7 @@ public sealed partial class ContainerScanner : Panel
                 Text = block.Item.Name.Split(" · ")[0],
                 FontFamily = (FontFamily)Application.Current.Resources["MonoMediumFont"],
                 FontSize = 9,
-                Foreground = Tokens.Brush("SurfaceBrush")
+                Foreground = Tokens.Brush("SurfaceInvariantBrush")
             };
             var anchor = Project(block.X + 4, hy - 6, front, cx, cy, zoom);
             Canvas.SetLeft(label, anchor.X);

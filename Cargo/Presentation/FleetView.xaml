@@ -23,7 +23,7 @@
       <StackPanel VerticalAlignment="Bottom" Spacing="8">
         <TextBlock Text="Fleet &amp; waterways" Style="{StaticResource PageTitleText}" />
         <StackPanel Orientation="Horizontal" Spacing="7">
-          <Ellipse Width="6" Height="6" Fill="{StaticResource AlertBrush}" VerticalAlignment="Center" />
+          <Ellipse Width="6" Height="6" Fill="{StaticResource AlertInvariantBrush}" VerticalAlignment="Center" />
           <TextBlock Text="Live AIS · Westhaven Sound to the Alder River · 120 km" Style="{StaticResource PageSubtitleText}" />
         </StackPanel>
       </StackPanel>
@@ -34,7 +34,7 @@
           <TextBlock Text="underway" Style="{StaticResource MetricLabelText}" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Spacing="8">
-          <TextBlock Text="{x:Bind ViewModel.LateCount, Mode=OneWay}" Style="{StaticResource MetricText}" Foreground="{StaticResource OrangeInkBrush}" />
+          <TextBlock Text="{x:Bind ViewModel.LateCount, Mode=OneWay}" Style="{StaticResource MetricText}" Foreground="{StaticResource OrangeInkInvariantBrush}" />
           <TextBlock Text="running late" Style="{StaticResource MetricLabelText}" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Spacing="8">
@@ -42,7 +42,7 @@
           <TextBlock Text="lockings booked" Style="{StaticResource MetricLabelText}" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Spacing="8">
-          <TextBlock Text="{x:Bind ViewModel.NoticeTotal, Mode=OneWay}" Style="{StaticResource MetricText}" Foreground="{StaticResource AlertBrush}" />
+          <TextBlock Text="{x:Bind ViewModel.NoticeTotal, Mode=OneWay}" Style="{StaticResource MetricText}" Foreground="{StaticResource AlertInvariantBrush}" />
           <TextBlock Text="notices" Style="{StaticResource MetricLabelText}" />
         </StackPanel>
       </StackPanel>
@@ -78,7 +78,7 @@
             </ItemsControl>
           </Grid>
           <!-- xaml-lint: allow card - the river chart's ground, not a card -->
-          <Border CornerRadius="{StaticResource RadiusPanel}" Background="{StaticResource LandBrush}">
+          <Border CornerRadius="{StaticResource RadiusPanel}" Background="{StaticResource LandInvariantBrush}">
             <ContentControl x:Name="RiverHost" HorizontalContentAlignment="Stretch" />
           </Border>
         </StackPanel>
@@ -158,7 +158,7 @@
                     <ColumnDefinition Width="Auto" />
                   </Grid.ColumnDefinitions>
                   <TextBlock Text="{x:Bind Time}" FontFamily="{StaticResource MonoMediumFont}" FontSize="12"
-                             Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" />
+                             Foreground="{StaticResource TextMutedInvariantBrush}" VerticalAlignment="Center" />
                   <TextBlock Grid.Column="1" Style="{StaticResource BodyText}" VerticalAlignment="Center"
                              TextTrimming="CharacterEllipsis">
                     <Run Text="{x:Bind Lock}" FontFamily="{StaticResource BodyStrongFont}" /><Run Text=" · " /><Run Text="{x:Bind Vessel}" />
@@ -198,8 +198,8 @@
                   </StackPanel>
                   <!-- Water level: the river's colour over a fade to the baseline -->
                   <Grid Grid.Column="1" Width="80" Height="22" VerticalAlignment="Center">
-                    <shapes:Path Data="{x:Bind SparkArea}" Fill="{StaticResource WaterFadeBrush}" />
-                    <shapes:Path Data="{x:Bind Spark}" Stroke="{StaticResource WaterLineBrush}" StrokeThickness="1.6"
+                    <shapes:Path Data="{x:Bind SparkArea}" Fill="{StaticResource WaterFadeInvariantBrush}" />
+                    <shapes:Path Data="{x:Bind Spark}" Stroke="{StaticResource WaterLineInvariantBrush}" StrokeThickness="1.6"
                                  StrokeLineJoin="Round" />
                   </Grid>
                   <TextBlock Grid.Column="2" Text="{x:Bind Level}" FontFamily="{StaticResource MonoMediumFont}"
@@ -275,7 +275,7 @@
                                  TextWrapping="Wrap" LineHeight="18" />
                     </Border>
                     <TextBlock Text="{x:Bind Meta}" FontFamily="{StaticResource MonoFont}" FontSize="11"
-                               Foreground="{StaticResource TextMutedBrush}" HorizontalAlignment="{x:Bind Align}" />
+                               Foreground="{StaticResource TextMutedInvariantBrush}" HorizontalAlignment="{x:Bind Align}" />
                   </StackPanel>
                 </DataTemplate>
               </ItemsControl.ItemTemplate>

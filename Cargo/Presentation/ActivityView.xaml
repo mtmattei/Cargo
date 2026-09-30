@@ -42,12 +42,12 @@
               <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <TextBlock Text="{x:Bind Time}" FontFamily="{StaticResource MonoMediumFont}" FontSize="12"
-                       Foreground="{StaticResource TextMutedBrush}" Margin="0,6,0,0" />
+                       Foreground="{StaticResource TextMutedInvariantBrush}" Margin="0,6,0,0" />
             <Grid Grid.Column="1">
-              <Rectangle Width="1" Fill="{StaticResource HairlineStrongBrush}" HorizontalAlignment="Center"
+              <Rectangle Width="1" Fill="{StaticResource HairlineStrongInvariantBrush}" HorizontalAlignment="Center"
                          VerticalAlignment="Stretch" Margin="0,34,0,-18" MinHeight="14" />
               <!-- xaml-lint: allow card - timeline icon disc -->
-              <Border Width="28" Height="28" CornerRadius="14" Background="{StaticResource SurfaceBrush}"
+              <Border Width="28" Height="28" CornerRadius="14" Background="{StaticResource SurfaceInvariantBrush}"
                       BorderThickness="1.5" BorderBrush="{x:Bind Tone}" VerticalAlignment="Top">
                 <shapes:Path Data="{x:Bind Icon}" Stroke="{x:Bind Tone}" StrokeThickness="1.8"
                              Width="14" Height="14" Stretch="Uniform" />
