@@ -76,10 +76,10 @@ public sealed partial class FleetView : UserControl
 
         Legend = new[]
         {
-            new LegendItem { Label = "On time", Swatch = Tokens.Brush("SeaGreenBrush"), Round = true },
-            new LegendItem { Label = "Running late", Swatch = Tokens.Brush("OrangeBrush"), Round = true },
+            new LegendItem { Label = "On time", Swatch = Tokens.Brush("SeaGreenBrush") },
+            new LegendItem { Label = "Running late", Swatch = Tokens.Brush("OrangeBrush") },
             new LegendItem { Label = "Lock", Swatch = Tokens.Brush("InkBrush") },
-            new LegendItem { Label = "Warning", Swatch = Tokens.Brush("AlertBrush"), Outline = true }
+            new LegendItem { Label = "Warning", Swatch = Tokens.Brush("AlertBrush") }
         };
 
         Lockings = PortData.Lockings.Select(l =>

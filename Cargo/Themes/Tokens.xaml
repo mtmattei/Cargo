@@ -30,7 +30,6 @@
   <Color x:Key="TealDeepColor">#FF17575A</Color>
   <Color x:Key="TealPaleColor">#FF8FD3CB</Color>
   <Color x:Key="SeaGreenColor">#FF1E8F7A</Color>
-  <Color x:Key="WaterColor">#FF1A5F60</Color>
   <Color x:Key="ShallowsColor">#FFCBDCE5</Color>
   <Color x:Key="QuayColor">#FF5F6B76</Color>
   <Color x:Key="QuayEdgeColor">#FF2C3944</Color>
@@ -55,14 +54,9 @@
 
   <!-- ── Hulls & harbour plant ────────────────────────────────── -->
   <Color x:Key="HullColor">#FF243442</Color>
-  <Color x:Key="HullShadowColor">#FF1E2A35</Color>
   <Color x:Key="BootToppingColor">#FFA94E3F</Color>
-  <Color x:Key="HullTrimColor">#FF8696A2</Color>
   <Color x:Key="DeckWhiteColor">#FFF5F4EF</Color>
   <Color x:Key="BridgeColor">#FF31495B</Color>
-  <Color x:Key="WindowFrameColor">#FFCBD0D3</Color>
-  <Color x:Key="PortholeColor">#FF111922</Color>
-  <Color x:Key="VentColor">#FF9FB2BF</Color>
   <Color x:Key="SteelColor">#FF1F2629</Color>
   <Color x:Key="SeaLightColor">#FFD6E3EC</Color>
   <Color x:Key="SeaMidColor">#FFB9CDDB</Color>
@@ -72,9 +66,7 @@
   <Color x:Key="RiverLightColor">#FF8FB9B3</Color>
   <Color x:Key="RiverDeepColor">#FF4F8F8A</Color>
 
-  <!-- Terminal apron, seen from above -->
-  <Color x:Key="ApronColor">#FF2E3438</Color>
-  <Color x:Key="ApronLightColor">#FF3B4247</Color>
+  <!-- Terminal apron markings -->
   <Color x:Key="ApronLineColor">#FF6B757C</Color>
 
   <!-- Container livery beyond the five cargo classes -->
@@ -149,13 +141,10 @@
   <Color x:Key="ScanMetallicColor">#FF4FB3A9</Color>
   <Color x:Key="ScanMixedColor">#FF7BD6B5</Color>
   <Color x:Key="ScanAnomalyColor">#FFFF4D4D</Color>
-  <Color x:Key="OnDarkPositiveColor">#FF8FD6B4</Color>
-  <Color x:Key="OnDarkWarnColor">#FFFFD27A</Color>
 
   <!-- ── Brushes ──────────────────────────────────────────────── -->
   <SolidColorBrush x:Key="InkBrush" Color="{StaticResource InkColor}" />
   <SolidColorBrush x:Key="InkDeepBrush" Color="{StaticResource InkDeepColor}" />
-  <SolidColorBrush x:Key="InkRaisedBrush" Color="{StaticResource InkRaisedColor}" />
   <SolidColorBrush x:Key="PaperBrush" Color="{StaticResource PaperColor}" />
   <SolidColorBrush x:Key="PaperWarmBrush" Color="{StaticResource PaperWarmColor}" />
   <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource SurfaceColor}" />
@@ -173,7 +162,6 @@
   <SolidColorBrush x:Key="TealDeepBrush" Color="{StaticResource TealDeepColor}" />
   <SolidColorBrush x:Key="TealPaleBrush" Color="{StaticResource TealPaleColor}" />
   <SolidColorBrush x:Key="SeaGreenBrush" Color="{StaticResource SeaGreenColor}" />
-  <SolidColorBrush x:Key="WaterBrush" Color="{StaticResource WaterColor}" />
   <SolidColorBrush x:Key="ShallowsBrush" Color="{StaticResource ShallowsColor}" />
   <SolidColorBrush x:Key="QuayBrush" Color="{StaticResource QuayColor}" />
   <SolidColorBrush x:Key="QuayEdgeBrush" Color="{StaticResource QuayEdgeColor}" />
@@ -194,38 +182,18 @@
   <SolidColorBrush x:Key="CargoReeferBrush" Color="{StaticResource CargoReeferColor}" />
   <SolidColorBrush x:Key="CargoHazardBrush" Color="{StaticResource CargoHazardColor}" />
   <SolidColorBrush x:Key="CargoOversizeBrush" Color="{StaticResource CargoOversizeColor}" />
-  <SolidColorBrush x:Key="CargoEmptyBrush" Color="{StaticResource CargoEmptyColor}" />
-  <SolidColorBrush x:Key="ApronBrush" Color="{StaticResource ApronColor}" />
-  <SolidColorBrush x:Key="ApronLightBrush" Color="{StaticResource ApronLightColor}" />
-  <SolidColorBrush x:Key="ApronLineBrush" Color="{StaticResource ApronLineColor}" />
   <SolidColorBrush x:Key="HullBrush" Color="{StaticResource HullColor}" />
-  <SolidColorBrush x:Key="HullShadowBrush" Color="{StaticResource HullShadowColor}" />
   <SolidColorBrush x:Key="BootToppingBrush" Color="{StaticResource BootToppingColor}" />
-  <SolidColorBrush x:Key="HullTrimBrush" Color="{StaticResource HullTrimColor}" />
   <SolidColorBrush x:Key="DeckWhiteBrush" Color="{StaticResource DeckWhiteColor}" />
   <SolidColorBrush x:Key="BridgeBrush" Color="{StaticResource BridgeColor}" />
-  <SolidColorBrush x:Key="WindowFrameBrush" Color="{StaticResource WindowFrameColor}" />
-  <SolidColorBrush x:Key="PortholeBrush" Color="{StaticResource PortholeColor}" />
-  <SolidColorBrush x:Key="VentBrush" Color="{StaticResource VentColor}" />
   <SolidColorBrush x:Key="SteelBrush" Color="{StaticResource SteelColor}" />
   <SolidColorBrush x:Key="SeaFlatBrush" Color="{StaticResource SeaFlatColor}" />
   <SolidColorBrush x:Key="RiverBankBrush" Color="{StaticResource RiverBankColor}" />
   <SolidColorBrush x:Key="RiverEdgeBrush" Color="{StaticResource RiverEdgeColor}" />
-  <SolidColorBrush x:Key="ContainerRustBrush" Color="{StaticResource ContainerRustColor}" />
-  <SolidColorBrush x:Key="ContainerMagentaBrush" Color="{StaticResource ContainerMagentaColor}" />
-  <SolidColorBrush x:Key="ContainerOliveBrush" Color="{StaticResource ContainerOliveColor}" />
-  <SolidColorBrush x:Key="ContainerSageBrush" Color="{StaticResource ContainerSageColor}" />
-  <SolidColorBrush x:Key="ScanOrganicBrush" Color="{StaticResource ScanOrganicColor}" />
-  <SolidColorBrush x:Key="ScanMetallicBrush" Color="{StaticResource ScanMetallicColor}" />
-  <SolidColorBrush x:Key="ScanMixedBrush" Color="{StaticResource ScanMixedColor}" />
-  <SolidColorBrush x:Key="ScanAnomalyBrush" Color="{StaticResource ScanAnomalyColor}" />
-  <SolidColorBrush x:Key="OnDarkPositiveBrush" Color="{StaticResource OnDarkPositiveColor}" />
-  <SolidColorBrush x:Key="OnDarkWarnBrush" Color="{StaticResource OnDarkWarnColor}" />
 
   <!-- Hairlines: the design leans on 8–14% ink rules rather than boxes -->
   <SolidColorBrush x:Key="HairlineBrush" Color="{StaticResource InkColor}" Opacity="0.08" />
   <SolidColorBrush x:Key="HairlineStrongBrush" Color="{StaticResource InkColor}" Opacity="0.14" />
-  <SolidColorBrush x:Key="HairlineFaintBrush" Color="{StaticResource InkColor}" Opacity="0.045" />
   <SolidColorBrush x:Key="HairlineOnDarkBrush" Color="#FFFFFFFF" Opacity="0.10" />
   <SolidColorBrush x:Key="ScrimBrush" Color="{StaticResource InkDeepColor}" Opacity="0.86" />
 
@@ -238,15 +206,8 @@
   <FontFamily x:Key="MonoFont">ms-appx:///Assets/Fonts/IBMPlexMono-Regular.ttf#IBM Plex Mono</FontFamily>
   <FontFamily x:Key="MonoMediumFont">ms-appx:///Assets/Fonts/IBMPlexMono-Medium.ttf#IBM Plex Mono Medium</FontFamily>
 
-  <!-- ── Spacing & radius ─────────────────────────────────────── -->
-  <!-- One spacing ramp and four radii. Inner radius = outer radius − padding (concentric). -->
-  <x:Double x:Key="SpaceXS">4</x:Double>
-  <x:Double x:Key="SpaceS">8</x:Double>
-  <x:Double x:Key="SpaceM">12</x:Double>
-  <x:Double x:Key="SpaceL">16</x:Double>
-  <x:Double x:Key="SpaceXL">24</x:Double>
-  <x:Double x:Key="SpaceXXL">32</x:Double>
-  <CornerRadius x:Key="RadiusChip">4</CornerRadius>
+  <!-- ── Radius ─────────────────────────────────────── -->
+  <!-- Three radii. Inner radius = outer radius − padding (concentric). -->
   <CornerRadius x:Key="RadiusControl">8</CornerRadius>
   <CornerRadius x:Key="RadiusPanel">12</CornerRadius>
   <CornerRadius x:Key="RadiusCard">18</CornerRadius>

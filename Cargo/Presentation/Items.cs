@@ -81,8 +81,6 @@ public sealed class LegendItem
 {
     public required string Label { get; init; }
     public required Brush Swatch { get; init; }
-    public bool Outline { get; init; }
-    public bool Round { get; init; }
 }
 
 public sealed class CompositionSlice

@@ -65,7 +65,7 @@ public sealed partial class VesselsView : UserControl
 
         CargoLegend = Enum.GetValues<CargoClass>()
             .Select(c => new LegendItem { Label = c.Label(), Swatch = Tokens.Brush(c.Token()) })
-            .Append(new LegendItem { Label = "Already ashore", Swatch = Tokens.Brush("TextFaintBrush"), Outline = true })
+            .Append(new LegendItem { Label = "Already ashore", Swatch = Tokens.Brush("TextFaintBrush") })
             .ToList();
 
         Refresh();
