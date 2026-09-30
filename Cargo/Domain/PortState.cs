@@ -261,6 +261,12 @@ public sealed partial class PortState : ObservableObject
 
     partial void OnHoveredBerthChanged(int? value) => NotifyHoverChanged();
 
+    /// <summary>The vessel a list row, tag or the needs-you bar is pointing at. Repaints, never rebuilds.</summary>
+    [ObservableProperty]
+    private string? _hoveredVessel;
+
+    partial void OnHoveredVesselChanged(string? value) => NotifyHoverChanged();
+
     /// <summary>Clicking a hull means different things depending on which screen is up.</summary>
     [RelayCommand]
     private void PickHullVessel(string vesselId)
@@ -386,6 +392,63 @@ public sealed partial class PortState : ObservableObject
     {
         _assigned.Remove(vesselId);
         NotifyStructureChanged();
+    }
+
+    // ── Decisions ─────────────────────────────────────────────────────────────
+
+    private readonly HashSet<string> _confirmed = new();
+
+    /// <summary>
+    /// The arrival waiting on the dispatcher: a vessel still arriving at a reserved berth whose
+    /// berth nobody has confirmed. In the demo data that is Nordic Star to berth 07.
+    /// </summary>
+    public string? PendingDecision => PortData.Vessels
+        .Where(v => v.Status == "Arriving" && !_confirmed.Contains(v.Id))
+        .FirstOrDefault(v => BerthOf(v.Id) is { } berth && PortData.Berths.Any(b => b.Number == berth && b.State == "reserved"))
+        ?.Id;
+
+    public bool NeedsDecision => PendingDecision is not null;
+
+    public bool IsConfirmed(string vesselId) => _confirmed.Contains(vesselId);
+
+    /// <summary>
+    /// Confirms the vessel's reserved berth as a real assignment, so the planner, the conflict
+    /// check and the harbour all follow. Returns null on success, or why the berth cannot take it.
+    /// </summary>
+    public string? Confirm(string vesselId)
+    {
+        var berth = BerthOf(vesselId);
+        var index = PortData.Berths.ToList().FindIndex(b => b.Number == berth);
+        if (index < 0)
+        {
+            return $"{PortData.Vessel(vesselId).Name} has no berth to confirm.";
+        }
+
+        if (!Fits(PortData.Vessel(vesselId), index))
+        {
+            return Assign(vesselId, index);
+        }
+
+        Assign(vesselId, index);
+        _confirmed.Add(vesselId);
+        OnDecisionChanged();
+        return null;
+    }
+
+    /// <summary>Reverses <see cref="Confirm"/>: the berth goes back to reserved and the decision is pending again.</summary>
+    public void UndoConfirm(string vesselId)
+    {
+        if (_confirmed.Remove(vesselId))
+        {
+            Unassign(vesselId);
+            OnDecisionChanged();
+        }
+    }
+
+    private void OnDecisionChanged()
+    {
+        OnPropertyChanged(nameof(PendingDecision));
+        OnPropertyChanged(nameof(NeedsDecision));
     }
 
     /// <summary>Give every movable vessel the shallowest berth that still clears its draft.</summary>
