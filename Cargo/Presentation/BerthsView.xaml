@@ -122,8 +122,9 @@
                                      Foreground="{StaticResource TextMutedInvariantBrush}" TextTrimming="CharacterEllipsis" />
                         </StackPanel>
 
-                        <TextBlock Grid.Column="2" Text="{x:Bind When, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}" FontSize="14"
-                                   Foreground="{x:Bind WhenForeground, Mode=OneWay}" VerticalAlignment="Center" />
+                        <!-- Countdowns roll each minute rather than swap -->
+                        <controls:RollingText Grid.Column="2" Text="{x:Bind When, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}" FontSize="14"
+                                              Foreground="{x:Bind WhenForeground, Mode=OneWay}" VerticalAlignment="Center" />
 
                         <FontIcon Grid.Column="3" Glyph="&#xE76C;" FontSize="11" Foreground="{StaticResource TextMutedInvariantBrush}"
                                   VerticalAlignment="Center" AutomationProperties.AccessibilityView="Raw" />
@@ -153,8 +154,8 @@
             <TextBlock Text="{x:Bind ViewModel.Detail.StateLabel, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}" FontSize="11"
                        Foreground="{x:Bind ViewModel.Detail.Accent, Mode=OneWay}" />
             <StackPanel Orientation="Horizontal" Spacing="8">
-              <TextBlock Text="{x:Bind ViewModel.Detail.Big, Mode=OneWay}" FontFamily="{StaticResource DisplayFont}" FontSize="32"
-                         Foreground="{x:Bind ViewModel.Detail.Accent, Mode=OneWay}" />
+              <controls:RollingText Text="{x:Bind ViewModel.Detail.Big, Mode=OneWay}" FontFamily="{StaticResource DisplayFont}" FontSize="32"
+                                    Foreground="{x:Bind ViewModel.Detail.Accent, Mode=OneWay}" />
               <TextBlock Text="{x:Bind ViewModel.Detail.BigSub, Mode=OneWay}" FontFamily="{StaticResource BodyFont}" FontSize="14"
                          Foreground="{StaticResource TextMutedInvariantBrush}" VerticalAlignment="Bottom" Margin="0,0,0,5" />
             </StackPanel>
@@ -163,7 +164,8 @@
           </StackPanel>
 
           <StackPanel Spacing="6" Visibility="{x:Bind ViewModel.Detail.CargoVisibility, Mode=OneWay}">
-            <ProgressBar Value="{x:Bind ViewModel.Detail.CargoPercent, Mode=OneWay}" Maximum="100" Height="6" MinHeight="6" CornerRadius="3"
+            <!-- Slides between ships (300 ms EaseSmooth) -->
+            <ProgressBar controls:Slide.Value="{x:Bind ViewModel.Detail.CargoPercent, Mode=OneWay}" Maximum="100" Height="6" MinHeight="6" CornerRadius="3"
                          Foreground="{StaticResource TextMutedInvariantBrush}" Background="{StaticResource HairlineInvariantBrush}"
                          AutomationProperties.Name="{x:Bind ViewModel.Detail.CargoLabel, Mode=OneWay}" />
             <TextBlock Text="{x:Bind ViewModel.Detail.CargoLabel, Mode=OneWay}" FontFamily="{StaticResource BodyFont}" FontSize="12"

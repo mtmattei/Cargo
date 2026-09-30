@@ -49,6 +49,13 @@ public sealed partial class RollingText : ContentControl
             foreach (var c in text)
             {
                 var cell = new Cell(this, c.ToString());
+                if (c == ' ')
+                {
+                    // A whitespace-only TextBlock measures zero wide on Uno Skia (gotcha), so the
+                    // space cell takes the font's space advance explicitly
+                    cell.Host.Width = SpaceAdvance();
+                }
+
                 _cells.Add(cell);
                 _row.Children.Add(cell.Host);
             }
@@ -65,6 +72,28 @@ public sealed partial class RollingText : ContentControl
                 _cells[i].Show(glyph, roll, FontSize);
             }
         }
+    }
+
+    private static readonly Dictionary<(FontFamily, double, ushort), double> SpaceCache = new();
+
+    /// <summary>The space advance for this font: "0 0" minus "00", since an interior space does count.</summary>
+    private double SpaceAdvance()
+    {
+        var key = (FontFamily, FontSize, FontWeight.Weight);
+        if (!SpaceCache.TryGetValue(key, out var advance))
+        {
+            double Width(string probe)
+            {
+                var block = new TextBlock { Text = probe, FontFamily = FontFamily, FontSize = FontSize, FontWeight = FontWeight };
+                block.Measure(new Windows.Foundation.Size(double.PositiveInfinity, double.PositiveInfinity));
+                return block.DesiredSize.Width;
+            }
+
+            advance = Math.Max(0, Width("0 0") - Width("00"));
+            SpaceCache[key] = advance;
+        }
+
+        return advance;
     }
 
     private sealed class Cell
