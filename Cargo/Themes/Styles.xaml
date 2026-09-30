@@ -162,6 +162,24 @@
   </Style>
 
   <!-- Masthead figures: a number and what it counts, baseline-aligned -->
+  <!-- A headline figure: its label above, the number below, left-aligned on one edge -->
+  <Style x:Key="FigureStack" TargetType="StackPanel">
+    <Setter Property="Spacing" Value="4" />
+    <Setter Property="VerticalAlignment" Value="Bottom" />
+  </Style>
+
+  <Style x:Key="FigureLabelText" TargetType="TextBlock" BasedOn="{StaticResource CaptionText}">
+    <Setter Property="FontSize" Value="12.5" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <!-- Status is a dot before an ink word; the dot is the only colour -->
+  <Style x:Key="StatusDot" TargetType="Ellipse">
+    <Setter Property="Width" Value="7" />
+    <Setter Property="Height" Value="7" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
   <Style x:Key="MetricLabelText" TargetType="TextBlock" BasedOn="{StaticResource CaptionText}">
     <Setter Property="FontSize" Value="12.5" />
     <Setter Property="VerticalAlignment" Value="Bottom" />

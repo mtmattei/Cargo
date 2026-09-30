@@ -32,17 +32,25 @@ public sealed class HarbourCamera
 
     public double ViewHeight { get; private set; }
 
+    /// <summary>
+    /// Height at the top of the view that holds an overlay (the Overview greeting). The scene is
+    /// framed in the space below it, so the overlay never sits on the harbour.
+    /// </summary>
+    public double TopInset { get; set; }
+
     public void Update(double width, double height)
     {
         ViewWidth = width;
         ViewHeight = height;
+        var top = Math.Clamp(TopInset, 0, height * .5);
+        height -= top;
         _cy = Math.Cos(Yaw);
         _sy = Math.Sin(Yaw);
         _cp = Math.Cos(Pitch);
         _sp = Math.Sin(Pitch);
         _scale = Math.Min(width / 1150, height / 600) * Zoom;
         _ox = width / 2;
-        _oy = height / 2 + height * 0.06;
+        _oy = top + height / 2 + height * 0.06;
         Eye = new V3(TargetX + Distance * _cp * _sy, TargetY + Distance * _cp * _cy, Distance * _sp);
     }
 

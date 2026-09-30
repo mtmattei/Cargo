@@ -2,9 +2,10 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-  <!-- The Overview greeting and the shift's headline figures, shown above the harbour -->
-  <Grid BorderBrush="{StaticResource HairlineStrongBrush}" BorderThickness="0,0,0,1"
-        Padding="0,0,0,18" ColumnSpacing="24">
+  <!-- The Overview greeting and the shift's headline figures, laid over the top of the harbour
+       stage. Greeting left, figures right, both on one bottom line. Figures are ink; colour only
+       marks status, as a dot before the label. -->
+  <Grid ColumnSpacing="32">
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="*" />
       <ColumnDefinition Width="Auto" />
@@ -17,33 +18,51 @@
       <TextBlock Text="{x:Bind ViewModel.Subtitle, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="14" />
     </StackPanel>
 
-    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="26" VerticalAlignment="Bottom">
-      <StackPanel Orientation="Horizontal" Spacing="8">
+    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="32" VerticalAlignment="Bottom">
+      <StackPanel Style="{StaticResource FigureStack}">
+        <TextBlock Text="Alongside" Style="{StaticResource FigureLabelText}" />
         <TextBlock Text="3" Style="{StaticResource MetricText}" />
-        <TextBlock Text="alongside" Style="{StaticResource CaptionText}" FontSize="12.5" VerticalAlignment="Bottom" Margin="0,0,0,3" />
       </StackPanel>
-      <StackPanel Orientation="Horizontal" Spacing="8">
-        <TextBlock Text="2" Style="{StaticResource MetricText}" Foreground="{StaticResource AmberBrush}" />
-        <TextBlock Text="inbound" Style="{StaticResource CaptionText}" FontSize="12.5" VerticalAlignment="Bottom" Margin="0,0,0,3" />
+
+      <StackPanel Style="{StaticResource FigureStack}">
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <Ellipse Style="{StaticResource StatusDot}" Fill="{StaticResource AmberBrush}" />
+          <TextBlock Text="Inbound" Style="{StaticResource FigureLabelText}" />
+        </StackPanel>
+        <TextBlock Text="2" Style="{StaticResource MetricText}" />
       </StackPanel>
-      <StackPanel Orientation="Horizontal" Spacing="8">
-        <TextBlock Text="{x:Bind ViewModel.MovesNow, Mode=OneWay}" Style="{StaticResource MetricText}" Foreground="{StaticResource TealBrush}" />
-        <TextBlock Text="moves / h" Style="{StaticResource CaptionText}" FontSize="12.5" VerticalAlignment="Bottom" Margin="0,0,0,3" />
+
+      <StackPanel Style="{StaticResource FigureStack}">
+        <TextBlock Text="Moves / h" Style="{StaticResource FigureLabelText}" />
+        <TextBlock Text="{x:Bind ViewModel.MovesNow, Mode=OneWay}" Style="{StaticResource MetricText}" />
       </StackPanel>
-      <Button Style="{StaticResource BareButton}" Command="{x:Bind ViewModel.State.GoCommand}" CommandParameter="fleet"
-              ToolTipService.ToolTip="Open Fleet &amp; Waterways">
-        <StackPanel Orientation="Horizontal" Spacing="8">
-          <TextBlock Text="2" Style="{StaticResource MetricText}" Foreground="{StaticResource OrangeBrush}" />
-          <TextBlock Text="orders late" Style="{StaticResource CaptionText}" FontSize="12.5" VerticalAlignment="Bottom" Margin="0,0,0,3" />
+
+      <Button Style="{StaticResource BareButton}" Command="{x:Bind ViewModel.State.GoCommand, Mode=OneWay}" CommandParameter="fleet"
+              ToolTipService.ToolTip="Open Waterways" AutomationProperties.Name="2 orders late, open Waterways">
+        <StackPanel Style="{StaticResource FigureStack}">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <Ellipse Style="{StaticResource StatusDot}" Fill="{StaticResource OrangeBrush}" />
+            <TextBlock Text="Orders late" Style="{StaticResource FigureLabelText}" />
+          </StackPanel>
+          <TextBlock Text="2" Style="{StaticResource MetricText}" />
         </StackPanel>
       </Button>
-      <Button Style="{StaticResource BareButton}" Command="{x:Bind ViewModel.State.OpenSecurityCommand}"
-              ToolTipService.ToolTip="Open Security">
-        <StackPanel Orientation="Horizontal" Spacing="8">
-          <TextBlock Text="1" Style="{StaticResource MetricText}" Foreground="{StaticResource OrangeBrush}" />
-          <TextBlock Text="hold · 0 incidents" Style="{StaticResource CaptionText}" FontSize="12.5" VerticalAlignment="Bottom" Margin="0,0,0,3" />
+
+      <Button Style="{StaticResource BareButton}" Command="{x:Bind ViewModel.State.OpenSecurityCommand, Mode=OneWay}"
+              ToolTipService.ToolTip="Open Security" AutomationProperties.Name="1 hold, open Security">
+        <StackPanel Style="{StaticResource FigureStack}">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <Ellipse Style="{StaticResource StatusDot}" Fill="{StaticResource OrangeBrush}" />
+            <TextBlock Text="Holds" Style="{StaticResource FigureLabelText}" />
+          </StackPanel>
+          <TextBlock Text="1" Style="{StaticResource MetricText}" />
         </StackPanel>
       </Button>
+
+      <StackPanel Style="{StaticResource FigureStack}">
+        <TextBlock Text="Incidents" Style="{StaticResource FigureLabelText}" />
+        <TextBlock Text="0" Style="{StaticResource MetricText}" />
+      </StackPanel>
     </StackPanel>
   </Grid>
 </UserControl>

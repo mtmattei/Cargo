@@ -206,6 +206,8 @@
   <SolidColorBrush x:Key="HairlineStrongBrush" Color="{StaticResource InkColor}" Opacity="0.14" />
   <SolidColorBrush x:Key="HairlineOnDarkBrush" Color="#FFFFFFFF" Opacity="0.10" />
   <SolidColorBrush x:Key="ScrimBrush" Color="{StaticResource InkDeepColor}" Opacity="0.86" />
+  <!-- Dims the page behind a floating panel (the container scanner) without hiding where you were -->
+  <SolidColorBrush x:Key="PageDimBrush" Color="{StaticResource InkDeepColor}" Opacity="0.55" />
 
   <!-- ── Type ─────────────────────────────────────────────────── -->
   <FontFamily x:Key="DisplayFont">ms-appx:///Assets/Fonts/BricolageGrotesque-SemiBold.ttf#Bricolage Grotesque SemiBold</FontFamily>

@@ -5,7 +5,11 @@
              xmlns:controls="using:Cargo.Controls"
              xmlns:shapes="using:Microsoft.UI.Xaml.Shapes">
 
-  <Grid Background="{StaticResource ScrimBrush}">
+  <!-- A floating panel over the dimmed page, not a full-window takeover: the section you came from
+       stays visible around it. At most 1320 x 820, 48 px from the window edges. -->
+  <Grid Background="{StaticResource PageDimBrush}">
+  <Grid Background="{StaticResource InkDeepBrush}" CornerRadius="{StaticResource RadiusCard}"
+        MaxWidth="1320" MaxHeight="820" Margin="48">
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="*" />
       <ColumnDefinition Width="360" />
@@ -203,5 +207,6 @@
         </StackPanel>
       </StackPanel>
     </ScrollViewer>
+  </Grid>
   </Grid>
 </UserControl>

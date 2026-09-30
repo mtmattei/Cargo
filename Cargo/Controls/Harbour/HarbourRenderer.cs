@@ -84,7 +84,7 @@ public sealed class HarbourRenderer : IDisposable
 
         _camera.Update(width, height);
 
-        var key = $"{_camera.Pose}|{width}|{height}|{state.Layer}";
+        var key = $"{_camera.Pose}|{width}|{height}|{_camera.TopInset}|{state.Layer}";
         if (key != _stillKey || _still is null)
         {
             _stillKey = key;
@@ -184,10 +184,11 @@ public sealed class HarbourRenderer : IDisposable
         _hazeShader = SKShader.CreateLinearGradient(new SKPoint(0, 0), new SKPoint(0, height * .62f),
             new[] { stage.WithAlpha(hazeAlpha), stage.WithAlpha(0) }, null, SKShaderTileMode.Clamp);
 
+        var top = (float)Math.Clamp(_camera.TopInset, 0, height * .5);
         // The world has no edge: it dissolves into the stage at the frame.
         var fades = new (SKPoint From, SKPoint To)[]
         {
-            (new(0, 0), new(0, height * .14f)),
+            (new(0, top), new(0, top + (height - top) * .14f)),
             (new(0, height), new(0, height * .92f)),
             (new(0, 0), new(width * .05f, 0)),
             (new(width, 0), new(width * .95f, 0))
@@ -777,7 +778,7 @@ public sealed class HarbourRenderer : IDisposable
 
         var rects = new[]
         {
-            new SKRect(0, 0, width, height * .14f),
+            new SKRect(0, 0, width, (float)_camera.TopInset + (height - (float)_camera.TopInset) * .14f),
             new SKRect(0, height * .92f, width, height),
             new SKRect(0, 0, width * .05f, height),
             new SKRect(width * .95f, 0, width, height)

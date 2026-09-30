@@ -62,7 +62,7 @@
 
     <!-- Legend: colour in the scene only ever means status -->
     <Border Style="{StaticResource HarbourHudPanel}" Visibility="{x:Bind HudVisibility, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Top"
-            Margin="12" IsHitTestVisible="False">
+            Margin="{x:Bind LegendMargin, Mode=OneWay}" IsHitTestVisible="False">
       <StackPanel Orientation="Horizontal" Spacing="14">
         <StackPanel Orientation="Horizontal" Spacing="6">
           <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2" Fill="{StaticResource AmberBrush}" VerticalAlignment="Center" />
@@ -85,7 +85,7 @@
     </Border>
 
     <!-- Camera presets -->
-    <Border Style="{StaticResource HarbourHudPanel}" Visibility="{x:Bind HudVisibility, Mode=OneWay}" Padding="3" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="12">
+    <Border Style="{StaticResource HarbourHudPanel}" Visibility="{x:Bind HudVisibility, Mode=OneWay}" Padding="3" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="24,16">
       <StackPanel Orientation="Horizontal" Spacing="2">
         <Button x:Name="OverviewButton" Style="{StaticResource HarbourSegmentCurrent}" Content="Overview"
                 Command="{x:Bind ViewCommand}" CommandParameter="overview" />
@@ -99,7 +99,7 @@
     </Border>
 
     <!-- Scale, north, zoom -->
-    <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="12" Visibility="{x:Bind HudVisibility, Mode=OneWay}">
+    <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="24,16" Visibility="{x:Bind HudVisibility, Mode=OneWay}">
       <Border Style="{StaticResource HarbourHudPanel}" VerticalAlignment="Stretch" IsHitTestVisible="False">
         <StackPanel Spacing="3" VerticalAlignment="Center">
           <Border x:Name="ScaleBar" Height="5" Width="100" HorizontalAlignment="Left"
