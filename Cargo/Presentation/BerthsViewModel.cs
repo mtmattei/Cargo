@@ -63,6 +63,8 @@ public sealed partial class BerthsViewModel : ObservableObject
         Detail?.Refresh();
     }
 
+    public void RepaintHover() => Status?.RepaintLinks();
+
     private void RefreshMasthead()
     {
         var count = State.Conflicts().Count;

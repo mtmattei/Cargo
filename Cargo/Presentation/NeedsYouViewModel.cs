@@ -37,6 +37,9 @@ public sealed partial class NeedsYouViewModel : ObservableObject
     [ObservableProperty] private Visibility _undoVisibility;
     [ObservableProperty] private bool _isBusy;
 
+    /// <summary>Hovering the bar outlines its vessel, lights its tag and its row.</summary>
+    public System.Windows.Input.ICommand HoverCommand => _state.HoverCommand;
+
     /// <summary>The vessel the bar is about, for hover linking; null when nothing is pending.</summary>
     public string? Subject => _confirmed ?? _state.PendingDecision;
 

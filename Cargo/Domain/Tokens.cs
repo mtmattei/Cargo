@@ -56,6 +56,17 @@ public static class Tokens
         return brush;
     }
 
+    /// <summary>
+    /// A token at partial alpha with the alpha in the colour itself (brush Opacity 1). Use it for
+    /// anything a <see cref="Microsoft.UI.Xaml.BrushTransition"/> animates: on Uno Skia the transition
+    /// interpolates Color only, so an Opacity-based brush fades to and from solid colour.
+    /// </summary>
+    public static SolidColorBrush Tint(string key, double alpha)
+    {
+        var c = Color(key);
+        return Of(Windows.UI.Color.FromArgb((byte)Math.Round(c.A * alpha), c.R, c.G, c.B));
+    }
+
     private static readonly Dictionary<(uint, int), SolidColorBrush> AdHoc = new();
 
     /// <summary>Brush for a colour that was resolved from a token but then blended or shaded.</summary>

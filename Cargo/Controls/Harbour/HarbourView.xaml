@@ -39,6 +39,7 @@
         </utu:CardContentControl>
 
         <Button Style="{StaticResource BareButton}" Command="{x:Bind Toggle}" CommandParameter="{x:Bind Id}"
+                controls:HoverLink.Command="{x:Bind Hover}" controls:HoverLink.Key="{x:Bind Id}"
                 AutomationProperties.Name="{x:Bind AccessibleName}" HorizontalAlignment="Center">
           <!-- xaml-lint: allow card - a data-tag chip on a leader line, not a content card -->
           <Border Background="{x:Bind Background, Mode=OneWay}" BorderBrush="{x:Bind Edge, Mode=OneWay}"

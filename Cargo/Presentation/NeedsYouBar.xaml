@@ -1,6 +1,7 @@
 <UserControl x:Class="Cargo.Presentation.NeedsYouBar"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="using:Cargo.Controls">
 
   <!-- The one decision waiting on the dispatcher. A polite live region: the title and meta are
        announced as the bar moves from needs to done and back. -->
@@ -8,6 +9,8 @@
   <Border MinHeight="48" Padding="14,4,4,4" CornerRadius="{StaticResource RadiusPanel}"
           Background="{x:Bind ViewModel.Ground, Mode=OneWay}"
           BorderBrush="{x:Bind ViewModel.Edge, Mode=OneWay}" BorderThickness="1"
+          controls:HoverLink.Command="{x:Bind ViewModel.HoverCommand, Mode=OneWay}"
+          controls:HoverLink.Key="{x:Bind ViewModel.Subject, Mode=OneWay}"
           AutomationProperties.LiveSetting="Polite"
           AutomationProperties.Name="{x:Bind ViewModel.Title, Mode=OneWay}">
     <Grid ColumnSpacing="12">

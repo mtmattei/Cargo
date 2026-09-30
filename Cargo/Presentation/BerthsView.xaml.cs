@@ -24,6 +24,7 @@ public sealed partial class BerthsView : Page
             _attached = true;
             this.RebuildWhenVisible(vm.State, vm.RefreshPanels);
             this.TickWhenVisible(vm.State, vm.RefreshPanels);
+            this.RepaintWhenVisible(vm.State, vm.RepaintHover);
         }
 
         Bindings.Update();

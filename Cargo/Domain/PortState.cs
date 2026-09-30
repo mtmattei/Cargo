@@ -267,6 +267,37 @@ public sealed partial class PortState : ObservableObject
 
     partial void OnHoveredVesselChanged(string? value) => NotifyHoverChanged();
 
+    /// <summary>
+    /// Linked hover from a list row, a harbour tag or the needs-you bar. The key is a vessel id or
+    /// a berth number; "-key" ends that hover, and only if it is still the current one, since the
+    /// next row's enter can arrive before the last row's leave.
+    /// </summary>
+    [RelayCommand]
+    private void Hover(string? key)
+    {
+        if (string.IsNullOrEmpty(key))
+        {
+            return;
+        }
+
+        if (key[0] == '-')
+        {
+            if (HoverKey == key[1..])
+            {
+                HoveredVessel = null;
+                HoveredBerth = null;
+            }
+
+            return;
+        }
+
+        var berth = PortData.Berths.Select(b => b.Number).ToList().IndexOf(key);
+        HoveredVessel = berth < 0 ? key : null;
+        HoveredBerth = berth < 0 ? null : berth;
+    }
+
+    private string? HoverKey => HoveredVessel ?? (HoveredBerth is { } i ? PortData.Berths[i].Number : null);
+
     /// <summary>Clicking a hull means different things depending on which screen is up.</summary>
     [RelayCommand]
     private void PickHullVessel(string vesselId)

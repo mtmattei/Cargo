@@ -22,6 +22,7 @@ public sealed partial class HarbourTag : ObservableObject
     public required IReadOnlyList<Fact> Facts { get; init; }
     public required ICommand Toggle { get; init; }
     public required ICommand Open { get; init; }
+    public required ICommand Hover { get; init; }
 
     [ObservableProperty]
     private Brush _background = Tokens.Transparent;
@@ -102,7 +103,12 @@ public sealed partial class HarbourView : UserControl
             SyncScene();
             BuildTags();
             this.RebuildWhenVisible(value, OnStructureChanged);
-            this.RepaintWhenVisible(value, () => _scene?.RefreshStill());
+            // Hover outlines draw in the live layer, so a hover never re-bakes the still frame
+            this.RepaintWhenVisible(value, () =>
+            {
+                _scene?.Invalidate();
+                PaintTags();
+            });
             value.PropertyChanged += (_, e) =>
             {
                 if (e.PropertyName is nameof(PortState.Section) or nameof(PortState.StageOpen) or nameof(PortState.SelectedVesselId))
@@ -316,7 +322,8 @@ public sealed partial class HarbourView : UserControl
                     new Fact { Key = "Security", Value = vessel.Security }
                 },
                 Toggle = _state.PickHullVesselCommand,
-                Open = _state.OpenVesselCommand
+                Open = _state.OpenVesselCommand,
+                Hover = _state.HoverCommand
             };
 
             var host = new ContentControl { Content = tag, ContentTemplate = template, IsTabStop = false, RenderTransform = new TranslateTransform() };
@@ -343,21 +350,27 @@ public sealed partial class HarbourView : UserControl
 
     private void RefreshTags()
     {
+        PaintTags();
+        DispatcherQueue.TryEnqueue(PlaceOverlays);
+        UpdateSummary();
+    }
+
+    /// <summary>Tag chrome only: selected takes a 2 px ink edge, a linked hover a 1 px one.</summary>
+    private void PaintTags()
+    {
         foreach (var (tag, _) in _tags)
         {
             var needs = PortData.Vessel(tag.Id).Status == "Arriving";
             var selected = EffectiveSelection == tag.Id;
+            var lit = _state?.HoveredVessel == tag.Id;
             tag.Background = needs ? Tokens.Brush("AmberInvariantBrush") : Tokens.Brush("SurfaceInvariantBrush");
             // The hairline comes straight from the resource: Tokens.Brush() drops brush opacity (audit C1).
-            tag.Edge = selected ? Tokens.Brush("InkInvariantBrush")
+            tag.Edge = selected || lit ? Tokens.Brush("InkInvariantBrush")
                 : needs ? Tokens.Brush("AmberDeepInvariantBrush")
                 : (Brush)Application.Current.Resources["HairlineStrongInvariantBrush"];
             tag.EdgeThickness = new Thickness(selected ? 2 : 1);
             tag.Expanded = selected && !Compact ? Visibility.Visible : Visibility.Collapsed;
         }
-
-        DispatcherQueue.TryEnqueue(PlaceOverlays);
-        UpdateSummary();
     }
 
     // ── Screen readers ─────────────────────────────────────────────────────────

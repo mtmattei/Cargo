@@ -15,6 +15,14 @@ public sealed partial class BerthStatusRow : ObservableObject
 
     public required ICommand Select { get; init; }
 
+    /// <summary>Linked hover through <see cref="PortState.HoverCommand"/>.</summary>
+    public required ICommand Hover { get; init; }
+
+    /// <summary>What the row stands for on the harbour: its vessel, else its berth.</summary>
+    [ObservableProperty] private string _linkKey = string.Empty;
+
+    internal RowKind Kind { get; set; }
+
     /// <summary>The vessel on or bound for this berth; null for a free or closed berth.</summary>
     [ObservableProperty] private string? _vesselId;
     [ObservableProperty] private string _plate = string.Empty;
@@ -78,7 +86,7 @@ public sealed partial class BerthStatusViewModel : ObservableObject
             Rows.Clear();
             foreach (var slot in slots)
             {
-                Rows.Add(new BerthStatusRow { Slot = slot, Select = PickCommand });
+                Rows.Add(new BerthStatusRow { Slot = slot, Select = PickCommand, Hover = _state.HoverCommand });
             }
         }
 
@@ -117,7 +125,8 @@ public sealed partial class BerthStatusViewModel : ObservableObject
             row.When = BerthFacts.When(_state, vessel);
             row.AccessibleName = $"Berth {berth.Number}, {vessel.Name}, {BerthFacts.State(_state, vessel)}, {row.When}"
                 + (needs ? ", needs confirming" : string.Empty);
-            Paint(row, needs ? Kind.Needs : Kind.Vessel, IsCurrent(vessel.Id, berth.Number));
+            row.Kind = needs ? RowKind.Needs : RowKind.Vessel;
+            Paint(row);
             return;
         }
 
@@ -128,7 +137,8 @@ public sealed partial class BerthStatusViewModel : ObservableObject
             : $"Depth {berth.Depth:0.0} m";
         row.When = string.Empty;
         row.AccessibleName = $"Berth {berth.Number}, {row.Name.ToLowerInvariant()}, {row.Meta}";
-        Paint(row, berth.State == "restricted" ? Kind.Restricted : Kind.Free, IsCurrent(null, berth.Number));
+        row.Kind = berth.State == "restricted" ? RowKind.Restricted : RowKind.Free;
+        Paint(row);
     }
 
     private void FillAnchorage(BerthStatusRow row, Vessel vessel)
@@ -140,42 +150,59 @@ public sealed partial class BerthStatusViewModel : ObservableObject
         row.Meta = BerthFacts.FitsLine(_state, vessel);
         row.When = BerthFacts.Clock(vessel.Eta);
         row.AccessibleName = $"Anchorage, {vessel.Name}, at anchor, arrival window {row.When}, {row.Meta}";
-        Paint(row, Kind.Vessel, IsCurrent(vessel.Id, null));
+        row.Kind = RowKind.Vessel;
+        Paint(row);
     }
 
-    private bool IsCurrent(string? vesselId, string? berth) =>
-        _state.SelectedBerth is { } picked
-            ? picked == berth && vesselId is null
-            : vesselId is not null && vesselId == _state.SelectedVesselId;
-
-    private enum Kind { Vessel, Needs, Free, Restricted }
-
-    private static void Paint(BerthStatusRow row, Kind kind, bool current)
+    /// <summary>Hover repaint: only the linked ground and outline change, never the text.</summary>
+    public void RepaintLinks()
     {
+        foreach (var row in Rows)
+        {
+            Paint(row);
+        }
+    }
+
+    private void Paint(BerthStatusRow row)
+    {
+        var kind = row.Kind;
+        var current = _state.SelectedBerth is { } picked
+            ? row.VesselId is null && picked == row.Slot
+            : row.VesselId is not null && row.VesselId == _state.SelectedVesselId;
+        var hoveredBerth = _state.HoveredBerth is { } i ? PortData.Berths[i].Number : null;
+        var linked = row.VesselId is not null ? _state.HoveredVessel == row.VesselId : hoveredBerth == row.Slot;
+        row.LinkKey = row.VesselId ?? row.Slot;
+
         var ink = Tokens.Brush("InkInvariantBrush");
         var muted = Tokens.Brush("TextMutedInvariantBrush");
         var transparent = Tokens.Brush("InkInvariantBrush", 0);
 
-        row.Outline = current ? ink : transparent;
-        row.RowBackground = kind == Kind.Needs ? Tokens.Brush("AmberInvariantBrush", .16) : transparent;
-        row.PlateBackground = kind == Kind.Needs ? Tokens.Brush("AmberInvariantBrush") : Tokens.Brush("SurfaceSunkInvariantBrush");
-        row.PlateForeground = kind == Kind.Restricted ? Tokens.Brush("RestrictedInvariantBrush") : ink;
+        // Linked: the hover ground; the needs row keeps its amber and takes a thin amber edge instead
+        row.Outline = current ? ink : linked && kind == RowKind.Needs ? Tokens.Brush("AmberDeepInvariantBrush") : transparent;
+        // Alpha in the colour, not the brush: the row ground fades through a BrushTransition
+        row.RowBackground = kind == RowKind.Needs ? Tokens.Tint("AmberInvariantBrush", .16)
+            : linked ? Tokens.Tint("InkInvariantBrush", .06)
+            : Tokens.Tint("InkInvariantBrush", 0);
+        row.PlateBackground = kind == RowKind.Needs ? Tokens.Brush("AmberInvariantBrush") : Tokens.Brush("SurfaceSunkInvariantBrush");
+        row.PlateForeground = kind == RowKind.Restricted ? Tokens.Brush("RestrictedInvariantBrush") : ink;
         row.PlateBorder = kind switch
         {
-            Kind.Needs => transparent,
-            Kind.Restricted => Tokens.Brush("RestrictedInvariantBrush"),
+            RowKind.Needs => transparent,
+            RowKind.Restricted => Tokens.Brush("RestrictedInvariantBrush"),
             _ => Tokens.Brush("HairlineStrongInvariantBrush")
         };
         row.StateForeground = kind switch
         {
-            Kind.Needs => Tokens.Brush("AmberInkInvariantBrush"),
-            Kind.Restricted => Tokens.Brush("RestrictedInvariantBrush"),
+            RowKind.Needs => Tokens.Brush("AmberInkInvariantBrush"),
+            RowKind.Restricted => Tokens.Brush("RestrictedInvariantBrush"),
             _ => muted
         };
-        row.NameForeground = kind == Kind.Free ? muted : ink;
-        row.WhenForeground = kind == Kind.Needs ? Tokens.Brush("AmberInkInvariantBrush") : ink;
+        row.NameForeground = kind == RowKind.Free ? muted : ink;
+        row.WhenForeground = kind == RowKind.Needs ? Tokens.Brush("AmberInkInvariantBrush") : ink;
     }
 }
+
+internal enum RowKind { Vessel, Needs, Free, Restricted }
 
 /// <summary>The wording the status list, the vessel detail and the needs-you bar share.</summary>
 internal static class BerthFacts

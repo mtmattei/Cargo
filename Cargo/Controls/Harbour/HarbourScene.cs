@@ -40,7 +40,6 @@ public sealed class HarbourScene : SKCanvasElement
     private double _dragDistance;
     private double _pinchStart;
     private double _zoomStart;
-    private string? _hoveredVessel;
     private string? _selectedVessel;
     private string _layer = "port";
     private bool _typefaceRequested;
@@ -244,7 +243,7 @@ public sealed class HarbourScene : SKCanvasElement
 
     protected override void RenderOverride(SKCanvas canvas, Size area)
     {
-        var frame = new HarbourFrameState(_selectedVessel, _hoveredVessel, _state?.HoveredBerth, _layer, Animate);
+        var frame = new HarbourFrameState(_selectedVessel, _state?.HoveredVessel, _state?.HoveredBerth, _layer, Animate);
         _renderer.Render(canvas, (float)area.Width, (float)area.Height, (DateTimeOffset.Now - _started).TotalSeconds, frame);
     }
 
@@ -356,20 +355,17 @@ public sealed class HarbourScene : SKCanvasElement
         ProtectedCursor = InputSystemCursor.Create(vessel is not null ? InputSystemCursorShape.Hand : InputSystemCursorShape.SizeAll);
     }
 
+    // Hover lives in the store, so the list rows and tags light up with the hull; the store's
+    // HoverChanged brings the repaint back here through the view
     private void SetHover(string? vessel, int? berth)
     {
-        var changed = vessel != _hoveredVessel;
-        _hoveredVessel = vessel;
-        if (_state is not null && _state.HoveredBerth != berth)
+        if (_state is null)
         {
-            _state.HoveredBerth = berth;
-            changed = true;
+            return;
         }
 
-        if (changed)
-        {
-            Invalidate();
-        }
+        _state.HoveredVessel = vessel;
+        _state.HoveredBerth = berth;
     }
 
     private string? HitVessel(Point point)
