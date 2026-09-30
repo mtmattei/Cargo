@@ -1,4 +1,4 @@
-# HANDOFF — Cargo docs refresh after the harbour and header passes
+# HANDOFF — Cargo fix list done; design pass and renderer question next
 Updated: 2026-09-30
 
 ## Where we are
@@ -46,8 +46,7 @@ Read, not applied: none.
 - SPEC.md still lists the compact strip as deferred; the code has moved on.
 - SPEC.md compared SKCanvasElement only against XAML shapes. `GLCanvasElement` (UnoFeature `GLCanvas`, Silk.NET) was never evaluated. Per the docs it runs on WinAppSDK, Skia desktop with hardware acceleration, and Skia WebAssembly, not on Android or iOS, both of which this app targets.
 - In the compact strip, vessel tags overlap each other (MSC Aurora under Kaida Maru).
-- Reduced motion on Skia desktop needs an in-app setting (the platform always reports animations enabled).
-- The 3D view can't be navigated with a screen reader; the tags and the Next up list carry that information.
+- Screen readers get a one-line harbour summary and the tag buttons, but no berth-by-berth keyboard walk (declined for now).
 - These gotchas from 2026-09-29 still have no exported transcript excerpt: RouteChanged path segments, off-UI-thread view models, RowSpan overlay shrinking an Auto row.
 
 ## Relaunch
