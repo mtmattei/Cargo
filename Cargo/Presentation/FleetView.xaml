@@ -196,9 +196,12 @@
                     <TextBlock Text="{x:Bind Name}" Style="{StaticResource BodyStrongText}" />
                     <TextBlock Text="{x:Bind Chainage}" Style="{StaticResource CaptionText}" />
                   </StackPanel>
-                  <shapes:Path Grid.Column="1" Data="{x:Bind Spark}" Stroke="{x:Bind Tone}"
-                               StrokeThickness="1.6" Width="80" Height="22" Stretch="Uniform"
-                               VerticalAlignment="Center" />
+                  <!-- Water level: the river's colour over a fade to the baseline -->
+                  <Grid Grid.Column="1" Width="80" Height="22" VerticalAlignment="Center">
+                    <shapes:Path Data="{x:Bind SparkArea}" Fill="{StaticResource WaterFadeBrush}" />
+                    <shapes:Path Data="{x:Bind Spark}" Stroke="{StaticResource WaterLineBrush}" StrokeThickness="1.6"
+                                 StrokeLineJoin="Round" />
+                  </Grid>
                   <TextBlock Grid.Column="2" Text="{x:Bind Level}" FontFamily="{StaticResource MonoMediumFont}"
                              FontSize="12" Foreground="{x:Bind Ink}" VerticalAlignment="Center" TextAlignment="Right" />
                 </Grid>

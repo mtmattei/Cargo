@@ -20,7 +20,7 @@ public sealed class GaugeRow
     public required string Chainage { get; init; }
     public required string Level { get; init; }
     public required Geometry Spark { get; init; }
-    public required Brush Tone { get; init; }
+    public required Geometry SparkArea { get; init; }
     public required Brush Ink { get; init; }
 }
 
@@ -158,8 +158,11 @@ public sealed partial class FleetViewModel : ObservableObject
         _ => "InkBrush"
     };
 
-    /// <summary>A 12-point trace that drifts with the gauge's trend arrow.</summary>
-    private static Geometry Spark(GaugeDef gauge, int index)
+    /// <summary>
+    /// A 12-point trace that drifts with the gauge's trend arrow, as the line and the area under
+    /// it, both in the gauge's real 80 x 22 frame so they register without stretching.
+    /// </summary>
+    private static (Geometry Line, Geometry Area) Spark(GaugeDef gauge, int index)
     {
         var drift = gauge.Trend == "↓" ? -0.02 : gauge.Trend == "↑" ? 0.02 : 0;
         var values = Enumerable.Range(0, 12)
@@ -174,9 +177,12 @@ public sealed partial class FleetViewModel : ObservableObject
             span = 1;
         }
 
-        return Geo.Polyline(values
-            .Select((v, j) => new Point(j * 90 / 11d, 20 - (v - min) / span * 16))
-            .ToList());
+        const double width = 80, height = 22, pad = 2;
+        var points = values
+            .Select((v, j) => new Point(j * width / 11d, height - pad - (v - min) / span * (height - pad * 2 - 2)))
+            .ToList();
+        var area = points.Prepend(new Point(0, height)).Append(new Point(width, height)).ToList();
+        return (Geo.Polyline(points), Geo.Polyline(area, close: true));
     }
 
     private void BuildStatic()
@@ -210,14 +216,19 @@ public sealed partial class FleetViewModel : ObservableObject
             };
         }).ToList();
 
-        Gauges = PortData.Gauges.Select((g, i) => new GaugeRow
+        // Every trace is water, in the river's colour; the gauge's status stays on its reading
+        Gauges = PortData.Gauges.Select((g, i) =>
         {
-            Name = g.Name,
-            Chainage = $"km {g.Km:0}",
-            Level = $"{g.Level:0.0} m {g.Trend}",
-            Spark = Spark(g, i),
-            Tone = Tokens.Brush(g.Tone),
-            Ink = Tokens.Brush(InkFor(g.Tone))
+            var (line, area) = Spark(g, i);
+            return new GaugeRow
+            {
+                Name = g.Name,
+                Chainage = $"km {g.Km:0}",
+                Level = $"{g.Level:0.0} m {g.Trend}",
+                Spark = line,
+                SparkArea = area,
+                Ink = Tokens.Brush(InkFor(g.Tone))
+            };
         }).ToList();
 
         Notices = PortData.Notices.Select(n => new NoticeRow

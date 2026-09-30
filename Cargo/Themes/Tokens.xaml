@@ -192,6 +192,13 @@
   <SolidColorBrush x:Key="SteelBrush" Color="{StaticResource SteelColor}" />
   <SolidColorBrush x:Key="SeaFlatBrush" Color="{StaticResource SeaFlatColor}" />
   <SolidColorBrush x:Key="RiverBankBrush" Color="{StaticResource RiverBankColor}" />
+  <!-- Water-level charts share the river map's water: the deep water as the line, a fade below it -->
+  <SolidColorBrush x:Key="WaterLineBrush" Color="{StaticResource RiverDeepColor}" />
+  <Color x:Key="RiverDeepClearColor">#004F8F8A</Color>
+  <LinearGradientBrush x:Key="WaterFadeBrush" StartPoint="0,0" EndPoint="0,1" Opacity="0.34">
+    <GradientStop Offset="0" Color="{StaticResource RiverDeepColor}" />
+    <GradientStop Offset="1" Color="{StaticResource RiverDeepClearColor}" />
+  </LinearGradientBrush>
   <SolidColorBrush x:Key="RiverEdgeBrush" Color="{StaticResource RiverEdgeColor}" />
 
   <!-- Hairlines: the design leans on 8–14% ink rules rather than boxes -->

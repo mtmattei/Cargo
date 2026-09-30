@@ -184,4 +184,26 @@ internal static class Draw
 
         return block.At(x, y);
     }
+
+    /// <summary>
+    /// The fill under a line chart: the line's colour at <paramref name="opacity"/> against the
+    /// line, fading to clear at the baseline. <paramref name="up"/> is for series drawn below a
+    /// baseline (the line sits at the bottom of the area), so the fade runs upward.
+    /// </summary>
+    public static LinearGradientBrush Fade(string colorToken, double opacity, bool up = false)
+    {
+        var c = Tokens.Color(colorToken);
+        var solid = Windows.UI.Color.FromArgb((byte)Math.Round(255 * opacity), c.R, c.G, c.B);
+        var clear = Windows.UI.Color.FromArgb(0, c.R, c.G, c.B);
+        return new LinearGradientBrush
+        {
+            StartPoint = new Windows.Foundation.Point(0, up ? 1 : 0),
+            EndPoint = new Windows.Foundation.Point(0, up ? 0 : 1),
+            GradientStops =
+            {
+                new GradientStop { Offset = 0, Color = solid },
+                new GradientStop { Offset = 1, Color = clear }
+            }
+        };
+    }
 }

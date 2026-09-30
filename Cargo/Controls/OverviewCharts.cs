@@ -22,8 +22,8 @@ public sealed partial class MovementsChart : SceneHost
         var arrivals = Geo.Mirror(PortData.Arrivals, 1200, 100, 62, -1);
         var departures = Geo.Mirror(PortData.Departures, 1200, 100, 46, 1);
 
-        Scene.Place(new Path { Data = arrivals.Area, Fill = Tokens.Brush("TealColor", 0.14) });
-        Scene.Place(new Path { Data = departures.Area, Fill = Tokens.Brush("SeaGreenColor", 0.14) });
+        Scene.Place(new Path { Data = arrivals.Area, Fill = Draw.Fade("TealColor", 0.24) });
+        Scene.Place(new Path { Data = departures.Area, Fill = Draw.Fade("SeaGreenColor", 0.24, up: true) });
         Scene.Place(new Path { Data = arrivals.Stroke, Stroke = Tokens.Brush("TealBrush"), StrokeThickness = 1.8 });
         Scene.Place(new Path { Data = departures.Stroke, Stroke = Tokens.Brush("SeaGreenBrush"), StrokeThickness = 1.8 });
 
@@ -189,8 +189,8 @@ public sealed partial class FlowChart : SceneHost
         var entering = Geo.MakeSeries(PortData.CargoIn, 300, 132, 14);
         var leaving = Geo.MakeSeries(PortData.CargoOut, 300, 132, 14);
 
-        Scene.Place(new Path { Data = leaving.Area, Fill = Tokens.Brush("AmberColor", 0.22) });
-        Scene.Place(new Path { Data = entering.Area, Fill = Tokens.Brush("TealColor", 0.18) });
+        Scene.Place(new Path { Data = leaving.Area, Fill = Draw.Fade("AmberColor", 0.30) });
+        Scene.Place(new Path { Data = entering.Area, Fill = Draw.Fade("TealColor", 0.26) });
         Scene.Place(new Path { Data = leaving.Stroke, Stroke = Tokens.Brush("AmberBrush"), StrokeThickness = 1.8 });
         Scene.Place(new Path { Data = entering.Stroke, Stroke = Tokens.Brush("TealBrush"), StrokeThickness = 1.8 });
 
@@ -207,8 +207,8 @@ public sealed partial class TideChart : SceneHost
     public TideChart() : base(600, 70, stretchHeight: true)
     {
         var tide = Geo.MakeSeries(PortData.Tide, 600, 62, 8);
-        Scene.Place(new Path { Data = tide.Area, Fill = Tokens.Brush("TealColor", 0.12) });
-        Scene.Place(new Path { Data = tide.Stroke, Stroke = Tokens.Brush("TealBrush"), StrokeThickness = 1.8 });
+        Scene.Place(new Path { Data = tide.Area, Fill = Draw.Fade("RiverDeepColor", 0.32) });
+        Scene.Place(new Path { Data = tide.Stroke, Stroke = Tokens.Brush("RiverDeepColor"), StrokeThickness = 1.8 });
 
         var x = Math.Clamp((PortData.NowHours - 18) / 12 * 600, 0, 600);
         var y = tide.At((PortData.NowHours - 18) * 2);
@@ -225,7 +225,7 @@ public sealed partial class ThroughputChart : SceneHost
         Overflow = 24;
         var series = Geo.MakeSeries(PortData.Volume, 1000, 100, 14);
 
-        Scene.Place(new Path { Data = series.Area, Fill = Tokens.Brush("TealColor", 0.1) });
+        Scene.Place(new Path { Data = series.Area, Fill = Draw.Fade("TealColor", 0.22) });
         Scene.Place(new Path { Data = series.Stroke, Stroke = Tokens.Brush("TealBrush"), StrokeThickness = 2 });
 
         Scene.Place(Draw.Rule(0, 100, 1000, 100, Tokens.Brush("InkColor", 0.1)));
