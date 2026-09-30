@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:Cargo.Presentation"
              xmlns:controls="using:Cargo.Controls"
+             xmlns:utu="using:Uno.Toolkit.UI"
              xmlns:shapes="using:Microsoft.UI.Xaml.Shapes">
 
   <Grid Style="{StaticResource SectionFrame}">
@@ -91,7 +92,7 @@
       </ItemsControl>
 
       <!-- ── Selected container ───────────────────────────────── -->
-      <controls:Card Grid.Column="1" Padding="22,20" VerticalAlignment="Top">
+      <utu:CardContentControl Style="{StaticResource PanelCard}" Grid.Column="1" Padding="22,20" VerticalAlignment="Top">
         <StackPanel Spacing="16">
           <StackPanel Spacing="5">
             <TextBlock Text="{x:Bind SelectedId, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}" FontSize="20" />
@@ -160,7 +161,7 @@
           <Button Style="{StaticResource GhostButton}" Content="Inspection record →"
                   Command="{x:Bind State.OpenInspectionCommand}" HorizontalAlignment="Stretch" />
         </StackPanel>
-      </controls:Card>
+      </utu:CardContentControl>
     </Grid>
   </Grid>
 </UserControl>

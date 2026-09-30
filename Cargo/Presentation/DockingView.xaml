@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:Cargo.Presentation"
              xmlns:controls="using:Cargo.Controls"
+             xmlns:utu="using:Uno.Toolkit.UI"
              xmlns:shapes="using:Microsoft.UI.Xaml.Shapes">
 
   <Grid Style="{StaticResource SectionFrame}">
@@ -38,7 +39,7 @@
     </Grid>
 
     <!-- ── Scrubber ─────────────────────────────────────────────── -->
-    <controls:Card Grid.Row="1" Padding="18,12">
+    <utu:CardContentControl Style="{StaticResource PanelCard}" Grid.Row="1" Padding="18,12">
       <Grid ColumnSpacing="18">
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="Auto" />
@@ -80,7 +81,7 @@
           </Button>
         </StackPanel>
       </Grid>
-    </controls:Card>
+    </utu:CardContentControl>
 
     <!-- ── Map, timeline and vessel panel ───────────────────────── -->
     <Grid Grid.Row="2" ColumnSpacing="18">
@@ -102,7 +103,7 @@
           </Border>
         </Grid>
 
-        <controls:Card Padding="22,20,22,18">
+        <utu:CardContentControl Style="{StaticResource PanelCard}" Padding="22,20,22,18">
           <StackPanel Spacing="12">
             <Grid>
               <TextBlock Text="Berth timeline · 36 h" Style="{StaticResource CardTitleText}" />
@@ -141,11 +142,11 @@
               </ItemsControl.ItemTemplate>
             </ItemsControl>
           </StackPanel>
-        </controls:Card>
+        </utu:CardContentControl>
       </StackPanel>
 
       <!-- ── Selected vessel ──────────────────────────────────────── -->
-      <controls:Card x:Name="VesselPanel" Grid.Column="1" Padding="22,20" VerticalAlignment="Top"
+      <utu:CardContentControl Style="{StaticResource PanelCard}" x:Name="VesselPanel" Grid.Column="1" Padding="22,20" VerticalAlignment="Top"
                      Visibility="Collapsed">
         <StackPanel Spacing="14">
           <Grid>
@@ -189,7 +190,7 @@
           <Button Style="{StaticResource PrimaryButton}" Content="Vessel profile →" Click="OnOpenProfileClick"
                   HorizontalAlignment="Stretch" />
         </StackPanel>
-      </controls:Card>
+      </utu:CardContentControl>
     </Grid>
   </Grid>
 </UserControl>

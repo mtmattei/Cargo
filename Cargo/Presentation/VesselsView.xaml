@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:Cargo.Presentation"
              xmlns:controls="using:Cargo.Controls"
+             xmlns:utu="using:Uno.Toolkit.UI"
              xmlns:shapes="using:Microsoft.UI.Xaml.Shapes">
 
   <Grid Style="{StaticResource SectionFrame}">
@@ -71,7 +72,7 @@
 
       <!-- ── Profile and operations ─────────────────────────────── -->
       <StackPanel Grid.Column="1" Spacing="16">
-        <controls:Card Padding="22,18,22,14">
+        <utu:CardContentControl Style="{StaticResource PanelCard}" Padding="22,18,22,14">
           <Grid>
             <StackPanel Spacing="4">
               <Grid>
@@ -125,7 +126,7 @@
               </ItemsControl.ItemTemplate>
             </ItemsControl>
           </Grid>
-        </controls:Card>
+        </utu:CardContentControl>
 
         <Grid ColumnSpacing="16">
           <Grid.ColumnDefinitions>
@@ -133,7 +134,7 @@
             <ColumnDefinition Width="*" />
           </Grid.ColumnDefinitions>
 
-          <controls:Card>
+          <utu:CardContentControl Style="{StaticResource PanelCard}">
             <StackPanel Spacing="10">
               <Grid>
                 <TextBlock Text="Cargo operations" Style="{StaticResource CardTitleText}" />
@@ -170,9 +171,9 @@
               <TextBlock Text="{x:Bind OpsNote, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12"
                          TextWrapping="Wrap" Margin="0,2,0,0" />
             </StackPanel>
-          </controls:Card>
+          </utu:CardContentControl>
 
-          <controls:Card Grid.Column="1">
+          <utu:CardContentControl Style="{StaticResource PanelCard}" Grid.Column="1">
             <StackPanel Spacing="14">
               <TextBlock Text="Cargo composition" Style="{StaticResource PanelTitleText}" />
               <ItemsControl x:Name="CompositionBar" Height="14" />
@@ -209,12 +210,12 @@
                 </Grid>
               </Grid>
             </StackPanel>
-          </controls:Card>
+          </utu:CardContentControl>
         </Grid>
       </StackPanel>
 
       <!-- ── Voyage ─────────────────────────────────────────────── -->
-      <controls:Card Grid.Column="2" Padding="22,20">
+      <utu:CardContentControl Style="{StaticResource PanelCard}" Grid.Column="2" Padding="22,20">
         <StackPanel Spacing="16">
           <Grid>
             <TextBlock Text="Voyage" Style="{StaticResource PanelTitleText}" FontSize="15" VerticalAlignment="Center" />
@@ -270,11 +271,11 @@
           <Button Style="{StaticResource GhostButton}" Command="{x:Bind State.OpenDockingCommand}"
                   Content="Open in Docking →" HorizontalAlignment="Stretch" Margin="0,4,0,0" />
         </StackPanel>
-      </controls:Card>
+      </utu:CardContentControl>
     </Grid>
 
     <!-- ── Bay detail ───────────────────────────────────────────── -->
-    <controls:Card Grid.Row="2" Padding="22,18">
+    <utu:CardContentControl Style="{StaticResource PanelCard}" Grid.Row="2" Padding="22,18">
       <StackPanel Spacing="12">
         <StackPanel Orientation="Horizontal" Spacing="14">
           <TextBlock Text="{x:Bind BayHeading, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}" FontSize="17" />
@@ -386,6 +387,6 @@
           </Grid>
         </Grid>
       </StackPanel>
-    </controls:Card>
+    </utu:CardContentControl>
   </Grid>
 </UserControl>

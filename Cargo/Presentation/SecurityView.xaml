@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:Cargo.Presentation"
              xmlns:controls="using:Cargo.Controls"
+             xmlns:utu="using:Uno.Toolkit.UI"
              xmlns:uen="using:Uno.Extensions.Navigation.UI">
 
   <Grid Padding="40,24,40,48" MinWidth="1100" MaxWidth="1520" RowSpacing="20" uen:Region.Attached="True">
@@ -20,6 +21,7 @@
         <TextBlock Text="SECURITY · ISPS LEVEL 1 · 1 HOLD ACTIVE" Style="{StaticResource EyebrowText}" />
         <TextBlock Text="{x:Bind ViewModel.State.SecurityTitle, Mode=OneWay}" Style="{StaticResource PageTitleText}" />
       </StackPanel>
+      <!-- xaml-lint: allow card - segmented tab strip; the Simple theme ships no segmented TabBar style -->
       <Border Grid.Column="1" Background="{StaticResource SurfaceSunkAltBrush}" CornerRadius="12" Padding="4"
               VerticalAlignment="Bottom">
         <ItemsControl ItemsSource="{x:Bind ViewModel.Tabs, Mode=OneWay}">
@@ -29,6 +31,7 @@
           <ItemsControl.ItemTemplate>
             <DataTemplate x:DataType="local:PageTab">
               <Button Style="{StaticResource BareButton}" uen:Navigation.Request="{x:Bind Route}">
+                <!-- xaml-lint: allow card - the current-tab highlight inside the segmented strip -->
                 <Border Background="{x:Bind Background}" CornerRadius="9" Padding="14,7">
                   <TextBlock Text="{x:Bind Label}" FontFamily="{StaticResource BodyMediumFont}" FontSize="12.5"
                              Foreground="{x:Bind Foreground}" />
@@ -51,12 +54,12 @@
       </Grid.ColumnDefinitions>
 
       <StackPanel Spacing="18">
-        <Border CornerRadius="18" BorderBrush="{StaticResource HairlineBrush}" BorderThickness="1"
-                Background="{StaticResource LandBrush}">
+        <utu:CardContentControl Style="{StaticResource OutlinedPanel}" Padding="0"
+                                CornerRadius="{StaticResource RadiusCard}" Background="{StaticResource LandBrush}">
           <controls:SecurityZoneMap />
-        </Border>
+        </utu:CardContentControl>
 
-        <controls:Card Padding="22,20,22,18">
+        <utu:CardContentControl Style="{StaticResource PanelCard}" Padding="22,20,22,18">
           <StackPanel Spacing="12">
             <Grid>
               <TextBlock Text="Security timeline" Style="{StaticResource CardTitleText}" />
@@ -77,15 +80,16 @@
             </Grid>
             <controls:SecurityTimeline />
           </StackPanel>
-        </controls:Card>
+        </utu:CardContentControl>
       </StackPanel>
 
       <StackPanel Grid.Column="1" Spacing="14">
-        <controls:Card Padding="20,18">
+        <utu:CardContentControl Style="{StaticResource PanelCard}" Padding="20,18">
           <StackPanel Spacing="8">
             <Grid>
               <TextBlock Text="MSCU 482193 7" FontFamily="{StaticResource MonoMediumFont}" FontSize="14" />
-              <Border Background="{StaticResource SurfaceSunkBrush}" CornerRadius="99" Padding="8,3"
+              <!-- xaml-lint: allow card - a status pill, not a card; half-height radius (99 draws an oval on Skia) -->
+              <Border Background="{StaticResource SurfaceSunkBrush}" CornerRadius="10" Padding="8,3"
                       HorizontalAlignment="Right">
                 <TextBlock Text="Cleared" FontFamily="{StaticResource BodyMediumFont}" FontSize="11"
                            Foreground="{StaticResource TealBrush}" />
@@ -106,13 +110,14 @@
               </ItemsControl.ItemTemplate>
             </ItemsControl>
           </StackPanel>
-        </controls:Card>
+        </utu:CardContentControl>
 
-        <controls:Card Padding="20,18" BorderBrush="{StaticResource OrangeBrush}">
+        <utu:CardContentControl Style="{StaticResource PanelCard}" Padding="20,18" BorderBrush="{StaticResource OrangeBrush}">
           <StackPanel Spacing="8">
             <Grid>
               <TextBlock Text="CMAU 918204 4" FontFamily="{StaticResource MonoMediumFont}" FontSize="14" />
-              <Border Background="{StaticResource SurfaceSunkBrush}" CornerRadius="99" Padding="8,3"
+              <!-- xaml-lint: allow card - a status pill, not a card; half-height radius (99 draws an oval on Skia) -->
+              <Border Background="{StaticResource SurfaceSunkBrush}" CornerRadius="10" Padding="8,3"
                       HorizontalAlignment="Right">
                 <TextBlock Text="Hold" FontFamily="{StaticResource BodyMediumFont}" FontSize="11"
                            Foreground="{StaticResource OrangeInkBrush}" />
@@ -135,9 +140,9 @@
             <Button Style="{StaticResource PrimaryButton}" Content="Open inspection →" Margin="0,4,0,0"
                     Command="{x:Bind ViewModel.State.OpenInspectionCommand, Mode=OneWay}" HorizontalAlignment="Left" Padding="12,8" />
           </StackPanel>
-        </controls:Card>
+        </utu:CardContentControl>
 
-        <controls:Card Padding="20,18">
+        <utu:CardContentControl Style="{StaticResource PanelCard}" Padding="20,18">
           <StackPanel Spacing="12">
             <TextBlock Text="Records today" Style="{StaticResource PanelTitleText}" />
             <ItemsControl ItemsSource="{x:Bind ViewModel.Records, Mode=OneWay}">
@@ -161,7 +166,7 @@
               </ItemsControl.ItemTemplate>
             </ItemsControl>
           </StackPanel>
-        </controls:Card>
+        </utu:CardContentControl>
       </StackPanel>
     </Grid>
 
@@ -181,13 +186,13 @@
           <ItemsControl.ItemTemplate>
             <DataTemplate x:DataType="local:PersonCard">
               <Button Style="{StaticResource RowButton}" Command="{x:Bind Select}" CommandParameter="{x:Bind Index}">
-                <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{x:Bind Border}" BorderThickness="1"
-                        CornerRadius="14" Padding="14">
+                <utu:CardContentControl Style="{StaticResource OutlinedPanel}" BorderBrush="{x:Bind Border}" Padding="14">
                   <Grid ColumnSpacing="12">
                     <Grid.ColumnDefinitions>
                       <ColumnDefinition Width="46" />
                       <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
+                    <!-- xaml-lint: allow card - avatar swatch -->
                     <Border Width="46" Height="46" CornerRadius="12" Background="{x:Bind Avatar}">
                       <TextBlock Text="{x:Bind Initials}" FontFamily="{StaticResource BodyStrongFont}" FontSize="14"
                                  Foreground="{StaticResource SurfaceBrush}"
@@ -200,13 +205,13 @@
                                  Foreground="{StaticResource TealBrush}" Margin="0,4,0,0" />
                     </StackPanel>
                   </Grid>
-                </Border>
+                </utu:CardContentControl>
               </Button>
             </DataTemplate>
           </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <controls:Card Padding="20,18">
+        <utu:CardContentControl Style="{StaticResource PanelCard}" Padding="20,18">
           <StackPanel Spacing="10">
             <Grid>
               <TextBlock Text="{x:Bind ViewModel.ZoneHeading, Mode=OneWay}" Style="{StaticResource CardTitleText}" />
@@ -215,7 +220,7 @@
             </Grid>
             <controls:AccessZoneMap Allowed="{x:Bind ViewModel.AllowedZones, Mode=OneWay}" />
           </StackPanel>
-        </controls:Card>
+        </utu:CardContentControl>
       </StackPanel>
 
       <StackPanel Grid.Column="1" Spacing="14">
@@ -227,8 +232,7 @@
           </ItemsControl.ItemsPanel>
           <ItemsControl.ItemTemplate>
             <DataTemplate x:DataType="local:VehicleCard">
-              <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource HairlineBrush}"
-                      BorderThickness="1" CornerRadius="14" Padding="16,14">
+              <utu:CardContentControl Style="{StaticResource OutlinedPanel}">
                 <Grid ColumnSpacing="14">
                   <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="92" />
@@ -249,7 +253,7 @@
                     </ItemsControl.ItemTemplate>
                   </ItemsControl>
                 </Grid>
-              </Border>
+              </utu:CardContentControl>
             </DataTemplate>
           </ItemsControl.ItemTemplate>
         </ItemsControl>
@@ -263,7 +267,7 @@
         <ColumnDefinition Width="340" />
       </Grid.ColumnDefinitions>
 
-      <controls:Card Padding="26,22,26,18">
+      <utu:CardContentControl Style="{StaticResource PanelCard}" Padding="26,22,26,18">
         <StackPanel Spacing="6">
           <Grid>
             <TextBlock Text="CMAU 918204 4" FontFamily="{StaticResource MonoMediumFont}" FontSize="18" />
@@ -273,19 +277,19 @@
           </Grid>
           <controls:InspectionDiagram />
         </StackPanel>
-      </controls:Card>
+      </utu:CardContentControl>
 
       <StackPanel Grid.Column="1" Spacing="14">
-        <controls:Card Padding="20,18" BorderBrush="{StaticResource OrangeBrush}">
+        <utu:CardContentControl Style="{StaticResource PanelCard}" Padding="20,18" BorderBrush="{StaticResource OrangeBrush}">
           <StackPanel Spacing="6">
             <TextBlock Text="⚠ Weight variance" FontFamily="{StaticResource BodyStrongFont}" FontSize="13.5"
                        Foreground="{StaticResource OrangeInkBrush}" />
             <TextBlock Style="{StaticResource BodyText}" TextWrapping="Wrap" LineHeight="19"
                        Text="Declared 24,120 kg · measured 25,920 kg (+1.8 t, +7.5%). Exceeds the 5% tolerance — physical inspection scheduled before customs release." />
           </StackPanel>
-        </controls:Card>
+        </utu:CardContentControl>
 
-        <controls:Card Padding="20,18">
+        <utu:CardContentControl Style="{StaticResource PanelCard}" Padding="20,18">
           <StackPanel Spacing="12">
             <TextBlock Text="Inspection log" Style="{StaticResource PanelTitleText}" />
             <ItemsControl ItemsSource="{x:Bind ViewModel.InspectionLog, Mode=OneWay}">
@@ -312,7 +316,7 @@
               </ItemsControl.ItemTemplate>
             </ItemsControl>
           </StackPanel>
-        </controls:Card>
+        </utu:CardContentControl>
 
         <StackPanel Orientation="Horizontal" Spacing="8">
           <Button Style="{StaticResource PrimaryButton}" Content="Assign inspector" Width="160" />

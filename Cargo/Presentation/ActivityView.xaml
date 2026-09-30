@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:Cargo.Presentation"
              xmlns:controls="using:Cargo.Controls"
+             xmlns:utu="using:Uno.Toolkit.UI"
              xmlns:shapes="using:Microsoft.UI.Xaml.Shapes">
 
   <Grid Style="{StaticResource SectionFrame}">
@@ -17,7 +18,7 @@
       <TextBlock Text="{x:Bind Eyebrow}" Style="{StaticResource CaptionText}" />
     </StackPanel>
 
-    <controls:Card Grid.Row="1" Padding="22,20,22,14">
+    <utu:CardContentControl Style="{StaticResource PanelCard}" Grid.Row="1" Padding="22,20,22,14">
       <StackPanel Spacing="22">
         <Grid>
           <TextBlock Text="Container throughput" Style="{StaticResource CardTitleText}" />
@@ -26,7 +27,7 @@
         </Grid>
         <ContentControl x:Name="ThroughputHost" HorizontalContentAlignment="Stretch" />
       </StackPanel>
-    </controls:Card>
+    </utu:CardContentControl>
 
     <ItemsControl Grid.Row="2" ItemsSource="{x:Bind Feed}">
       <ItemsControl.ItemsPanel>

@@ -71,41 +71,52 @@
   </Style>
 
   <!-- ============================================================
-       Card — white panel, hairline edge, one soft ground shadow.
-       Shadows are declared inside the template so every instance
-       gets its own ShadowCollection (a shared one silently drops).
+       Cards — Toolkit CardContentControl, tuned by lightweight keys.
+       PanelCard: surface, hairline edge, elevation (the section panels).
+       OutlinedPanel: hairline only, for cards inside a panel or a row.
+       Both stretch like the old Card did (the Toolkit base does not).
+       These panels are static, so pointer-over keeps the resting fill:
+       a hover tint on a panel reads as "this is clickable".
        ============================================================ -->
-  <Style TargetType="controls:Card">
+  <Style x:Key="PanelCard" TargetType="utu:CardContentControl" BasedOn="{StaticResource ElevatedCardContentControlStyle}">
     <Setter Property="Padding" Value="20,18" />
     <Setter Property="CornerRadius" Value="{StaticResource RadiusCard}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <!-- The Simple template reads BorderBrush from the control; the ElevatedCardContentBorderBrush key had no effect -->
+    <Setter Property="BorderBrush" Value="{StaticResource HairlineBrush}" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="VerticalAlignment" Value="Stretch" />
     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
     <Setter Property="VerticalContentAlignment" Value="Stretch" />
-    <Setter Property="Template">
+    <Setter Property="IsTabStop" Value="False" />
+    <Setter Property="utu:ResourceExtensions.Resources">
       <Setter.Value>
-        <ControlTemplate TargetType="controls:Card">
-          <utu:ShadowContainer>
-            <utu:ShadowContainer.Shadows>
-              <utu:ShadowCollection>
-                <utu:Shadow OffsetY="12" BlurRadius="26" Spread="-14" Opacity="0.20" Color="{StaticResource InkColor}" />
-              </utu:ShadowCollection>
-            </utu:ShadowContainer.Shadows>
-            <Border Background="{TemplateBinding Background}"
-                    BorderBrush="{TemplateBinding BorderBrush}"
-                    BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="{TemplateBinding CornerRadius}"
-                    Padding="{TemplateBinding Padding}">
-              <ContentPresenter Content="{TemplateBinding Content}"
-                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-            </Border>
-          </utu:ShadowContainer>
-        </ControlTemplate>
+        <ResourceDictionary>
+          <StaticResource x:Key="ElevatedCardContentBackground" ResourceKey="SurfaceBrush" />
+          <StaticResource x:Key="CardContentBackgroundPointerOver" ResourceKey="SurfaceBrush" />
+        </ResourceDictionary>
       </Setter.Value>
     </Setter>
-    <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
-    <Setter Property="BorderBrush" Value="{StaticResource HairlineBrush}" />
+  </Style>
+
+  <Style x:Key="OutlinedPanel" TargetType="utu:CardContentControl" BasedOn="{StaticResource OutlinedCardContentControlStyle}">
+    <Setter Property="Padding" Value="16,14" />
+    <Setter Property="CornerRadius" Value="{StaticResource RadiusPanel}" />
     <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="BorderBrush" Value="{StaticResource HairlineBrush}" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="VerticalAlignment" Value="Stretch" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+    <Setter Property="IsTabStop" Value="False" />
+    <Setter Property="utu:ResourceExtensions.Resources">
+      <Setter.Value>
+        <ResourceDictionary>
+          <StaticResource x:Key="OutlinedCardContentBackground" ResourceKey="SurfaceBrush" />
+          <StaticResource x:Key="CardContentBackgroundPointerOver" ResourceKey="SurfaceBrush" />
+        </ResourceDictionary>
+      </Setter.Value>
+    </Setter>
   </Style>
 
   <!-- ============================================================
