@@ -1,4 +1,4 @@
-# SPEC: Berths "needs you" flow and linked interactions
+# SPEC: Berths "needs you" flow, Overview context panel, and linked interactions
 
 Written 2026-09-30. Source design: the **North Quay Twin** artifact
 (https://claude.ai/artifact/NYuaftYiPe9a6sfbZyLjws), plus the user's interaction list (Before / After / Why,
@@ -24,6 +24,7 @@ let them make it in place, and link every list row to the thing it means on the 
 | Live clock from 20:58, real time | **implemented** | `PortState.NowHours` already advances in real time from `PortData.NowHours` |
 | Rolling digits each minute (clock, row 07 time, detail big number) | to build | New `RollingText` control; seconds in the header clock do not roll |
 | Cargo bar slides 300 ms between ships | to build | `TickBar` / new bar animates `Percent` |
+| Overview context panel that explains what the harbour shows | to build | Agreed 2026-09-30; see *Overview context panel* |
 | Reduced motion | covered | Every loop and fade above checks `Motion.Reduced` (`Domain/Motion.cs`) and jumps to the end state |
 
 ## Architecture Brief
@@ -106,6 +107,40 @@ The user's list, as the acceptance table:
 - **Runtime verification:** Confirm → capture at 0 / 200 / 400 ms with a 60 s hot-reloaded duration; Undo;
   hover each row type via pointer; Tab through rows; reduced motion on; minute roll (wait for a minute boundary).
 
+## Overview context panel
+
+Agreed with the user 2026-09-30. Below the harbour, one fixed-height panel explains what the harbour is
+showing. The existing layer switcher (Map / Yard / Security / Traffic) is the picker; a harbour selection
+overrides the layer; clearing the selection returns to the layer's view. Rejected: a separate chart picker
+(a second control doing the layer switcher's job) and auto-cycling (motion with no job, hides what you read,
+no screen-reader path).
+
+| Harbour state | Panel content | Source today |
+|---|---|---|
+| Needs-you pending, nothing selected | The decision (Nordic Star to berth 07) with Confirm, then Next up | new, shares `NeedsYouViewModel` |
+| Map, nothing selected | Next up + Vessel movements | `OverviewView` row 0 |
+| Vessel selected | That vessel: its ETA/ETD highlighted on the movements curve, cargo bar, cranes and moves/h, clearances, Open vessel profile | `VesselsViewModel`, `MovementsChart` |
+| Berth hovered (300 ms dwell) or clicked | Berth depth, restriction, its next 36 h as one planner row | `DockingViewModel.PlanRows` |
+| Yard | Container volume, yard occupancy, recent moves | `VolumeChart`, `CargoViewModel.Yard` |
+| Security | Holds, gate queue, incident timeline | `SecurityViewModel` |
+| Traffic | Vessel movements, tide, channel depth, pilotage | `MovementsChart`, `TideChart`, sea block |
+
+- **State:** `OverviewContextViewModel.Mode` derives from `PortState` (`HarbourSelection`, `HoveredBerth` after
+  dwell, `HarbourLayer`, `NeedsDecision`), in that priority. One view per mode, switched through a Visibility
+  region or VSM states (no code-behind toggling; CODEBEHIND lint).
+- **Layout:** the panel's height is fixed at the space the stage leaves (the stage is capped at 58% of the window
+  height), so Overview fits one screen with no vertical scroll at 1680 x 1020, and a mode change never moves the
+  page. Header: what it shows ("MSC Aurora · Berth 04") and a clear button when a selection drives it.
+- **Motion:** content cross-fades 200 ms and rises 6 px (`EaseSmooth`); reduced motion switches instantly. Hover
+  changes the panel after a 300 ms dwell and a click changes it at once, so crossing the quay does not flicker.
+- **Page below:** the remaining Overview charts move to their sections (Container volume and Cargo flow to
+  Cargo, Sea & weather and tide to Waterways, Activity to its own panel mode or Security). Overview becomes a
+  one-screen summary.
+- **Accessibility:** the panel is a polite live region announcing its header; the clear button is keyboard
+  reachable; the harbour summary line mentions the panel's mode.
+- **Verification:** each mode driven via the MCP (layer tabs, tag click, berth hover through `CARGO_HOVER_BERTH`),
+  captured at 1680 x 1020 and 1100 x 900; no vertical scroll on Overview at 1020 px high.
+
 ## Implementation Plan
 
 1. `MotionTokens.xaml` + `RollingText` control; roll the header clock minutes. Build, verify, commit.
@@ -115,7 +150,8 @@ The user's list, as the acceptance table:
 5. Camera pill slide + drag fade in `HarbourView`.
 6. Harbour: route creep, `NeedsOpacity` fade on confirm/undo; row 07 in-place update.
 7. Cargo bar slide; big-number roll in the detail.
-8. Reduced motion pass, lint, gold-standard self-critique (`ui-craft` checklist), HANDOFF.
+8. Overview context panel: `OverviewContextViewModel`, one view per mode, dwell hover, move the remaining charts to their sections.
+9. Reduced motion pass, lint, gold-standard self-critique (`ui-craft` checklist), HANDOFF.
 
 ## Unresolved Questions
 
@@ -124,3 +160,4 @@ The user's list, as the acceptance table:
 - Confirm writes a real assignment (`_assigned`), which also changes the planner and conflict count. Intended?
 - Header clock rolls minutes only; seconds keep ticking plainly. OK?
 - Only Nordic Star can need a decision in the demo data; a general "decisions" queue is out of scope.
+- Context panel: Activity feed goes where (its own mode, or Security)? Spec assumes a panel mode reached from Map.
