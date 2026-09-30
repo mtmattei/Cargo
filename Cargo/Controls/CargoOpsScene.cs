@@ -34,7 +34,7 @@ public sealed partial class CargoOpsScene : SceneHost
     public CargoOpsScene() : base(420, 175)
     {
         _timer.Tick += (_, _) => Advance();
-        this.TrackShown(shown => { if (shown) { _timer.Start(); } else { _timer.Stop(); } });
+        this.RunWhileShown(_timer);
     }
 
     public Vessel? Vessel

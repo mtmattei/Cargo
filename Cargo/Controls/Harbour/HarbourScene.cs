@@ -26,7 +26,6 @@ public sealed class HarbourScene : SKCanvasElement
     private readonly HarbourRenderer _renderer;
     private readonly DispatcherTimer _timer = new() { Interval = IdleFrame };
     private readonly DateTimeOffset _started = DateTimeOffset.Now;
-    private readonly bool _animate = new Windows.UI.ViewManagement.UISettings().AnimationsEnabled;
     private readonly Dictionary<uint, Point> _pointers = new();
 
     private PortState? _state;
@@ -53,7 +52,19 @@ public sealed class HarbourScene : SKCanvasElement
         Loaded += (_, _) => LoadTypeface();
 
         // The stage collapses on pages without a harbour; a hidden scene should not draw 30 frames a second
-        this.TrackShown(shown => { if (shown) { _timer.Start(); } else { _timer.Stop(); } });
+        this.TrackShown(shown =>
+        {
+            if (shown)
+            {
+                Motion.Changed += OnMotionChanged;
+                _timer.Start();
+            }
+            else
+            {
+                Motion.Changed -= OnMotionChanged;
+                _timer.Stop();
+            }
+        });
     }
 
     /// <summary>
@@ -109,11 +120,14 @@ public sealed class HarbourScene : SKCanvasElement
         }
     }
 
+    // Motion turned off mid-cycle: one redraw puts the cranes and trucks at their resting pose
+    private void OnMotionChanged(object? sender, EventArgs e) => RefreshStill();
+
     public HarbourCamera Camera => _camera;
 
     public HarbourWorld World => _world;
 
-    public bool Animate => _animate;
+    public bool Animate => !Motion.Reduced;
 
     /// <summary>Leader lines from each mast to its tag, computed by the view that owns the tags.</summary>
     public IReadOnlyDictionary<string, (SKPoint Anchor, SKPoint Tag)> Leaders
@@ -141,7 +155,7 @@ public sealed class HarbourScene : SKCanvasElement
     public void GoTo(HarbourCameraPose pose, double ms = 450)
     {
         _yawVelocity = 0;
-        if (!_animate || ms <= 0)
+        if (!Animate || ms <= 0)
         {
             _tween = null;
             _camera.Apply(pose);
@@ -203,7 +217,7 @@ public sealed class HarbourScene : SKCanvasElement
         {
             Moved();
         }
-        else if (_animate)
+        else if (Animate)
         {
             if (_pointers.Count == 0)
             {
@@ -217,7 +231,7 @@ public sealed class HarbourScene : SKCanvasElement
 
     protected override void RenderOverride(SKCanvas canvas, Size area)
     {
-        var frame = new HarbourFrameState(_selectedVessel, _hoveredVessel, _state?.HoveredBerth, _layer, _animate);
+        var frame = new HarbourFrameState(_selectedVessel, _hoveredVessel, _state?.HoveredBerth, _layer, Animate);
         _renderer.Render(canvas, (float)area.Width, (float)area.Height, (DateTimeOffset.Now - _started).TotalSeconds, frame);
     }
 
@@ -271,7 +285,7 @@ public sealed class HarbourScene : SKCanvasElement
         var dy = point.Y - previous.Y;
         _dragDistance += Math.Abs(dx) + Math.Abs(dy);
         _camera.Yaw -= dx * .0065;
-        _yawVelocity = _animate ? -dx * .0065 : 0;
+        _yawVelocity = Animate ? -dx * .0065 : 0;
         _camera.Pitch = Math.Clamp(_camera.Pitch + dy * .005, HarbourCamera.MinPitch, HarbourCamera.MaxPitch);
         Moved();
         e.Handled = true;

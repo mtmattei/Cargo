@@ -64,6 +64,23 @@ public sealed partial class MainViewModel : ObservableObject
 
     public TideReadout Tide { get; } = new();
 
+    /// <summary>The header's reduced-motion toggle, saved between launches (see <see cref="Motion"/>).</summary>
+    public bool ReduceMotion
+    {
+        get => Motion.Requested;
+        set
+        {
+            if (Motion.Requested != value)
+            {
+                Motion.Requested = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(MotionLabel));
+            }
+        }
+    }
+
+    public string MotionLabel => Motion.Reduced ? "Motion off" : "Motion on";
+
     /// <summary>The container inspection that covers the whole window while it is open.</summary>
     [ObservableProperty]
     private ScannerViewModel? _scanner;

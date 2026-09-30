@@ -86,6 +86,35 @@ internal static class Live
         }
     }
 
+    /// <summary>
+    /// Runs a decorative animation timer while the element is shown and reduced motion is off.
+    /// The scene holds its last frame when motion is turned off. It only listens for the setting
+    /// while shown, so the static event never keeps an off-screen scene alive.
+    /// </summary>
+    public static void RunWhileShown(this FrameworkElement element, DispatcherTimer timer)
+    {
+        void Apply()
+        {
+            if (Motion.Reduced) { timer.Stop(); } else { timer.Start(); }
+        }
+
+        void OnMotionChanged(object? sender, EventArgs e) => Apply();
+
+        element.TrackShown(shown =>
+        {
+            if (shown)
+            {
+                Motion.Changed += OnMotionChanged;
+                Apply();
+            }
+            else
+            {
+                Motion.Changed -= OnMotionChanged;
+                timer.Stop();
+            }
+        });
+    }
+
     private static void Subscribe(FrameworkElement element, Action work, Action<EventHandler> attach)
     {
         var shown = false;

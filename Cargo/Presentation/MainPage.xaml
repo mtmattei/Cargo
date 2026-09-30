@@ -121,6 +121,36 @@
                      Foreground="{StaticResource TextOnDarkMutedBrush}" VerticalAlignment="Center" />
         </StackPanel>
 
+        <!-- Reduced motion: Skia desktop always reports animations enabled, so the app keeps its own
+             setting. The rest colours are local (the style's setters resolve the keys at app level);
+             the lightweight keys cover the hover, pressed and checked states. -->
+        <ToggleButton IsChecked="{x:Bind ViewModel.ReduceMotion, Mode=TwoWay}"
+                      Content="{x:Bind ViewModel.MotionLabel, Mode=OneWay}"
+                      FontFamily="{StaticResource BodyFont}" FontSize="11.5"
+                      AutomationProperties.Name="Reduce motion"
+                      ToolTipService.ToolTip="Reduce motion: hold the cranes, trucks and camera moves still"
+                      Padding="10,4" MinHeight="0" CornerRadius="12" BorderThickness="1" VerticalAlignment="Center"
+                      Background="Transparent" Foreground="{StaticResource TextOnDarkMutedBrush}"
+                      BorderBrush="{StaticResource HairlineOnDarkBrush}">
+          <ToggleButton.Resources>
+            <StaticResource x:Key="ToggleButtonBackgroundPointerOver" ResourceKey="HairlineOnDarkBrush" />
+            <StaticResource x:Key="ToggleButtonBackgroundPressed" ResourceKey="HairlineOnDarkBrush" />
+            <StaticResource x:Key="ToggleButtonBackgroundChecked" ResourceKey="TealDeepInvariantBrush" />
+            <StaticResource x:Key="ToggleButtonBackgroundCheckedPointerOver" ResourceKey="TealDeepInvariantBrush" />
+            <StaticResource x:Key="ToggleButtonBackgroundCheckedPressed" ResourceKey="TealDeepInvariantBrush" />
+            <StaticResource x:Key="ToggleButtonForegroundPointerOver" ResourceKey="PaperInvariantBrush" />
+            <StaticResource x:Key="ToggleButtonForegroundPressed" ResourceKey="PaperInvariantBrush" />
+            <StaticResource x:Key="ToggleButtonForegroundChecked" ResourceKey="PaperInvariantBrush" />
+            <StaticResource x:Key="ToggleButtonForegroundCheckedPointerOver" ResourceKey="PaperInvariantBrush" />
+            <StaticResource x:Key="ToggleButtonForegroundCheckedPressed" ResourceKey="PaperInvariantBrush" />
+            <StaticResource x:Key="ToggleButtonBorderBrushPointerOver" ResourceKey="HairlineOnDarkBrush" />
+            <StaticResource x:Key="ToggleButtonBorderBrushPressed" ResourceKey="HairlineOnDarkBrush" />
+            <StaticResource x:Key="ToggleButtonBorderBrushChecked" ResourceKey="TealDeepInvariantBrush" />
+            <StaticResource x:Key="ToggleButtonBorderBrushCheckedPointerOver" ResourceKey="TealDeepInvariantBrush" />
+            <StaticResource x:Key="ToggleButtonBorderBrushCheckedPressed" ResourceKey="TealDeepInvariantBrush" />
+          </ToggleButton.Resources>
+        </ToggleButton>
+
         <Rectangle Width="1" Height="20" Fill="{StaticResource HairlineOnDarkBrush}" VerticalAlignment="Center" />
 
         <TextBlock Text="{x:Bind ViewModel.State.Now, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}"
