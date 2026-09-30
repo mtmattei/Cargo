@@ -142,18 +142,6 @@ public static class PortData
         };
 
     /// <summary>What each berth is showing on the harbour map, independent of the planner.</summary>
-    public static readonly IReadOnlyList<(string Number, string State, string Label)> HarbourBerths = new[]
-    {
-        ("01", "occupied", "Kaida Maru · loading"),
-        ("02", "occupied", "Kaida Maru · loading"),
-        ("03", "occupied", "MSC Aurora · discharging"),
-        ("04", "occupied", "MSC Aurora · discharging"),
-        ("05", "available", "Available · 14.8 m draft"),
-        ("06", "occupied", "Baltic Crown · departs 21:30"),
-        ("07", "reserved", "Reserved · Nordic Star 21:40"),
-        ("08", "available", "Available · 12.5 m draft")
-    };
-
     // ── Containers ────────────────────────────────────────────────────────────
 
     public static readonly IReadOnlyList<ContainerDef> Containers = new[]

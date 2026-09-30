@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Media;
 
 namespace Cargo.Presentation;
 
-/// <summary>Berths: the berth plan (was Docking) above the vessel you are working (was Vessels).</summary>
+/// <summary>Berths: the berth plan above the vessel you are working.</summary>
 public sealed partial class BerthsView : UserControl
 {
     public BerthsView(PortState state)

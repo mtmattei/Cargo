@@ -128,27 +128,4 @@ public static class Geo
             Area = SmoothArea(points, baseline)
         };
     }
-
-    /// <summary>Donut arc dash pattern for a stroked circle of radius <paramref name="radius"/>.</summary>
-    public static IReadOnlyList<(double Visible, double Gap, double Offset)> Donut(IReadOnlyList<double> weights, double radius)
-    {
-        var circumference = 2 * Math.PI * radius;
-        var total = weights.Sum();
-        if (total <= 0)
-        {
-            total = 1;
-        }
-
-        var result = new List<(double, double, double)>();
-        var accumulated = 0d;
-        foreach (var weight in weights)
-        {
-            var length = circumference * weight / total;
-            var visible = Math.Max(length - 1.5, 0);
-            result.Add((visible, circumference - visible, -accumulated));
-            accumulated += length;
-        }
-
-        return result;
-    }
 }

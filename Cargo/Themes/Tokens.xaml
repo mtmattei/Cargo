@@ -18,7 +18,7 @@
   <Color x:Key="SurfaceSunkAltColor">#FFE9EAE6</Color>
   <Color x:Key="LandColor">#FFE6E7E2</Color>
   <Color x:Key="RoadColor">#FFDDD7CA</Color>
-  <!-- Secondary text, darkened to pass WCAG AA on Paper (muted 5.2:1, faint 4.6:1; were 4.2 and 3.0) -->
+  <!-- Secondary text, darkened to pass WCAG AA on Paper (muted 5.2:1, faint 4.6:1) -->
   <Color x:Key="TextMutedColor">#FF5E6569</Color>
   <Color x:Key="TextFaintColor">#FF6B7377</Color>
   <Color x:Key="TextOnDarkMutedColor">#FF9AA4A8</Color>

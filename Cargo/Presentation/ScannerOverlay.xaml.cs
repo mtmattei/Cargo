@@ -20,7 +20,7 @@ public sealed class ScanViewOption
 
 /// <summary>
 /// The full-window container inspection. It lives in the shell rather than inside the
-/// Containers page so it covers the whole app the way the design's fixed overlay does.
+/// Cargo page so it covers the whole app the way the design's fixed overlay does.
 /// </summary>
 public sealed partial class ScannerOverlay : UserControl
 {
@@ -201,7 +201,6 @@ public sealed partial class ScannerOverlay : UserControl
             Density.Add(new CompositionSlice
             {
                 Label = label,
-                Percent = percent,
                 Fill = brush,
                 Count = $"{percent}%"
             });

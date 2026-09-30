@@ -2,7 +2,7 @@ using Cargo.Controls;
 
 namespace Cargo.Presentation;
 
-/// <summary>Cargo: the container explorer (was Containers) above the yard it lives in (was Yard).</summary>
+/// <summary>Cargo: the container explorer above the yard it lives in.</summary>
 public sealed partial class CargoView : UserControl
 {
     public CargoView(PortState state)

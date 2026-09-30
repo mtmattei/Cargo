@@ -237,7 +237,6 @@ public sealed partial class VesselsView : UserControl
             Composition.Add(new CompositionSlice
             {
                 Label = cargo.Label(),
-                Percent = percent,
                 Fill = brush,
                 Count = $"{percent}%"
             });
@@ -289,7 +288,6 @@ public sealed partial class VesselsView : UserControl
             BayComposition.Add(new CompositionSlice
             {
                 Label = cargo.Label(),
-                Percent = percent,
                 Fill = brush,
                 Count = $"{count} ({percent}%)"
             });

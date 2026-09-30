@@ -1,7 +1,5 @@
 using System.ComponentModel;
 using Microsoft.UI.Dispatching;
-using Cargo.Controls;
-using Microsoft.UI.Xaml.Media;
 
 namespace Cargo.Presentation;
 
@@ -162,7 +160,7 @@ public sealed partial class ShellPage : Page
     }
 
     /// <summary>
-    /// Builds the eight header items on first use, then only refreshes what navigation
+    /// Builds the header items on first use, then only refreshes what navigation
     /// actually changes. Replacing the collection recreated every button and its subtree,
     /// which read as a flicker across the header on each move between sections.
     /// </summary>

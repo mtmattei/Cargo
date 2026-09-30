@@ -16,8 +16,6 @@ public sealed partial class ActivityView : UserControl
 {
     public ActivityView(PortState state)
     {
-        State = state;
-
         Feed = PortData.Activity.Select(entry =>
         {
             var (icon, tone) = PortData.ActivityIcons[entry.Kind];
@@ -34,8 +32,6 @@ public sealed partial class ActivityView : UserControl
         InitializeComponent();
         BuildThroughput();
     }
-
-    public PortState State { get; }
 
     public string Eyebrow => $"ACTIVITY · {PortData.Today.ToUpperInvariant()}";
 

@@ -70,16 +70,6 @@
     <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
   </Style>
 
-  <Style x:Key="MonoText" TargetType="TextBlock">
-    <Setter Property="FontFamily" Value="{StaticResource MonoFont}" />
-    <Setter Property="FontSize" Value="12" />
-    <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
-  </Style>
-
-  <Style x:Key="MonoStrongText" TargetType="TextBlock" BasedOn="{StaticResource MonoText}">
-    <Setter Property="FontFamily" Value="{StaticResource MonoMediumFont}" />
-  </Style>
-
   <!-- ============================================================
        Card — white panel, hairline edge, one soft ground shadow.
        Shadows are declared inside the template so every instance

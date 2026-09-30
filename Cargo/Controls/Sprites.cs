@@ -1,4 +1,3 @@
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Windows.Foundation;
@@ -116,8 +115,6 @@ internal static class Sprites
 
     public static string Plan(string vesselId) => IsMsc(vesselId) ? "msc-plan" : "ship-plan";
 
-    public static string Bow(string vesselId) => IsMsc(vesselId) ? "msc-bow" : "ship-bow";
-
     /// <summary>The isometric render for a container class, for the inspection panels.</summary>
     public static string Container(CargoClass cargo) => cargo switch
     {
@@ -152,17 +149,6 @@ internal static class Sprites
         "ContainerOliveColor" => "cont-tank",
         "ContainerMagentaColor" => "cont-yellow",
         _ => "cont-blue"
-    };
-
-    public static string ContainerSideByTone(string tintToken) => tintToken switch
-    {
-        "CargoReeferColor" => "cont-white-side",
-        "CargoHazardColor" => "cont-red-side",
-        "CargoOversizeColor" => "cont-orange-side",
-        "CargoEmptyColor" => "cont-yellow-side",
-        "ContainerRustColor" => "cont-orange-side",
-        "ContainerMagentaColor" => "cont-yellow-side",
-        _ => "cont-blue-side"
     };
 
     private static Image Element(string name, double x, double y, double w, double h, double opacity)

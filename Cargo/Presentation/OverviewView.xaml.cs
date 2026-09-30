@@ -1,7 +1,6 @@
 using System.Windows.Input;
 using Cargo.Controls;
 using Microsoft.UI.Xaml.Media;
-using Windows.Foundation;
 
 namespace Cargo.Presentation;
 

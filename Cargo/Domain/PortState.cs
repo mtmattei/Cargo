@@ -1,4 +1,3 @@
-using Microsoft.UI.Xaml;
 
 namespace Cargo.Domain;
 
@@ -50,7 +49,7 @@ public sealed partial class PortState : ObservableObject
 
         if (Environment.GetEnvironmentVariable("CARGO_OPTIMIZE") == "1")
         {
-            _dropMessage = Optimize();
+            Optimize();
         }
 #endif
 
@@ -158,8 +157,9 @@ public sealed partial class PortState : ObservableObject
     private void Go(string section) => Section = Canonical(section);
 
     /// <summary>
-    /// Eight rooms became five: Vessels and Docking are Berths, Containers and Yard are Cargo,
-    /// and Activity lives at the foot of Overview. Old destinations still land in the right place.
+    /// Maps a retired section id onto the page that now holds it (Vessels and Docking live on
+    /// Berths, Containers and Yard on Cargo, Activity on Overview), so a DEBUG start hook or an
+    /// old link still lands in the right place.
     /// </summary>
     public static string Canonical(string section) => section switch
     {
@@ -261,9 +261,6 @@ public sealed partial class PortState : ObservableObject
                 break;
         }
     }
-
-    [RelayCommand]
-    private void ClearHarbourSelection() => HarbourSelection = null;
 
     // ── Vessels ───────────────────────────────────────────────────────────────
 
@@ -432,9 +429,6 @@ public sealed partial class PortState : ObservableObject
     partial void OnPlanHourChanged(double? value) => NotifyStructureChanged();
 
     public double EffectivePlanHour => PlanHour ?? NowHours;
-
-    [ObservableProperty]
-    private string? _dropMessage;
 
     // ── Containers ────────────────────────────────────────────────────────────
 

@@ -8,8 +8,8 @@ namespace Cargo.Presentation;
 
 /// <summary>
 /// One section in the header. Unlike the other rows here this one is built once and then
-/// updated in place: rebuilding the collection on every navigation recreated all eight
-/// buttons, which is what made moving between sections flicker.
+/// updated in place: rebuilding the collection on every navigation recreated every
+/// button, which is what made moving between sections flicker.
 /// </summary>
 public sealed partial class NavItem : ObservableObject
 {
@@ -88,23 +88,6 @@ public sealed class LegendItem
 public sealed class CompositionSlice
 {
     public required string Label { get; init; }
-    public required int Percent { get; init; }
     public required Brush Fill { get; init; }
     public string Count { get; init; } = string.Empty;
-}
-
-public sealed class DonutArc
-{
-    public required Brush Stroke { get; init; }
-    public required Microsoft.UI.Xaml.Media.DoubleCollection Dash { get; init; }
-    public required double Offset { get; init; }
-    public required double Radius { get; init; }
-    public required double Thickness { get; init; }
-    public double Diameter => Radius * 2;
-}
-
-public sealed class TickItem
-{
-    public required double Height { get; init; }
-    public required Brush Fill { get; init; }
 }

@@ -192,7 +192,7 @@ public sealed partial class HarbourView : UserControl
 
     /// <summary>
     /// Moving between sections moves the camera over the same harbour: the wide shot on
-    /// Overview, the selected ship on Vessels, the terminal perimeter on Security.
+    /// Overview, the selected ship on Berths, the yard on Cargo, the terminal perimeter on Security.
     /// </summary>
     private void Frame(bool animate)
     {

@@ -91,14 +91,7 @@ public sealed partial record Vessel(
     CargoMix Mix,
     int Bays,
     string OpsNote,
-    IReadOnlyList<ClearanceCheck> Checks)
-{
-    public bool IsBoxship => Operator == "MSC";
-
-    /// <summary>Share of the deck that reads as empty. A ship only shows gaps while it is
-    /// actually discharging — once it is loading again the stow is full.</summary>
-    public double DeckGapPercent => UnloadPercent > 0 && UnloadPercent < 100 ? UnloadPercent : 0;
-}
+    IReadOnlyList<ClearanceCheck> Checks);
 
 public sealed record BerthDef(string Number, string State, string? Occupant, double Depth);
 
