@@ -21,15 +21,16 @@
         <TextBlock Text="Containers" Style="{StaticResource SectionHeadText}" />
         <TextBlock Text="Find a box, follow its journey, release or inspect a hold" Style="{StaticResource CaptionText}" />
       </StackPanel>
-      <ItemsControl Grid.Column="1" ItemsSource="{x:Bind Filters, Mode=OneWay}" VerticalAlignment="Bottom">
+      <ItemsControl Grid.Column="1" ItemsSource="{x:Bind ViewModel.Filters, Mode=OneWay}" VerticalAlignment="Bottom">
         <ItemsControl.ItemsPanel>
           <ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="6" /></ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
         <ItemsControl.ItemTemplate>
           <DataTemplate x:DataType="local:FilterChip">
             <Button Style="{StaticResource BareButton}" Command="{x:Bind Apply}" CommandParameter="{x:Bind Label}">
+              <!-- xaml-lint: allow card - a filter pill, not a card; half-height radius (99 draws an oval on Skia) -->
               <Border Background="{x:Bind Background}" BorderBrush="{x:Bind Border}" BorderThickness="1"
-                      CornerRadius="99" Padding="13,7">
+                      CornerRadius="15" Padding="13,7">
                 <TextBlock Text="{x:Bind Label}" FontFamily="{StaticResource BodyMediumFont}" FontSize="12"
                            Foreground="{x:Bind Foreground}" />
               </Border>
@@ -45,7 +46,7 @@
         <ColumnDefinition Width="360" />
       </Grid.ColumnDefinitions>
 
-      <ItemsControl ItemsSource="{x:Bind Cards, Mode=OneWay}" VerticalAlignment="Top">
+      <ItemsControl ItemsSource="{x:Bind ViewModel.Cards, Mode=OneWay}" VerticalAlignment="Top">
         <ItemsControl.ItemsPanel>
           <ItemsPanelTemplate>
             <controls:TileGridPanel MinTileWidth="240" Gap="14" />
@@ -54,8 +55,7 @@
         <ItemsControl.ItemTemplate>
           <DataTemplate x:DataType="local:ContainerCard">
             <Button Style="{StaticResource RowButton}" Command="{x:Bind Select}" CommandParameter="{x:Bind Id}">
-              <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{x:Bind Border}" BorderThickness="1"
-                      CornerRadius="14" Padding="16,14">
+              <utu:CardContentControl Style="{StaticResource OutlinedPanel}" BorderBrush="{x:Bind Border}" Padding="16,14">
                 <StackPanel Spacing="6">
                   <Grid>
                     <Border CornerRadius="10" Padding="6,8,6,4">
@@ -85,7 +85,7 @@
                                Foreground="{x:Bind StateTone}" />
                   </StackPanel>
                 </StackPanel>
-              </Border>
+              </utu:CardContentControl>
             </Button>
           </DataTemplate>
         </ItemsControl.ItemTemplate>
@@ -95,17 +95,17 @@
       <utu:CardContentControl Style="{StaticResource PanelCard}" Grid.Column="1" Padding="22,20" VerticalAlignment="Top">
         <StackPanel Spacing="16">
           <StackPanel Spacing="5">
-            <TextBlock Text="{x:Bind SelectedId, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}" FontSize="20" />
-            <TextBlock Text="{x:Bind SelectedMeta, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12.5"
+            <TextBlock Text="{x:Bind ViewModel.SelectedId, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}" FontSize="20" />
+            <TextBlock Text="{x:Bind ViewModel.SelectedMeta, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12.5"
                        TextWrapping="Wrap" />
           </StackPanel>
 
-          <Image x:Name="SelectedIso" Height="150" Stretch="Uniform" />
+          <Image Source="{x:Bind ViewModel.SelectedIso, Mode=OneWay}" Height="150" Stretch="Uniform" />
 
           <StackPanel Spacing="10">
             <TextBlock Text="JOURNEY" FontFamily="{StaticResource BodyStrongFont}" FontSize="12"
                        Foreground="{StaticResource TextMutedBrush}" />
-            <ItemsControl ItemsSource="{x:Bind Journey, Mode=OneWay}">
+            <ItemsControl ItemsSource="{x:Bind ViewModel.Journey, Mode=OneWay}">
               <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate><controls:EvenRowPanel /></ItemsPanelTemplate>
               </ItemsControl.ItemsPanel>
@@ -134,7 +134,7 @@
           </StackPanel>
 
           <Border Height="1" Background="{StaticResource HairlineBrush}" />
-          <ItemsControl ItemsSource="{x:Bind Facts, Mode=OneWay}">
+          <ItemsControl ItemsSource="{x:Bind ViewModel.Facts, Mode=OneWay}">
             <ItemsControl.ItemsPanel>
               <ItemsPanelTemplate><controls:TwoColumnPanel ColumnSpacing="14" RowSpacing="11" /></ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
@@ -149,7 +149,7 @@
             </ItemsControl.ItemTemplate>
           </ItemsControl>
 
-          <Button Style="{StaticResource PrimaryButton}" Click="OnOpenScanner" HorizontalAlignment="Stretch">
+          <Button Style="{StaticResource PrimaryButton}" Command="{x:Bind ViewModel.OpenScannerCommand, Mode=OneWay}" HorizontalAlignment="Stretch">
             <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
               <shapes:Path Data="M4 8V5a1 1 0 011-1h3M16 4h3a1 1 0 011 1v3M20 16v3a1 1 0 01-1 1h-3M8 20H5a1 1 0 01-1-1v-3M3 12h18"
                            Stroke="{StaticResource PaperBrush}" StrokeThickness="2" Width="14" Height="14"
@@ -159,7 +159,7 @@
             </StackPanel>
           </Button>
           <Button Style="{StaticResource GhostButton}" Content="Inspection record →"
-                  Command="{x:Bind State.OpenInspectionCommand}" HorizontalAlignment="Stretch" />
+                  Command="{x:Bind ViewModel.State.OpenInspectionCommand}" HorizontalAlignment="Stretch" />
         </StackPanel>
       </utu:CardContentControl>
     </Grid>

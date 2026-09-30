@@ -58,14 +58,13 @@ public sealed partial class CompositionBar : ContentControl
 }
 
 /// <summary>
-/// Thirty progress ticks, built once. Progress moves a tick every few minutes, so a
-/// one-second update only restyles when the lit count actually changes.
+/// A row of progress ticks, built on first use. Progress moves a tick every few minutes, so
+/// a one-second update only restyles when the lit count actually changes. Every fifth lit
+/// tick stands taller, so the count reads at a glance.
 /// </summary>
-// xaml-lint: allow builtin - 30 segmented ticks, every fifth taller; lightweight ProgressBar keys cannot draw that
+// xaml-lint: allow builtin - segmented ticks, every fifth taller; lightweight ProgressBar keys cannot draw that
 public sealed partial class TickBar : StackPanel
 {
-    private const int Count = 30;
-
     public static readonly DependencyProperty PercentProperty = DependencyProperty.Register(
         nameof(Percent), typeof(double), typeof(TickBar),
         new PropertyMetadata(0d, (d, _) => ((TickBar)d).Restyle()));
@@ -76,17 +75,7 @@ public sealed partial class TickBar : StackPanel
     {
         Orientation = Orientation.Horizontal;
         VerticalAlignment = VerticalAlignment.Bottom;
-        for (var i = 0; i < Count; i++)
-        {
-            Children.Add(new Rectangle
-            {
-                RadiusX = 1,
-                RadiusY = 1,
-                Width = 4,
-                Margin = new Thickness(0, 0, 2, 0),
-                VerticalAlignment = VerticalAlignment.Bottom
-            });
-        }
+        Loaded += (_, _) => Restyle();
     }
 
     public double Percent
@@ -98,8 +87,37 @@ public sealed partial class TickBar : StackPanel
     /// <summary>Token for the lit ticks, e.g. "SeaGreenBrush".</summary>
     public string LitToken { get; set; } = "TealBrush";
 
+    public int Count { get; set; } = 30;
+
+    public double TickWidth { get; set; } = 4;
+
+    public double Gap { get; set; } = 2;
+
+    public double TallHeight { get; set; } = 14;
+
+    public double LitHeight { get; set; } = 10;
+
+    public double OffHeight { get; set; } = 6;
+
     private void Restyle()
     {
+        if (Children.Count != Count)
+        {
+            Children.Clear();
+            _lit = -1;
+            for (var i = 0; i < Count; i++)
+            {
+                Children.Add(new Rectangle
+                {
+                    RadiusX = 1,
+                    RadiusY = 1,
+                    Width = TickWidth,
+                    Margin = new Thickness(0, 0, Gap, 0),
+                    VerticalAlignment = VerticalAlignment.Bottom
+                });
+            }
+        }
+
         var lit = Enumerable.Range(0, Count).Count(i => i / (double)Count * 100 < Percent);
         if (lit == _lit)
         {
@@ -112,7 +130,7 @@ public sealed partial class TickBar : StackPanel
         {
             var on = i < lit;
             var tick = (Rectangle)Children[i];
-            tick.Height = on ? i % 5 == 0 ? 14 : 10 : 6;
+            tick.Height = on ? i % 5 == 0 ? TallHeight : LitHeight : OffHeight;
             tick.Fill = on ? Tokens.Brush(LitToken) : Tokens.Brush("InkColor", 0.12);
         }
     }

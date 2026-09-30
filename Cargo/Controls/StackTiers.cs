@@ -3,11 +3,23 @@ namespace Cargo.Controls;
 /// <summary>The selected yard slot drawn as an isometric pile, one box per tier.</summary>
 public sealed partial class StackTiers : SceneHost
 {
+    public static readonly DependencyProperty BoxesProperty = DependencyProperty.Register(
+        nameof(Boxes), typeof(IReadOnlyList<(string Id, string Tag, string Token)>), typeof(StackTiers),
+        new PropertyMetadata(null, (d, e) =>
+            ((StackTiers)d).Show(e.NewValue as IReadOnlyList<(string Id, string Tag, string Token)> ?? [])));
+
     public StackTiers() : base(300, 200)
     {
     }
 
-    public void Show(IReadOnlyList<(string Id, string Tag, string Token)> tiers)
+    /// <summary>The boxes in the pile, bottom tier first.</summary>
+    public IReadOnlyList<(string Id, string Tag, string Token)>? Boxes
+    {
+        get => (IReadOnlyList<(string Id, string Tag, string Token)>?)GetValue(BoxesProperty);
+        set => SetValue(BoxesProperty, value);
+    }
+
+    private void Show(IReadOnlyList<(string Id, string Tag, string Token)> tiers)
     {
         Scene.Children.Clear();
         Scene.Place(Draw.Rule(60, 191, 300, 191, Tokens.Brush("InkColor", 0.15)));
