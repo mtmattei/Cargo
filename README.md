@@ -27,7 +27,7 @@ iOS is in the target list but needs a paired Mac to build.
 
 ## Architecture
 
-- **Uno.Sdk 6.8.0-dev.23**, single project, Skia renderer, `SimpleTheme` + Uno Toolkit.
+- **Uno.Sdk 6.7.30** (stable), single project, Skia renderer, `SimpleTheme` + Uno Toolkit.
 - **MVVM (`CommunityToolkit.Mvvm`)**, not MVUX. Every figure in this app is an in-memory
   constant; there is no async or reactive data flow for feeds to model. What the app
   actually has is a lot of imperative selection state — which berth is hovered, which bay
