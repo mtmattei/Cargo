@@ -16,7 +16,9 @@ public sealed partial class NavItem : ObservableObject
     public required string Id { get; init; }
     public required string Index { get; init; }
     public required string Label { get; init; }
-    public required ICommand Command { get; init; }
+
+    /// <summary>The section's route inside Main's region ("./berths").</summary>
+    public string Route => $"./{Id}";
 
     [ObservableProperty]
     private string _tooltip = string.Empty;

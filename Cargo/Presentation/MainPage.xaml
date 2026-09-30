@@ -44,7 +44,7 @@
         </ItemsControl.ItemsPanel>
         <ItemsControl.ItemTemplate>
           <DataTemplate x:DataType="local:NavItem">
-            <Button Style="{StaticResource BareButton}" Command="{x:Bind Command}" CommandParameter="{x:Bind Id}"
+            <Button Style="{StaticResource BareButton}" uen:Navigation.Request="{x:Bind Route}"
                     ToolTipService.ToolTip="{x:Bind Tooltip, Mode=OneWay}" Height="56">
               <Grid Padding="8,0">
                 <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">

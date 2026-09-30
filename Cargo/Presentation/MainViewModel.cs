@@ -4,9 +4,10 @@ namespace Cargo.Presentation;
 
 /// <summary>
 /// The dispatcher's frame: the section header, the harbour layer switcher, the tide readout,
-/// and the bridge from <see cref="PortState.Section"/> to the router. Section stays the source
-/// of truth because most moves between sections start inside the store (opening a vessel, an
-/// inspection, a harbour tag), so the route follows it in one direction and never loops back.
+/// and the bridge between the router and <see cref="PortState.Section"/>. The header navigates
+/// declaratively (uen:Navigation.Request); the route it lands on is written back to Section,
+/// which frames the harbour. Moves that start inside the store (opening a vessel, an
+/// inspection, a harbour tag) set Section, and this model navigates to match.
 /// </summary>
 public sealed partial class MainViewModel : ObservableObject
 {
@@ -16,11 +17,16 @@ public sealed partial class MainViewModel : ObservableObject
     private readonly INavigator _navigator;
     private readonly ILogger<MainViewModel> _logger;
 
-    public MainViewModel(PortState state, INavigator navigator, IDispatcher dispatcher, ILogger<MainViewModel> logger)
+    // The section the router last reported, so a Section change that came from the router
+    // is not navigated a second time.
+    private string? _routedSection;
+
+    public MainViewModel(PortState state, INavigator navigator, IRouteNotifier routeNotifier, IDispatcher dispatcher, ILogger<MainViewModel> logger)
     {
         State = state;
         _navigator = navigator;
         _logger = logger;
+
 
         // The router builds models off the UI thread, and the header items carry brushes and
         // geometries, which must be created on it.
@@ -32,6 +38,7 @@ public sealed partial class MainViewModel : ObservableObject
 
             state.PropertyChanged += OnStateChanged;
             state.Ticked += (_, _) => RefreshTide();
+            routeNotifier.RouteChanged += (_, e) => dispatcher.TryEnqueue(() => OnRouteChanged(e));
         });
     }
 
@@ -81,8 +88,29 @@ public sealed partial class MainViewModel : ObservableObject
         }
     }
 
+    /// <summary>
+    /// For a section route the event's Route is the app-level path ("Main/berths") and the
+    /// navigator's route base is the section id; between moves it also reports a bare "Main".
+    /// </summary>
+    private void OnRouteChanged(RouteChangedEventArgs e)
+    {
+        if (e.Navigator?.Route?.Base is not { Length: > 0 } section
+            || PortData.Sections.All(s => s.Id != section))
+        {
+            return;
+        }
+
+        _routedSection = section;
+        State.Section = section;
+    }
+
     private async Task ShowSectionAsync(string section)
     {
+        if (section == _routedSection)
+        {
+            return;
+        }
+
         try
         {
             // Section ids are the route names, registered under Main in App.RegisterRoutes.
@@ -122,8 +150,7 @@ public sealed partial class MainViewModel : ObservableObject
                 {
                     Id = section.Id,
                     Index = (i + 1).ToString("D2"),
-                    Label = section.Label,
-                    Command = State.GoCommand
+                    Label = section.Label
                 });
             }
         }
