@@ -175,9 +175,11 @@
       <local:OverviewMasthead x:Name="Masthead" DataContext="{x:Bind ViewModel.Overview, Mode=OneWay}"
                               Visibility="{x:Bind ViewModel.IsOverview, Mode=OneWay}"
                               VerticalAlignment="Top" Margin="24,20,24,0" />
-      <!-- Layer switcher -->
-      <Border Style="{StaticResource HarbourHudPanel}" Padding="3"
-              HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,12"
+      <!-- Layer switcher: centred on the HUD row; below Normal (1040) the row cannot hold presets, layers and
+           zoom (292 + 330 + 266 px plus gutters), so it stacks above the camera presets (16 + 36 + 8 px up) -->
+      <Border Style="{StaticResource HarbourHudPanel}" Padding="3" VerticalAlignment="Bottom"
+              HorizontalAlignment="{utu:Responsive Layout={StaticResource HeaderBreakpoints}, Narrow=Left, Normal=Center}"
+              Margin="{utu:Responsive Layout={StaticResource HeaderBreakpoints}, Narrow='24,0,0,60', Normal='0,0,0,16'}"
               Visibility="{x:Bind ViewModel.State.StageFull, Mode=OneWay}">
         <ItemsControl ItemsSource="{x:Bind ViewModel.Layers, Mode=OneWay}">
           <ItemsControl.ItemsPanel>
