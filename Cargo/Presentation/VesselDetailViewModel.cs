@@ -102,7 +102,16 @@ public sealed partial class VesselDetailViewModel : ObservableObject
             facts.Add(Fact("Under-keel", $"{ukc:0.0} m", needs && ukc < 1 ? "AmberInkInvariantBrush" : null));
         }
 
-        Facts = facts;
+        SetFacts(facts);
+    }
+
+    // Refresh runs on every clock tick; a new list each time would re-create the facts grid every second
+    private void SetFacts(IReadOnlyList<Fact> facts)
+    {
+        if (!facts.Select(f => (f.Key, f.Value, f.Tone)).SequenceEqual(Facts.Select(f => (f.Key, f.Value, f.Tone))))
+        {
+            Facts = facts;
+        }
     }
 
     private static Fact Fact(string key, string value, string? tone = null) =>
@@ -123,10 +132,10 @@ public sealed partial class VesselDetailViewModel : ObservableObject
             ? BerthFacts.Restriction(berth)
             : next is null ? "No vessel booked in the next 36 h" : $"{next.Name} booked from {BerthFacts.Clock(next.Eta)}";
         CargoVisibility = Visibility.Collapsed;
-        Facts =
+        SetFacts(
         [
             Fact("Alongside depth", $"{berth.Depth:0.0} m"),
             Fact("Next booking", next is null ? "None in 36 h" : BerthFacts.Clock(next.Eta))
-        ];
+        ]);
     }
 }

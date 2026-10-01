@@ -70,6 +70,84 @@
     <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />
   </Style>
 
+  <!-- Status lists (Berths): a caps state line, the name, a muted meta line, a mono time -->
+  <Style x:Key="ListStateText" TargetType="TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource BodyStrongFont}" />
+    <Setter Property="FontSize" Value="11" />
+    <Setter Property="Foreground" Value="{StaticResource TextMutedInvariantBrush}" />
+  </Style>
+
+  <Style x:Key="ListNameText" TargetType="TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource BodyStrongFont}" />
+    <Setter Property="FontSize" Value="15" />
+    <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />
+    <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+  </Style>
+
+  <Style x:Key="ListMetaText" TargetType="TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="Foreground" Value="{StaticResource TextMutedInvariantBrush}" />
+    <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+  </Style>
+
+  <Style x:Key="ListTimeFigure" TargetType="controls:RollingText">
+    <Setter Property="FontFamily" Value="{StaticResource MonoMediumFont}" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />
+  </Style>
+
+  <!-- The berth chip: the list's version of the harbour's painted number -->
+  <Style x:Key="PlateText" TargetType="TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource MonoMediumFont}" />
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <!-- Detail panels: one big figure, lead text, facts as a muted key over a mono value -->
+  <Style x:Key="DetailFigure" TargetType="controls:RollingText">
+    <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+    <Setter Property="FontSize" Value="32" />
+    <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />
+  </Style>
+
+  <Style x:Key="LeadText" TargetType="TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="Foreground" Value="{StaticResource TextMutedInvariantBrush}" />
+  </Style>
+
+  <Style x:Key="FactKeyText" TargetType="TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="Foreground" Value="{StaticResource TextMutedInvariantBrush}" />
+  </Style>
+
+  <Style x:Key="FactValueText" TargetType="TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource MonoMediumFont}" />
+    <Setter Property="FontSize" Value="15" />
+    <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />
+  </Style>
+
+  <Style x:Key="ActionLabelText" TargetType="TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource BodyStrongFont}" />
+    <Setter Property="FontSize" Value="13" />
+  </Style>
+
+  <!-- Header clock: minutes roll, seconds tick plainly -->
+  <Style x:Key="HeaderClockFigure" TargetType="controls:RollingText">
+    <Setter Property="FontFamily" Value="{StaticResource MonoMediumFont}" />
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="Foreground" Value="{StaticResource PaperInvariantBrush}" />
+  </Style>
+
+  <Style x:Key="HeaderClockText" TargetType="TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource MonoMediumFont}" />
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="Foreground" Value="{StaticResource PaperInvariantBrush}" />
+  </Style>
+
   <!-- ============================================================
        Cards — Toolkit CardContentControl, tuned by lightweight keys.
        PanelCard: surface, hairline edge, elevation (the section panels).

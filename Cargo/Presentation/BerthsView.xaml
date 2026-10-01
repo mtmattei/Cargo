@@ -108,22 +108,20 @@
                         <!-- xaml-lint: allow card - the berth chip, the list's version of the harbour's painted number -->
                         <Border Width="34" Height="30" CornerRadius="5" BorderThickness="1"
                                 Background="{x:Bind PlateBackground, Mode=OneWay}" BorderBrush="{x:Bind PlateBorder, Mode=OneWay}">
-                          <TextBlock Text="{x:Bind Plate, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}" FontSize="13"
-                                     Foreground="{x:Bind PlateForeground, Mode=OneWay}"
-                                     HorizontalAlignment="Center" VerticalAlignment="Center" />
+                          <TextBlock Text="{x:Bind Plate, Mode=OneWay}" Style="{StaticResource PlateText}"
+                                     Foreground="{x:Bind PlateForeground, Mode=OneWay}" />
                         </Border>
 
                         <StackPanel Grid.Column="1" Spacing="1" VerticalAlignment="Center">
-                          <TextBlock Text="{x:Bind StateLabel, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}" FontSize="11"
+                          <TextBlock Text="{x:Bind StateLabel, Mode=OneWay}" Style="{StaticResource ListStateText}"
                                      Foreground="{x:Bind StateForeground, Mode=OneWay}" />
-                          <TextBlock Text="{x:Bind Name, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}" FontSize="15"
-                                     Foreground="{x:Bind NameForeground, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
-                          <TextBlock Text="{x:Bind Meta, Mode=OneWay}" FontFamily="{StaticResource BodyFont}" FontSize="13"
-                                     Foreground="{StaticResource TextMutedInvariantBrush}" TextTrimming="CharacterEllipsis" />
+                          <TextBlock Text="{x:Bind Name, Mode=OneWay}" Style="{StaticResource ListNameText}"
+                                     Foreground="{x:Bind NameForeground, Mode=OneWay}" />
+                          <TextBlock Text="{x:Bind Meta, Mode=OneWay}" Style="{StaticResource ListMetaText}" />
                         </StackPanel>
 
                         <!-- Countdowns roll each minute rather than swap -->
-                        <controls:RollingText Grid.Column="2" Text="{x:Bind When, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}" FontSize="14"
+                        <controls:RollingText Grid.Column="2" Text="{x:Bind When, Mode=OneWay}" Style="{StaticResource ListTimeFigure}"
                                               Foreground="{x:Bind WhenForeground, Mode=OneWay}" VerticalAlignment="Center" />
 
                         <FontIcon Grid.Column="3" Glyph="&#xE76C;" FontSize="11" Foreground="{StaticResource TextMutedInvariantBrush}"
@@ -151,25 +149,26 @@
           </Grid>
 
           <StackPanel Spacing="8">
-            <TextBlock Text="{x:Bind ViewModel.Detail.StateLabel, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}" FontSize="11"
+            <TextBlock Text="{x:Bind ViewModel.Detail.StateLabel, Mode=OneWay}" Style="{StaticResource ListStateText}"
                        Foreground="{x:Bind ViewModel.Detail.Accent, Mode=OneWay}" />
             <StackPanel Orientation="Horizontal" Spacing="8">
-              <controls:RollingText Text="{x:Bind ViewModel.Detail.Big, Mode=OneWay}" FontFamily="{StaticResource DisplayFont}" FontSize="32"
+              <controls:RollingText Text="{x:Bind ViewModel.Detail.Big, Mode=OneWay}" Style="{StaticResource DetailFigure}"
                                     Foreground="{x:Bind ViewModel.Detail.Accent, Mode=OneWay}" />
-              <TextBlock Text="{x:Bind ViewModel.Detail.BigSub, Mode=OneWay}" FontFamily="{StaticResource BodyFont}" FontSize="14"
-                         Foreground="{StaticResource TextMutedInvariantBrush}" VerticalAlignment="Bottom" Margin="0,0,0,5" />
+              <TextBlock Text="{x:Bind ViewModel.Detail.BigSub, Mode=OneWay}" Style="{StaticResource LeadText}"
+                         VerticalAlignment="Bottom" Margin="0,0,0,5" />
             </StackPanel>
-            <TextBlock Text="{x:Bind ViewModel.Detail.Note, Mode=OneWay}" FontFamily="{StaticResource BodyFont}" FontSize="14"
-                       Foreground="{StaticResource TextMutedInvariantBrush}" TextWrapping="WrapWholeWords" />
+            <TextBlock Text="{x:Bind ViewModel.Detail.Note, Mode=OneWay}" Style="{StaticResource LeadText}" TextWrapping="WrapWholeWords" />
           </StackPanel>
 
-          <StackPanel Spacing="6" Visibility="{x:Bind ViewModel.Detail.CargoVisibility, Mode=OneWay}">
+          <!-- The cargo block collapses for a free berth; it sits with the facts in an unspaced
+               panel and carries its own gap, since Spacing would still charge for it on Uno -->
+          <StackPanel>
+          <StackPanel Spacing="6" Margin="0,0,0,16" Visibility="{x:Bind ViewModel.Detail.CargoVisibility, Mode=OneWay}">
             <!-- Slides between ships (300 ms EaseSmooth) -->
             <ProgressBar controls:Slide.Value="{x:Bind ViewModel.Detail.CargoPercent, Mode=OneWay}" Maximum="100" Height="6" MinHeight="6" CornerRadius="3"
                          Foreground="{StaticResource TextMutedInvariantBrush}" Background="{StaticResource HairlineInvariantBrush}"
                          AutomationProperties.Name="{x:Bind ViewModel.Detail.CargoLabel, Mode=OneWay}" />
-            <TextBlock Text="{x:Bind ViewModel.Detail.CargoLabel, Mode=OneWay}" FontFamily="{StaticResource BodyFont}" FontSize="12"
-                       Foreground="{StaticResource TextMutedInvariantBrush}" />
+            <TextBlock Text="{x:Bind ViewModel.Detail.CargoLabel, Mode=OneWay}" Style="{StaticResource FactKeyText}" />
           </StackPanel>
 
           <ItemsRepeater ItemsSource="{x:Bind ViewModel.Detail.Facts, Mode=OneWay}">
@@ -179,12 +178,13 @@
             <ItemsRepeater.ItemTemplate>
               <DataTemplate x:DataType="local:Fact">
                 <StackPanel Spacing="2">
-                  <TextBlock Text="{x:Bind Key}" FontFamily="{StaticResource BodyFont}" FontSize="12" Foreground="{StaticResource TextMutedInvariantBrush}" />
-                  <TextBlock Text="{x:Bind Value}" FontFamily="{StaticResource MonoMediumFont}" FontSize="15" Foreground="{x:Bind Tone}" />
+                  <TextBlock Text="{x:Bind Key}" Style="{StaticResource FactKeyText}" />
+                  <TextBlock Text="{x:Bind Value}" Style="{StaticResource FactValueText}" Foreground="{x:Bind Tone}" />
                 </StackPanel>
               </DataTemplate>
             </ItemsRepeater.ItemTemplate>
           </ItemsRepeater>
+          </StackPanel>
 
           <Button Content="Show on map" Style="{StaticResource GhostButton}" MinHeight="40" HorizontalAlignment="Left"
                   Command="{x:Bind ViewModel.Detail.ShowOnMapCommand, Mode=OneWay}" />

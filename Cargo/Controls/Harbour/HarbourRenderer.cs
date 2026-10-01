@@ -36,6 +36,9 @@ public sealed class HarbourRenderer : IDisposable
     private readonly Dictionary<int, SKMaskFilter> _maskFilters = new();
     private readonly Dictionary<int, SKImageFilter> _blurFilters = new();
     private readonly SKPathEffect _dashRoute = SKPathEffect.CreateDash(new[] { 6f, 5f }, 0);
+
+    // The creeping track steps its dash phase in half pixels: 22 cached effects, none built per frame
+    private readonly SKPathEffect?[] _dashCreep = new SKPathEffect?[22];
     private readonly SKPathEffect _dashFairway = SKPathEffect.CreateDash(new[] { 10f, 6f }, 0);
     private readonly SKPathEffect _dashTile = SKPathEffect.CreateDash(new[] { 5f, 4f }, 0);
 
@@ -453,8 +456,7 @@ public sealed class HarbourRenderer : IDisposable
 
         _stroke.Color = color;
         _stroke.StrokeWidth = width;
-        using var creeping = phase == 0 ? null : SKPathEffect.CreateDash(new[] { 6f, 5f }, phase);
-        _stroke.PathEffect = creeping ?? _dashRoute;
+        _stroke.PathEffect = phase == 0 ? _dashRoute : CreepDash(phase);
         canvas.DrawPath(_path, _stroke);
         _stroke.PathEffect = null;
     }
@@ -822,6 +824,12 @@ public sealed class HarbourRenderer : IDisposable
         }
     }
 
+    private SKPathEffect CreepDash(float phase)
+    {
+        var step = (int)Math.Round(phase * 2) % _dashCreep.Length;
+        return _dashCreep[step] ??= SKPathEffect.CreateDash(new[] { 6f, 5f }, step / 2f);
+    }
+
     private static SKColor Blend(SKColor a, SKColor b, double t) => new(
         (byte)(a.Red + (b.Red - a.Red) * t),
         (byte)(a.Green + (b.Green - a.Green) * t),
@@ -970,6 +978,11 @@ public sealed class HarbourRenderer : IDisposable
         _chartFont.Dispose();
         _paintFont.Dispose();
         _dashRoute.Dispose();
+        foreach (var effect in _dashCreep)
+        {
+            effect?.Dispose();
+        }
+
         _dashFairway.Dispose();
         _dashTile.Dispose();
     }

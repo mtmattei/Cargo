@@ -157,10 +157,8 @@
         <!-- Minutes roll; seconds tick plainly -->
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
                     AutomationProperties.Name="{x:Bind ViewModel.State.Now, Mode=OneWay}">
-          <controls:RollingText Text="{x:Bind ViewModel.State.NowMinutes, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}"
-                           FontSize="13" Foreground="{StaticResource PaperInvariantBrush}" />
-          <TextBlock Text="{x:Bind ViewModel.State.NowSeconds, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}"
-                     FontSize="13" Foreground="{StaticResource PaperInvariantBrush}" />
+          <controls:RollingText Text="{x:Bind ViewModel.State.NowMinutes, Mode=OneWay}" Style="{StaticResource HeaderClockFigure}" />
+          <TextBlock Text="{x:Bind ViewModel.State.NowSeconds, Mode=OneWay}" Style="{StaticResource HeaderClockText}" />
         </StackPanel>
 
         <!-- xaml-lint: allow card - user avatar -->
