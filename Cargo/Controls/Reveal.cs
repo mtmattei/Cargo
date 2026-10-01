@@ -86,6 +86,13 @@ public static class Reveal
 
         var shift = element.RenderTransform as TranslateTransform;
         var visible = element.Visibility == Visibility.Visible;
+        var hides = GetGrow(element) || GetHides(element);
+
+        // Shown before measuring: a collapsed element measures 0, so the grow-in would target nothing
+        if (hides && on)
+        {
+            element.Visibility = Visibility.Visible;
+        }
 
         // From wherever the element is now: a running tween's last frame left these as local values
         var tween = new Tween
@@ -97,7 +104,7 @@ public static class Reveal
             Opacity = GetFade(element) ? (visible ? element.Opacity : 0, on ? GetOnOpacity(element) : 0) : null,
             Rise = shift is null ? null : (shift, shift.Y, on ? -GetRise(element) : 0),
             Height = GetGrow(element) ? (visible ? element.ActualHeight : 0, on ? Natural(element) : 0) : null,
-            Hides = GetGrow(element) || GetHides(element)
+            Hides = hides
         };
 
         if (!element.IsLoaded || Motion.Reduced)
