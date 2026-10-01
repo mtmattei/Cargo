@@ -1,4 +1,4 @@
-# HANDOFF — Cargo: Overview one-timeline build, steps 0-1 done; tokens + type next
+# HANDOFF — Cargo: Overview one-timeline build, steps 0-2 done; header + account menu next
 Updated: 2026-09-30
 
 ## Where we are
@@ -14,7 +14,22 @@ Updated: 2026-09-30
   Verified (Release desktop, PrintWindow captures, no MCP): solid past / 50% forecast / HW + now
   markers / transparent ground / NOW advancing / HW marker drops after the last high water; settled
   CPU 0-3% of one core vs ~57% with the live feed on. Library 0 warnings on desktop, wasm, android, ios.
-- Next: step 2 (tokens + type, app-wide). Cargo does not reference Liveline yet (lands in step 7).
+- Step 2 done (`b97e930`, `2182b74`). Spec questions answered (defaults), recorded in the spec.
+  - Palette: design tokens in `Themes/Tokens.xaml`; teal renamed to accent everywhere (incl. string
+    keys). Status: reserved/arriving = accent, needs-you = alert (tint .05, count-badge plate white on
+    AlertInk), vessel/happened/occupied = navy. Amber stays only for caution (customs pending, security
+    zones, truck gate, yard "moved", Overview "Leaving" chart). `PrimaryActionButton` = light-ground
+    primary; `AccentButton` stays the on-dark (scanner) variant.
+  - Type: ramp 11/12/13/14/15/18/20/24/30/40. `Type*` styles (family+size, no colour) + role styles.
+    104 inline sizes migrated by script; none left outside MainPage, OverviewView, OverviewMasthead,
+    ActivityView, HarbourView (rebuilt in steps 3-8) plus two FontIcon glyph sizes.
+  - Fonts renamed to underscores (Android hyphen gotcha). `IBMPlexMono_SemiBold.ttf` NOT added:
+    the Google Fonts download was denied in-session; needed by steps 6-8 (mono 600).
+  - Verified (uno-app MCP, 1680x1020 + 1100x900): Overview, Berths (incl. Docking, Vessels), Cargo,
+    Waterways, Security (zones, inspection). Scanner overlay not runtime-verified (style refactor only).
+  - Key gate: every string token key in C#/XAML resolves (`Tokens.Color` returns transparent on a
+    miss, so a missed rename is silent). Script: session scratchpad `keycheck.py`; worth adding to tools/.
+- Next: step 3 (header + account menu). Cargo does not reference Liveline yet (lands in step 7).
 
 Previous (needs-you spec), 2026-09-30, third session: the spec's six questions are answered (amber; Confirm writes a real
 assignment; full bar on Berths plus a panel mode on Overview; minutes-only clock roll; Nordic Star
@@ -47,13 +62,18 @@ critique) remain.
 Read, not applied: none.
 
 ## Next actions (in order)
-0. `SPEC-OVERVIEW-TIMELINE.md` step 2 (tokens + type), then 3-9. Items 1-2 below are superseded by it.
+0. Add `Assets/Fonts/IBMPlexMono_SemiBold.ttf` (static TTF, Android 2.2 UA via Google Fonts css2) and a `MonoStrongFont` resource.
+0b. `SPEC-OVERVIEW-TIMELINE.md` step 3 (header + account menu), then 4-9. Items 1-2 below are superseded by it.
 1. (superseded) Plan step 8, Overview context panel (spec section *Overview context panel*): `OverviewContextViewModel` with the mode priority (needs-you, selection, berth hover after a 300 ms dwell, layer); one view per mode in a Visibility region or VSM (no code-behind toggling); reuse `NeedsYouBar`; move Container volume and Cargo flow to Cargo, Sea & weather and tide to Waterways; Activity becomes a Map panel mode. Verify each mode at 1680 x 1020 and 1100 x 900, no vertical scroll at 1020 high.
 2. Plan step 9: reduced-motion pass over every new motion, lint, `ui-craft` self-critique, HANDOFF.
 3. Push `main` once step 8 lands (8 commits local).
 4. Then the queued items: `GLCanvasElement` harbour trial (uno-build-options), MainPage design pass (gold-standard-pass).
 
 ## Open questions
+- Security zone sub-labels ("Personnel & visitors", "Gates 1–3") spill below the 34 px zone outlines; drawn in C# (`SecurityScenes.cs:43`), pre-existing.
+- Canvas scenes (`SecurityScenes`, `OverviewCharts`...) still pass literal text sizes to `Draw.Text`; the ramp migration covered XAML only.
+- Vessels: the floated key-figure cards cover bays 01-03 of the side profile at panel widths below ~1300 (pre-existing layout intent: "over the empty water at the bow").
+- One Cargo launch exited after a window resize during startup; not reproduced when resizing after first frame.
 - uno-app MCP rejects `uno_app_select_solution` for a solution outside the session root (Liveline); the demo was verified by exe + PrintWindow + Get-Process instead.
 - One Liveline demo instance exited with no event-log entry after a synthetic click near the Feed switch; not reproduced. UIA `TogglePattern.Toggle()` on that ToggleSwitch reported Off without raising `Toggled` (one observation).
 - Row 07 recolours through the row's 150 ms hover transition; the spec's 400 ms for the confirm recolour is not separate.
