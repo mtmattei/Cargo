@@ -8,8 +8,8 @@ Scope: the Overview page only. The take never leaves it (see "Stays on Overview"
 
 - Relaunch the app for every take. Confirm berth is one-way, so state only resets on launch: the clock starts at
   20:58, Needs you at 4.
-- Record without the dev toolbar (it covers the "Westhaven" wordmark in Debug). Run
-  `$env:APP_NO_HOTDESIGN='1'; .\bin\Debug\net10.0-desktop\Cargo.exe`, or a Release build (not yet verified).
+- Record without the dev toolbar (it covers the "Westhaven" wordmark in Debug). From `Cargo\Cargo`, run
+  `$env:APP_NO_HOTDESIGN='1'; .\bin\Debug\net10.0-desktop\Cargo.exe` (verified 2026-10-01: no toolbar, the wordmark is whole).
 - Window: 1680x1020 (the rehearsed layout) or 1920x1080. Anything at or above 1280 wide keeps the side-by-side layout.
 - Capture: OBS window capture, Windows 10 (1903+) method. Do one 10-second test take first, because GDI region and
   title capture can return black for the Skia GL window.
@@ -42,7 +42,8 @@ Segue: "Start with the water."
 | 9 | "And any ship is one click from its facts." | Click the Nordic Star tag, hold 3 s, click it again | Facts card; the timeline dot enlarges |
 
 Live-only (the MCP cannot hover or drag; do these with the mouse): drag to orbit the harbour, mouse-wheel zoom.
-After beat 9 the camera stays close. Choose Overview in the camera menu or move on.
+After beat 9 the camera stays close and the menu reads Custom. Choose Overview in the camera menu to return to the
+opening framing (250 m); the facts card stays open until the tag is clicked again.
 
 Segue: "Now the rest of today."
 
@@ -88,9 +89,9 @@ These controls leave the page. Do not click them in the take:
 
 | Risk | Status | In the take |
 |---|---|---|
-| Dev toolbar covers the wordmark in Debug | Open | Record with `APP_NO_HOTDESIGN=1` or Release |
+| Dev toolbar covers the wordmark in Debug | Resolved by launch flag | Record with `APP_NO_HOTDESIGN=1` |
 | A Next 6 h row opens Berths scrolled mid-page, with the selected row off-screen | Open (bug, off-page) | Out of scope: hover only |
-| Selecting a vessel leaves the camera close, and the menu still reads "Overview" | Open (bug) | Beat 9 is last in its section; re-pick Overview |
+| Selecting a vessel left the menu reading "Overview" while close | Fixed in 13afd5c (reads Custom) | Re-pick Overview after beat 9 |
 | Plan preset hides the Nordic Star tag (in the bottom HUD margin) | By design | Skip Plan |
 | The facts card covers most of Nordic Star's hull | Cosmetic | Hold only 3 s |
 | Key and zoom group shifts about 40 px when the scale bar changes width | Cosmetic | Avoid the zoom buttons; use the camera menu |
