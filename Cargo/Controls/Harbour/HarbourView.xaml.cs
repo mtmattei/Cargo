@@ -351,6 +351,8 @@ public sealed partial class HarbourView : UserControl
             if (vessel is not null && !Compact)
             {
                 _scene!.FlyTo(vessel.X, vessel.Y);
+                // Flown off the preset, as a drag or zoom is: the menu says Custom, so Overview frames it again
+                MarkView(null);
             }
         }
 
