@@ -112,7 +112,7 @@
       </Grid.RowDefinitions>
       <!-- Overview: the greeting, figures and duty card on the page ground, above the harbour band -->
       <local:OverviewMasthead x:Name="Masthead" DataContext="{x:Bind ViewModel.Overview, Mode=OneWay}"
-                              Visibility="{x:Bind ViewModel.IsOverview, Mode=OneWay}" Margin="40,20,40,20" />
+                              Visibility="{x:Bind ViewModel.IsOverview, Mode=OneWay}" Margin="40,14,40,14" />
       <!-- One harbour for every harbour page: Overview's 340 px band (491 expanded), a strip framed by
            the section elsewhere -->
       <harbour:HarbourView x:Name="Harbour" Grid.Row="1" Compact="{x:Bind ViewModel.State.StageCompact, Mode=OneWay}"
