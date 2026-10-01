@@ -45,14 +45,19 @@ public sealed partial class NavItem : ObservableObject
     private Microsoft.UI.Xaml.Visibility _otherVisibility;
 }
 
-public sealed class LayerItem
+/// <summary>One segment of the harbour layer switcher; built once, recoloured in place.</summary>
+public sealed partial class LayerItem : ObservableObject
 {
     public required string Id { get; init; }
     public required string Label { get; init; }
     public required Geometry Icon { get; init; }
-    public required Brush Background { get; init; }
-    public required Brush Foreground { get; init; }
     public required ICommand Command { get; init; }
+
+    [ObservableProperty]
+    private Brush? _foreground;
+
+    [ObservableProperty]
+    private Brush? _iconForeground;
 }
 
 public sealed class Fact

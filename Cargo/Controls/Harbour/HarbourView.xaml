@@ -100,82 +100,136 @@
     <TextBlock x:Name="Summary" Opacity="0" IsHitTestVisible="False" Width="1" Height="1"
                HorizontalAlignment="Left" VerticalAlignment="Top" AutomationProperties.LiveSetting="Polite" />
 
-    <!-- Legend: colour in the scene only ever means status -->
-    <Border Style="{StaticResource HarbourHudPanel}" Visibility="{x:Bind HudVisibility, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Top"
-            Margin="{x:Bind LegendMargin, Mode=OneWay}" IsHitTestVisible="False">
-      <StackPanel Orientation="Horizontal" Spacing="14">
-        <StackPanel Orientation="Horizontal" Spacing="6">
-          <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2" Fill="{StaticResource AccentInvariantBrush}" VerticalAlignment="Center" />
-          <TextBlock Text="Reserved · arriving" Style="{StaticResource CaptionText}" VerticalAlignment="Center" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Spacing="6">
-          <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2" Stroke="{StaticResource InkInvariantBrush}" StrokeThickness="2" VerticalAlignment="Center" />
-          <TextBlock Text="Selected" Style="{StaticResource CaptionText}" VerticalAlignment="Center" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Spacing="6">
-          <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2" Stroke="{StaticResource AlertInvariantBrush}" StrokeThickness="1"
-                     StrokeDashArray="2,1.5" VerticalAlignment="Center" />
-          <TextBlock Text="Restricted" Style="{StaticResource CaptionText}" VerticalAlignment="Center" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Spacing="6">
-          <Rectangle Width="14" Height="1.5" Fill="{StaticResource TextMutedInvariantBrush}" VerticalAlignment="Center" />
-          <TextBlock Text="Depth contour (m)" Style="{StaticResource CaptionText}" VerticalAlignment="Center" />
-        </StackPanel>
-      </StackPanel>
-    </Border>
+    <!-- HUD floats: surface on the float shadow. The shadow collection is repeated on each
+         container because a Style-supplied one never applies (Toolkit gotcha G36). -->
 
-    <!-- Camera presets -->
-    <Border Style="{StaticResource HarbourHudPanel}" Visibility="{x:Bind HudVisibility, Mode=OneWay}" Padding="3" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="24,16">
-      <!-- One ink pill slides and resizes to the chosen preset (200 ms EaseSmooth) and fades out
-           when a drag leaves no preset current (150 ms) -->
-      <Grid>
-        <!-- xaml-lint: allow card - the sliding selection pill behind the preset buttons, not a content card -->
-        <Border x:Name="SegmentPill" HorizontalAlignment="Left" Width="0" Opacity="0" CornerRadius="6"
-                Background="{StaticResource InkInvariantBrush}" IsHitTestVisible="False">
-          <Border.RenderTransform>
-            <TranslateTransform x:Name="PillShift" />
-          </Border.RenderTransform>
-        </Border>
-      <StackPanel x:Name="SegmentPanel" Orientation="Horizontal" Spacing="2">
-        <Button x:Name="OverviewButton" Style="{StaticResource HarbourSegment}" Content="Overview"
-                Foreground="{StaticResource PaperInvariantBrush}"
-                Command="{x:Bind ViewCommand}" CommandParameter="overview" />
-        <Button x:Name="SeaButton" Style="{StaticResource HarbourSegment}" Content="From sea"
-                Command="{x:Bind ViewCommand}" CommandParameter="sea" />
-        <Button x:Name="LandButton" Style="{StaticResource HarbourSegment}" Content="From land"
-                Command="{x:Bind ViewCommand}" CommandParameter="land" />
-        <Button x:Name="PlanButton" Style="{StaticResource HarbourSegment}" Content="Plan"
-                Command="{x:Bind ViewCommand}" CommandParameter="plan" />
-      </StackPanel>
-      </Grid>
-    </Border>
-
-    <!-- Scale, north, zoom -->
-    <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="24,16" Visibility="{x:Bind HudVisibility, Mode=OneWay}">
-      <Border Style="{StaticResource HarbourHudPanel}" VerticalAlignment="Stretch" IsHitTestVisible="False">
-        <StackPanel Spacing="3" VerticalAlignment="Center">
-          <Border x:Name="ScaleBar" Height="5" Width="100" HorizontalAlignment="Left"
-                  BorderBrush="{StaticResource InkInvariantBrush}" BorderThickness="1.5,0,1.5,1.5" />
-          <TextBlock x:Name="ScaleLabel" Text="200 m" FontFamily="{StaticResource MonoMediumFont}" FontSize="11"
-                     Foreground="{StaticResource TextMutedInvariantBrush}" />
+    <!-- Camera: the current preset, opening the four presets upward; a drag or zoom clears the check -->
+    <utu:ShadowContainer Background="{StaticResource SurfaceInvariantBrush}" Visibility="{x:Bind HudVisibility, Mode=OneWay}"
+                         HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="40,0,0,16">
+      <utu:ShadowContainer.Shadows>
+        <utu:ShadowCollection>
+          <utu:Shadow Spread="1" BlurRadius="0" Color="{StaticResource InkColor}" Opacity="0.08" />
+          <utu:Shadow OffsetY="1" BlurRadius="2" Color="{StaticResource InkColor}" Opacity="0.06" />
+          <utu:Shadow OffsetY="6" BlurRadius="20" Color="{StaticResource InkColor}" Opacity="0.07" />
+        </utu:ShadowCollection>
+      </utu:ShadowContainer.Shadows>
+      <Button Style="{StaticResource HudSummaryButton}" AutomationProperties.Name="Camera view">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <TextBlock x:Name="CameraLabel" Text="Overview" Style="{StaticResource TypeMedium14}" VerticalAlignment="Center" />
+          <Viewbox Width="16" Height="16" VerticalAlignment="Center">
+            <Grid Width="24" Height="24">
+              <shapes:Path Style="{StaticResource ChevronDownIcon}" Stroke="{StaticResource InkInvariantBrush}" />
+            </Grid>
+          </Viewbox>
         </StackPanel>
-      </Border>
-      <Border Style="{StaticResource HarbourHudPanel}" Width="34" Height="34" Padding="0" IsHitTestVisible="False"
-              AutomationProperties.Name="North">
-        <Viewbox Width="22" Height="22">
-          <Canvas Width="26" Height="26">
-            <Canvas.RenderTransform>
-              <RotateTransform x:Name="Needle" CenterX="13" CenterY="13" />
-            </Canvas.RenderTransform>
-            <shapes:Path Data="M13 3 L16.6 14 L13 12 L9.4 14 Z" Fill="{StaticResource AlertInvariantBrush}" />
-            <shapes:Path Data="M13 23 L16.6 12 L13 14 L9.4 12 Z" Fill="{StaticResource HairlineStrongInvariantBrush}" />
-          </Canvas>
-        </Viewbox>
-      </Border>
-      <Button Style="{StaticResource HarbourIconButton}" Content="−" Command="{x:Bind ZoomCommand}" CommandParameter="out"
-              AutomationProperties.Name="Zoom out" />
-      <Button Style="{StaticResource HarbourIconButton}" Content="+" Command="{x:Bind ZoomCommand}" CommandParameter="in"
-              AutomationProperties.Name="Zoom in" />
+        <Button.Flyout>
+          <MenuFlyout Placement="Top">
+            <RadioMenuFlyoutItem x:Name="OverviewItem" Text="Overview" GroupName="Camera" IsChecked="True" Command="{x:Bind ViewCommand}" CommandParameter="overview" />
+            <RadioMenuFlyoutItem x:Name="SeaItem" Text="From sea" GroupName="Camera" Command="{x:Bind ViewCommand}" CommandParameter="sea" />
+            <RadioMenuFlyoutItem x:Name="LandItem" Text="From land" GroupName="Camera" Command="{x:Bind ViewCommand}" CommandParameter="land" />
+            <RadioMenuFlyoutItem x:Name="PlanItem" Text="Plan" GroupName="Camera" Command="{x:Bind ViewCommand}" CommandParameter="plan" />
+          </MenuFlyout>
+        </Button.Flyout>
+      </Button>
+    </utu:ShadowContainer>
+
+    <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,40,16"
+                Visibility="{x:Bind HudVisibility, Mode=OneWay}">
+      <!-- Key: what each mark on the map means -->
+      <utu:ShadowContainer Background="{StaticResource SurfaceInvariantBrush}">
+        <utu:ShadowContainer.Shadows>
+          <utu:ShadowCollection>
+            <utu:Shadow Spread="1" BlurRadius="0" Color="{StaticResource InkColor}" Opacity="0.08" />
+            <utu:Shadow OffsetY="1" BlurRadius="2" Color="{StaticResource InkColor}" Opacity="0.06" />
+            <utu:Shadow OffsetY="6" BlurRadius="20" Color="{StaticResource InkColor}" Opacity="0.07" />
+          </utu:ShadowCollection>
+        </utu:ShadowContainer.Shadows>
+        <Button Style="{StaticResource HudSummaryButton}" Content="Key" AutomationProperties.Name="Map key">
+          <Button.Flyout>
+            <Flyout Placement="TopEdgeAlignedRight">
+              <StackPanel MinWidth="208">
+                <TextBlock Text="KEY" Style="{StaticResource CapsLabelText}" Margin="10,8,10,4" />
+                <StackPanel Orientation="Horizontal" Spacing="10" Padding="10,8">
+                  <Ellipse Width="9" Height="9" Fill="{StaticResource NavyInvariantBrush}" VerticalAlignment="Center" />
+                  <TextBlock Text="Vessel alongside" Style="{StaticResource KeyRowText}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="10" Padding="10,8">
+                  <Ellipse Width="9" Height="9" Stroke="{StaticResource NavyInvariantBrush}" StrokeThickness="1.6" VerticalAlignment="Center" />
+                  <TextBlock Text="Vessel inbound" Style="{StaticResource KeyRowText}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="10" Padding="10,8">
+                  <Rectangle Width="14" Height="12" RadiusX="2" RadiusY="2" Fill="{StaticResource ReservedFillInvariantBrush}" Stroke="{StaticResource AccentInvariantBrush}" StrokeThickness="1.5" StrokeDashArray="2,1.5" VerticalAlignment="Center" />
+                  <TextBlock Text="Berth reserved for an arrival" Style="{StaticResource KeyRowText}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="10" Padding="10,8">
+                  <Rectangle Width="14" Height="12" RadiusX="2" RadiusY="2" Fill="{StaticResource HairlineInvariantBrush}" Stroke="{StaticResource TextMutedInvariantBrush}" StrokeThickness="1.5" StrokeDashArray="2,1.5" VerticalAlignment="Center" />
+                  <TextBlock Text="Restricted" Style="{StaticResource KeyRowText}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="10" Padding="10,8">
+                  <Line X1="0" Y1="0" X2="14" Y2="0" Width="14" Stroke="{StaticResource TextMutedInvariantBrush}" StrokeThickness="1.5" StrokeDashArray="2,1.5" VerticalAlignment="Center" />
+                  <TextBlock Text="Depth contour, metres" Style="{StaticResource KeyRowText}" />
+                </StackPanel>
+              </StackPanel>
+            </Flyout>
+          </Button.Flyout>
+        </Button>
+      </utu:ShadowContainer>
+
+      <!-- Scale, north, zoom: one float, cells split by hairlines -->
+      <utu:ShadowContainer Background="{StaticResource SurfaceInvariantBrush}">
+        <utu:ShadowContainer.Shadows>
+          <utu:ShadowCollection>
+            <utu:Shadow Spread="1" BlurRadius="0" Color="{StaticResource InkColor}" Opacity="0.08" />
+            <utu:Shadow OffsetY="1" BlurRadius="2" Color="{StaticResource InkColor}" Opacity="0.06" />
+            <utu:Shadow OffsetY="6" BlurRadius="20" Color="{StaticResource InkColor}" Opacity="0.07" />
+          </utu:ShadowCollection>
+        </utu:ShadowContainer.Shadows>
+        <Grid CornerRadius="10" Height="44">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="1" />
+            <ColumnDefinition Width="44" />
+            <ColumnDefinition Width="1" />
+            <ColumnDefinition Width="44" />
+            <ColumnDefinition Width="1" />
+            <ColumnDefinition Width="44" />
+          </Grid.ColumnDefinitions>
+          <StackPanel Orientation="Horizontal" Spacing="8" Padding="14,0,12,0" VerticalAlignment="Center" IsHitTestVisible="False">
+            <Border x:Name="ScaleBar" Height="6" Width="64" VerticalAlignment="Center"
+                    BorderBrush="{StaticResource InkInvariantBrush}" BorderThickness="1.5,0,1.5,1.5" />
+            <TextBlock x:Name="ScaleLabel" Text="250 m" Style="{StaticResource TypeMonoMedium12}"
+                       Foreground="{StaticResource InkInvariantBrush}" VerticalAlignment="Center" />
+          </StackPanel>
+          <Rectangle Grid.Column="1" Fill="{StaticResource HairlineInvariantBrush}" />
+          <Viewbox Grid.Column="2" Width="20" Height="20" IsHitTestVisible="False" AutomationProperties.Name="North">
+            <Canvas Width="26" Height="26">
+              <Canvas.RenderTransform>
+                <RotateTransform x:Name="Needle" CenterX="13" CenterY="13" />
+              </Canvas.RenderTransform>
+              <shapes:Path Style="{StaticResource NorthNeedleIcon}" Fill="{StaticResource AlertInvariantBrush}" />
+              <shapes:Path Style="{StaticResource SouthNeedleIcon}" Fill="{StaticResource HairlineStrongInvariantBrush}" />
+            </Canvas>
+          </Viewbox>
+          <Rectangle Grid.Column="3" Fill="{StaticResource HairlineInvariantBrush}" />
+          <Button Grid.Column="4" Style="{StaticResource HudIconButton}" Command="{x:Bind ZoomCommand}" CommandParameter="out"
+                  AutomationProperties.Name="Zoom out">
+            <Viewbox Width="18" Height="18">
+              <Grid Width="24" Height="24">
+                <shapes:Path Style="{StaticResource MinusIcon}" Stroke="{StaticResource InkInvariantBrush}" />
+              </Grid>
+            </Viewbox>
+          </Button>
+          <Rectangle Grid.Column="5" Fill="{StaticResource HairlineInvariantBrush}" />
+          <Button Grid.Column="6" Style="{StaticResource HudIconButton}" Command="{x:Bind ZoomCommand}" CommandParameter="in"
+                  AutomationProperties.Name="Zoom in">
+            <Viewbox Width="18" Height="18">
+              <Grid Width="24" Height="24">
+                <shapes:Path Style="{StaticResource PlusIcon}" Stroke="{StaticResource InkInvariantBrush}" />
+              </Grid>
+            </Viewbox>
+          </Button>
+        </Grid>
+      </utu:ShadowContainer>
     </StackPanel>
   </Grid>
 </UserControl>

@@ -227,6 +227,8 @@
   <!-- Hairlines: the design leans on 8–18% ink rules rather than boxes -->
   <SolidColorBrush x:Key="HairlineInvariantBrush" Color="{StaticResource InkColor}" Opacity="0.08" />
   <SolidColorBrush x:Key="HairlineStrongInvariantBrush" Color="{StaticResource InkColor}" Opacity="0.18" />
+  <!-- A berth reserved for an arrival: the map polygon and its Key swatch -->
+  <SolidColorBrush x:Key="ReservedFillInvariantBrush" Color="{StaticResource AccentColor}" Opacity="0.12" />
   <!-- The header tab's hover underline -->
   <SolidColorBrush x:Key="TabHoverInvariantBrush" Color="{StaticResource InkColor}" Opacity="0.16" />
   <SolidColorBrush x:Key="HairlineOnDarkBrush" Color="#FFFFFFFF" Opacity="0.10" />

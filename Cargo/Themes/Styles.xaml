@@ -593,6 +593,34 @@
     </Setter>
   </Style>
 
+  <!-- HUD float buttons: transparent inside their ShadowContainer, ink text, the bare button's hover fade -->
+  <Style x:Key="HudSummaryButton" TargetType="Button" BasedOn="{StaticResource BareButton}">
+    <Setter Property="Height" Value="44" />
+    <Setter Property="Padding" Value="16,0,14,0" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="FontFamily" Value="{StaticResource BodyMediumFont}" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="HorizontalContentAlignment" Value="Left" />
+  </Style>
+
+  <Style x:Key="HudIconButton" TargetType="Button" BasedOn="{StaticResource BareButton}">
+    <Setter Property="Width" Value="44" />
+    <Setter Property="Height" Value="44" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+  </Style>
+
+  <!-- Caps labels (Key header, lane labels, table heads): 11/600 muted -->
+  <Style x:Key="CapsLabelText" TargetType="TextBlock" BasedOn="{StaticResource TypeStrong11}">
+    <Setter Property="Foreground" Value="{StaticResource TextMutedInvariantBrush}" />
+  </Style>
+
+  <Style x:Key="KeyRowText" TargetType="TextBlock" BasedOn="{StaticResource TypeBody13}">
+    <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
   <!-- The × that closes a detail panel, top-right of its header -->
   <Style x:Key="CloseButton" TargetType="Button" BasedOn="{StaticResource BareButton}">
     <Setter Property="FontSize" Value="18" />
@@ -622,30 +650,6 @@
   <!-- ============================================================
        Harbour stage HUD — flat surface chips over the 3D scene
        ============================================================ -->
-  <Style x:Key="HarbourHudPanel" TargetType="Border">
-    <Setter Property="Background" Value="{StaticResource SurfaceInvariantBrush}" />
-    <Setter Property="BorderBrush" Value="{StaticResource HairlineStrongInvariantBrush}" />
-    <Setter Property="BorderThickness" Value="1" />
-    <Setter Property="CornerRadius" Value="{StaticResource RadiusControl}" />
-    <Setter Property="Padding" Value="10,7" />
-  </Style>
-
-  <Style x:Key="HarbourSegment" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
-    <Setter Property="Background" Value="Transparent" />
-    <Setter Property="Foreground" Value="{StaticResource TextMutedInvariantBrush}" />
-    <Setter Property="Padding" Value="11,7" />
-    <Setter Property="CornerRadius" Value="6" />
-  </Style>
-
-  <Style x:Key="HarbourIconButton" TargetType="Button" BasedOn="{StaticResource GhostButton}">
-    <Setter Property="Background" Value="{StaticResource SurfaceInvariantBrush}" />
-    <Setter Property="Width" Value="34" />
-    <Setter Property="Height" Value="34" />
-    <Setter Property="Padding" Value="0" />
-    <Setter Property="CornerRadius" Value="8" />
-    <Setter Property="FontSize" Value="16" />
-  </Style>
-
   <!-- Slider used by the docking timeline scrubber -->
   <Style x:Key="ScrubSlider" TargetType="Slider">
     <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />

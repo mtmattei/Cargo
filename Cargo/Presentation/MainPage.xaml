@@ -112,34 +112,48 @@
       <local:OverviewMasthead x:Name="Masthead" DataContext="{x:Bind ViewModel.Overview, Mode=OneWay}"
                               Visibility="{x:Bind ViewModel.IsOverview, Mode=OneWay}"
                               VerticalAlignment="Top" Margin="40,20,40,0" />
-      <!-- Layer switcher: centred on the HUD row; below Normal (1040) the row cannot hold presets, layers and
-           zoom (292 + 330 + 266 px plus gutters), so it stacks above the camera presets (16 + 36 + 8 px up) -->
-      <Border Style="{StaticResource HarbourHudPanel}" Padding="3" VerticalAlignment="Bottom"
-              HorizontalAlignment="{utu:Responsive Layout={StaticResource HudBreakpoints}, Narrow=Left, Normal=Center}"
-              Margin="{utu:Responsive Layout={StaticResource HudBreakpoints}, Narrow='24,0,0,60', Normal='0,0,0,16'}"
-              Visibility="{x:Bind ViewModel.State.StageFull, Mode=OneWay}">
-        <ItemsControl ItemsSource="{x:Bind ViewModel.Layers, Mode=OneWay}">
-          <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="2" /></ItemsPanelTemplate>
-          </ItemsControl.ItemsPanel>
-          <ItemsControl.ItemTemplate>
-            <DataTemplate x:DataType="local:LayerItem">
-              <Button Style="{StaticResource BareButton}" Command="{x:Bind Command}" CommandParameter="{x:Bind Id}"
-                      ToolTipService.ToolTip="{x:Bind Label}">
-                <!-- xaml-lint: allow card - the current-segment highlight of a segmented control, not a card -->
-                <Border Background="{x:Bind Background}" CornerRadius="6" Padding="11,7">
-                  <StackPanel Orientation="Horizontal" Spacing="8">
-                    <shapes:Path Data="{x:Bind Icon}" Stroke="{x:Bind Foreground}" StrokeThickness="1.8"
-                                 Width="15" Height="15" Stretch="Uniform" VerticalAlignment="Center" />
-                    <TextBlock Text="{x:Bind Label}" FontFamily="{StaticResource BodyMediumFont}" FontSize="13"
-                               Foreground="{x:Bind Foreground}" />
+      <!-- Layer switcher: centred on the HUD row; below Normal (1040) the row cannot hold the camera menu,
+           layers and the Key/scale/zoom group (~115 + 370 + 370 px plus 40 px gutters), so it stacks above
+           the camera menu (16 + 44 + 4 px up) -->
+      <utu:ShadowContainer Background="{StaticResource SurfaceInvariantBrush}" VerticalAlignment="Bottom"
+                           HorizontalAlignment="{utu:Responsive Layout={StaticResource HudBreakpoints}, Narrow=Left, Normal=Center}"
+                           Margin="{utu:Responsive Layout={StaticResource HudBreakpoints}, Narrow='24,0,0,64', Normal='0,0,0,16'}"
+                           Visibility="{x:Bind ViewModel.State.StageFull, Mode=OneWay}">
+        <!-- The HUD float shadow. Inline: a Style-supplied collection never applies (Toolkit gotcha G36). -->
+        <utu:ShadowContainer.Shadows>
+          <utu:ShadowCollection>
+            <utu:Shadow Spread="1" BlurRadius="0" Color="{StaticResource InkColor}" Opacity="0.08" />
+            <utu:Shadow OffsetY="1" BlurRadius="2" Color="{StaticResource InkColor}" Opacity="0.06" />
+            <utu:Shadow OffsetY="6" BlurRadius="20" Color="{StaticResource InkColor}" Opacity="0.07" />
+          </utu:ShadowCollection>
+        </utu:ShadowContainer.Shadows>
+        <Grid CornerRadius="10" Padding="2">
+          <!-- One ink pill slides and resizes to the current layer (DurationSlideMs on EaseSmooth) -->
+          <controls:SegmentIndicator Host="{x:Bind LayerItems}" SelectedIndex="{x:Bind ViewModel.SelectedLayerIndex, Mode=OneWay}"
+                                     Height="40" CornerRadius="8" Background="{StaticResource InkInvariantBrush}" />
+          <ItemsControl x:Name="LayerItems" ItemsSource="{x:Bind ViewModel.Layers, Mode=OneWay}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="local:LayerItem">
+                <Button Style="{StaticResource BareButton}" Command="{x:Bind Command}" CommandParameter="{x:Bind Id}"
+                        Height="40" Padding="14,0" AutomationProperties.Name="{x:Bind Label}">
+                  <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                    <Viewbox Width="18" Height="18" VerticalAlignment="Center">
+                      <Grid Width="24" Height="24">
+                        <shapes:Path Data="{x:Bind Icon}" Stroke="{x:Bind IconForeground, Mode=OneWay}" StrokeThickness="1.6"
+                                     StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                      </Grid>
+                    </Viewbox>
+                    <TextBlock Text="{x:Bind Label}" Style="{StaticResource TypeMedium14}" Foreground="{x:Bind Foreground, Mode=OneWay}" />
                   </StackPanel>
-                </Border>
-              </Button>
-            </DataTemplate>
-          </ItemsControl.ItemTemplate>
-        </ItemsControl>
-      </Border>
+                </Button>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </Grid>
+      </utu:ShadowContainer>
 
       <Button Style="{StaticResource GhostButton}" Command="{x:Bind ViewModel.State.ToggleStageCommand}"
               Content="{x:Bind ViewModel.State.StageToggleLabel, Mode=OneWay}"

@@ -193,29 +193,38 @@ public sealed partial class MainViewModel : ObservableObject
         }
     }
 
+    /// <summary>The current layer's place in <see cref="Layers"/>, for the switcher's sliding indicator.</summary>
+    [ObservableProperty]
+    private int _selectedLayerIndex = -1;
+
+    /// <summary>The design's 24-unit stroke icons for the four layers (EXTRACTION §2 Harbour).</summary>
+    private static readonly (string Id, string Label, string Icon)[] LayerDefinitions =
+    {
+        ("port", "Map", "M9 4 3.5 6v14L9 18l6 2 5.5-2V4L15 6zM9 4v14M15 6v14"),
+        ("yard", "Yard", "M4.5 7h15a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-15a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1zM3.5 12.5h17M9.2 7v11M14.8 7v11"),
+        ("security", "Security", "M12 3.2 19 6v5.2c0 4.4-2.9 7.5-7 8.9-4.1-1.4-7-4.5-7-8.9V6z"),
+        ("traffic", "Traffic", "M4 12h15M14 7l5 5-5 5")
+    };
+
     private void BuildLayers()
     {
-        (string Id, string Label, string Icon)[] definitions =
+        if (Layers.Count == 0)
         {
-            ("port", "Map", "M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2zM9 4v14M15 6v14"),
-            ("yard", "Yard", "M3 14h6v6H3zM9 14h6v6H9zM15 14h6v6h-6zM6 8h6v6H6zM12 8h6v6h-6z"),
-            ("security", "Security", "M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"),
-            ("traffic", "Traffic", "M4 12h12M12 6l6 6-6 6")
-        };
-
-        Layers.Clear();
-        foreach (var (id, label, icon) in definitions)
-        {
-            var current = State.HarbourLayer == id;
-            Layers.Add(new LayerItem
+            foreach (var (id, label, icon) in LayerDefinitions)
             {
-                Id = id,
-                Label = label,
-                Icon = Geo.Path(icon),
-                Background = current ? Tokens.Brush("InkInvariantBrush") : Tokens.Transparent,
-                Foreground = current ? Tokens.Brush("PaperInvariantBrush") : Tokens.Brush("TextMutedInvariantBrush"),
-                Command = State.SetLayerCommand
-            });
+                Layers.Add(new LayerItem { Id = id, Label = label, Icon = Geo.Path(icon), Command = State.SetLayerCommand });
+            }
+        }
+
+        for (var i = 0; i < Layers.Count; i++)
+        {
+            var current = State.HarbourLayer == Layers[i].Id;
+            Layers[i].Foreground = current ? Tokens.Brush("PaperInvariantBrush") : Tokens.Brush("InkInvariantBrush");
+            Layers[i].IconForeground = current ? Tokens.Brush("PaperInvariantBrush") : Tokens.Brush("TextMutedInvariantBrush");
+            if (current)
+            {
+                SelectedLayerIndex = i;
+            }
         }
     }
 }

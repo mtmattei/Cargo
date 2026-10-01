@@ -3,7 +3,6 @@ using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Animation;
 using SkiaSharp;
 using Uno.WinUI.Graphics2DSK;
 using Windows.Foundation;
@@ -83,7 +82,6 @@ public sealed partial class HarbourView : UserControl
         }
 
         SizeChanged += (_, _) => PlaceOverlays();
-        SegmentPanel.SizeChanged += (_, _) => MovePill(animate: false);
         KeyDown += OnKeyDown;
         Loaded += (_, _) =>
         {
@@ -172,18 +170,8 @@ public sealed partial class HarbourView : UserControl
         set => SetValue(TopInsetProperty, value);
     }
 
-    public static readonly DependencyProperty LegendMarginProperty = DependencyProperty.Register(
-        nameof(LegendMargin), typeof(Thickness), typeof(HarbourView), new PropertyMetadata(new Thickness(24, 16, 24, 16)));
-
-    public Thickness LegendMargin
-    {
-        get => (Thickness)GetValue(LegendMarginProperty);
-        private set => SetValue(LegendMarginProperty, value);
-    }
-
     private void OnTopInsetChanged(double inset)
     {
-        LegendMargin = new Thickness(24, 16 + inset, 24, 16);
         if (_scene is not null)
         {
             _scene.Camera.TopInset = inset;
@@ -593,75 +581,13 @@ public sealed partial class HarbourView : UserControl
         };
         UpdateSummary();
 
-        _markedView = name;
-        var paper = Tokens.Brush("PaperInvariantBrush");
-        var muted = Tokens.Brush("TextMutedInvariantBrush");
-        OverviewButton.Foreground = name == "overview" ? paper : muted;
-        SeaButton.Foreground = name == "sea" ? paper : muted;
-        LandButton.Foreground = name == "land" ? paper : muted;
-        PlanButton.Foreground = name == "plan" ? paper : muted;
-        MovePill(animate: true);
-    }
-
-    private string? _markedView = "overview";
-    private Storyboard? _pillBoard;
-
-    private Button? PresetButton(string? name) => name switch
-    {
-        "overview" => OverviewButton,
-        "sea" => SeaButton,
-        "land" => LandButton,
-        "plan" => PlanButton,
-        _ => null
-    };
-
-    /// <summary>
-    /// Slides the pill under the current preset: position and width together, 200 ms on
-    /// EaseSmooth. The keyframes carry no From, so a click mid-slide re-targets from wherever
-    /// the pill is. No preset (a drag or a zoom) fades it out over 150 ms, leaving it in place.
-    /// </summary>
-    private void MovePill(bool animate)
-    {
-        var button = PresetButton(_markedView);
-        var target = button is { ActualWidth: > 0 }
-            ? (X: button.TransformToVisual(SegmentPanel).TransformPoint(default).X, Width: button.ActualWidth, Opacity: 1d)
-            : (X: PillShift.X, Width: SegmentPill.Width, Opacity: 0d);
-
-        // Hand off mid-slide: read where the running board has the pill, stop it, pin that as the
-        // start. A stopped board otherwise snaps back to the old local values.
-        var (x, width, opacity) = (PillShift.X, SegmentPill.Width, SegmentPill.Opacity);
-        _pillBoard?.Stop();
-        _pillBoard = null;
-        var instant = !animate || Motion.Reduced || width <= 0;
-        PillShift.X = instant ? target.X : x;
-        SegmentPill.Width = instant ? target.Width : width;
-        SegmentPill.Opacity = instant ? target.Opacity : opacity;
-        if (instant)
-        {
-            return;
-        }
-
-        var board = new Storyboard();
-        var slide = Motion.Duration(button is null ? "DurationFastMs" : "DurationSlideMs");
-        Add(board, PillShift, "X", target.X, slide, dependent: false);
-        Add(board, SegmentPill, "Width", target.Width, slide, dependent: true);
-        Add(board, SegmentPill, "Opacity", target.Opacity, Motion.Duration("DurationFastMs"), dependent: false);
-        board.Begin();
-        _pillBoard = board;
-
-        static void Add(Storyboard board, DependencyObject target, string property, double to, TimeSpan duration, bool dependent)
-        {
-            var animation = new DoubleAnimationUsingKeyFrames { EnableDependentAnimation = dependent };
-            animation.KeyFrames.Add(new SplineDoubleKeyFrame
-            {
-                KeyTime = duration,
-                Value = to,
-                KeySpline = (KeySpline)Application.Current.Resources["EaseSmooth"]
-            });
-            Storyboard.SetTarget(animation, target);
-            Storyboard.SetTargetProperty(animation, property);
-            board.Children.Add(animation);
-        }
+        // The camera menu: the current preset is checked and named on the button; a drag or a
+        // zoom leaves none current
+        OverviewItem.IsChecked = name == "overview";
+        SeaItem.IsChecked = name == "sea";
+        LandItem.IsChecked = name == "land";
+        PlanItem.IsChecked = name == "plan";
+        CameraLabel.Text = _viewName;
     }
 
     // xaml-lint: allow codebehind - keyboard orbit for the Skia canvas; the camera has no XAML surface
