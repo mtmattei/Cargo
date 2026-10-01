@@ -1,6 +1,6 @@
 # SPEC: Overview scrolling with a condensing harbour
 
-Status: spec, not built. Written 2026-10-01. Build in a fresh session: read this cold, then HANDOFF.md.
+Status: built 2026-10-01, in the same session at the user's request (see Decisions at the end).
 
 ## Problem
 
@@ -113,17 +113,19 @@ at about y 360. That is 205 px of interest; 180 keeps every tag and pin with the
 6. Update `docs/demo/overview-recording.md` (the take can now show Next 6 h and Activity with the harbour visible),
    HANDOFF.md, commit per step.
 
-## Unresolved Questions
+## Decisions (resolved 2026-10-01, the user delegated the calls)
 
-- Should the condensed state repeat the three figures (Alongside / Inbound / Needs you) somewhere, for example
-  as a compact line in the header, or is the Needs you section enough once you have scrolled?
-- Clicking a tag in the mini band: allow the facts card to overflow the band (drawn over the content), skip
-  the card and only fly-to plus highlight, or restore the full band first?
-- Snap vs scroll-linked: this spec snaps (320 ms). Scroll-linked shrinking tracks the finger better but
-  steps layout every scroll frame on a page with measured hitches (idle p99 206 ms). Accepting snap as the risk.
-- Masthead fold: one driver (the band's frame step) or a second tween (`Reveal`)? Spec prefers one driver;
-  decide in step 4 once the code is open.
-- Ecosystem check before step 4 (5 min): is there an Uno Toolkit or WCT 8 sticky or condensing-header
-  mechanism? WinUI has no sticky headers; if none exists, the custom path above stands and goes in the handoff.
-- Risk: the frame hitches measured on Overview can land inside the 320 ms fold. Profiling the hitches is
-  separate work, already queued.
+- Figures while condensed: not repeated. The Needs you section is on screen once scrolled, and the tab dots
+  already flag sections that need you.
+- Ship click in the mini band: selects and flies to the vessel (tag edge, timeline dot, Next 6 h row light up);
+  no facts card in the mini band. The card shows when the band is full again.
+- Snap, not scroll-linked: 320 ms. The masthead fold runs on `controls:Reveal` (Grow, `DurationKey` =
+  DurationExpandMs) started by the same state change as the band, so both move together; one driver was not needed.
+- Mini slice: offset 180 (not 165) after the step 1 spike; every pin and most of each hull reads, and the
+  top tag clamps to the band's edge.
+- Ecosystem check: no Toolkit or Themes sticky/condensing header in the docs; the custom path stands.
+- Found while verifying: one ScrollViewer hosts every section, so a section opened at the previous section's
+  offset (Berths opened halfway down; Overview came back scrolled under full chrome). Each section now opens at
+  its top.
+- Not verified this session: hover linking in the mini band (the MCP has no hover; selection linking was
+  verified), and the frame-interval trace during the fold (step 8).

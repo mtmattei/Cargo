@@ -31,6 +31,10 @@ public static class Reveal
     public static readonly DependencyProperty OnOpacityProperty = DependencyProperty.RegisterAttached(
         "OnOpacity", typeof(double), typeof(Reveal), new PropertyMetadata(1d));
 
+    /// <summary>The motion token for the duration (DurationRevealMs by default; the masthead fold uses DurationExpandMs to move with the band).</summary>
+    public static readonly DependencyProperty DurationKeyProperty = DependencyProperty.RegisterAttached(
+        "DurationKey", typeof(string), typeof(Reveal), new PropertyMetadata("DurationRevealMs"));
+
     public static readonly DependencyProperty FadeProperty = DependencyProperty.RegisterAttached(
         "Fade", typeof(bool), typeof(Reveal), new PropertyMetadata(true));
 
@@ -69,6 +73,10 @@ public static class Reveal
 
     public static void SetOnOpacity(DependencyObject d, double value) => d.SetValue(OnOpacityProperty, value);
 
+    public static string GetDurationKey(DependencyObject d) => (string)d.GetValue(DurationKeyProperty);
+
+    public static void SetDurationKey(DependencyObject d, string value) => d.SetValue(DurationKeyProperty, value);
+
     public static bool GetFade(DependencyObject d) => (bool)d.GetValue(FadeProperty);
 
     public static void SetFade(DependencyObject d, bool value) => d.SetValue(FadeProperty, value);
@@ -100,7 +108,7 @@ public static class Reveal
             Element = element,
             On = on,
             Start = DateTimeOffset.Now,
-            Duration = Motion.Duration("DurationRevealMs"),
+            Duration = Motion.Duration(GetDurationKey(element)),
             Opacity = GetFade(element) ? (visible ? element.Opacity : 0, on ? GetOnOpacity(element) : 0) : null,
             Rise = shift is null ? null : (shift, shift.Y, on ? -GetRise(element) : 0),
             Height = GetGrow(element) ? (visible ? element.ActualHeight : 0, on ? Natural(element) : 0) : null,

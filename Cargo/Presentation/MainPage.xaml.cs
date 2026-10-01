@@ -7,6 +7,12 @@ public sealed partial class MainPage : Page
     private bool _attached;
     private bool _warmed;
 
+    // Scrolling back to the top for Show harbour: no condensing on the way up
+    private bool _returning;
+
+    /// <summary>Folding the masthead and the band to its mini frees this much height (121 + 340 - 180).</summary>
+    private const double CondenseFrees = 311;
+
     public MainPage()
     {
         InitializeComponent();
@@ -32,7 +38,48 @@ public sealed partial class MainPage : Page
 
         _attached = true;
         Harbour.State = vm.State;
+        SectionScroll.ViewChanged += OnSectionScrolled;
+        // Each section opens at its top: one ScrollViewer hosts them all, and a carried offset opened
+        // Berths halfway down and brought Overview back scrolled under its full chrome
+        vm.State.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(PortState.Section))
+            {
+                _returning = false;
+                SectionScroll.ChangeView(null, 0, null, true);
+            }
+        };
+        vm.State.ScrollToTopRequested += (_, _) =>
+        {
+            _returning = true;
+            SectionScroll.ChangeView(null, 0, null, Motion.Reduced);
+        };
         Bindings.Update();
+    }
+
+    /// <summary>
+    /// Overview condenses once scrolled past 48 px and restores at the top (4 px), so the edge never flaps.
+    /// It condenses only when the content stays scrollable after the chrome gives back its 311 px; otherwise
+    /// the larger viewport would clamp the offset to the top and restore it straight away.
+    /// </summary>
+    // xaml-lint: allow codebehind - the scroll offset drives page-chrome state; ViewChanged has no Command surface
+    private void OnSectionScrolled(object? sender, ScrollViewerViewChangedEventArgs e)
+    {
+        if (ViewModel?.State is not { Section: "overview" } state)
+        {
+            return;
+        }
+
+        var y = SectionScroll.VerticalOffset;
+        if (y <= 4)
+        {
+            _returning = false;
+            state.OverviewCondensed = false;
+        }
+        else if (y > 48 && !_returning && (state.OverviewCondensed || SectionScroll.ScrollableHeight > CondenseFrees + 48))
+        {
+            state.OverviewCondensed = true;
+        }
     }
 
     /// <summary>

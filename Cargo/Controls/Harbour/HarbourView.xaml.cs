@@ -174,6 +174,18 @@ public sealed partial class HarbourView : UserControl
     /// <summary>The band's full height (expanded) and how far the scene rides up when collapsed to 340 (the design).</summary>
     private const double BandFull = 491, BandCollapsed = 340, BandRise = 110;
 
+    /// <summary>
+    /// The mini band Overview condenses to while scrolled (SPEC-OVERVIEW-SCROLL), and how far the scene sits
+    /// up in it: the slice from scene y 180 to 360 holds every pin and most of each hull; tags clamp to its top edge.
+    /// </summary>
+    private const double BandMini = 180, BandMiniRise = 180;
+
+    /// <summary>Overview condensed to its mini band: no HUD, no facts card, tags kept clear of the edges only.</summary>
+    private bool Mini => !double.IsNaN(StageHeight) && StageHeight <= BandMini;
+
+    /// <summary>A short frame (the strip elsewhere, the mini band here): tight tag insets, no facts card.</summary>
+    private bool Tight => Compact || Mini;
+
     /// <summary>How far the scene sits above the view's top edge right now, in band mode.</summary>
     private double _bandOffset;
 
@@ -194,6 +206,8 @@ public sealed partial class HarbourView : UserControl
         // Band mode renders the scene once at full height; the view clips it and slides it, so
         // growing or shrinking the band never re-bakes or re-frames the scene
         var band = !double.IsNaN(to);
+        HudVisibility = Tight ? Visibility.Collapsed : Visibility.Visible;
+        PaintTags();
         SceneHost.Height = TagLayer.Height = band ? BandFull : double.NaN;
         SceneHost.VerticalAlignment = TagLayer.VerticalAlignment = band ? VerticalAlignment.Top : VerticalAlignment.Stretch;
 
@@ -258,16 +272,19 @@ public sealed partial class HarbourView : UserControl
     private double VisibleHeight => !double.IsNaN(StageHeight) && !double.IsNaN(Height) ? Height : ActualHeight;
 
     /// <summary>
-    /// Slides the full-height scene up as the band shrinks: flush at 491, the design's 110 px up at 340,
-    /// linear between. Called per band step, and on SizeChanged for width changes.
+    /// Slides the full-height scene up as the band shrinks: flush at 491, the design's 110 px up at 340, 180 up
+    /// at the mini band. Called per band step, and on SizeChanged for width changes.
     /// </summary>
     // xaml-lint: allow responsive - follows the band's height animation frame by frame; no size class or threshold
     private void SlideBand()
     {
         var visible = VisibleHeight;
+        // Three points, linear between: flush at 491, 110 up at 340, 180 up at the 180 mini band
         _bandOffset = double.IsNaN(StageHeight) || visible <= 0
             ? 0
-            : Math.Clamp((BandFull - visible) * BandRise / (BandFull - BandCollapsed), 0, BandRise);
+            : visible >= BandCollapsed
+                ? Math.Clamp((BandFull - visible) * BandRise / (BandFull - BandCollapsed), 0, BandRise)
+                : Math.Clamp(BandRise + (BandCollapsed - visible) * (BandMiniRise - BandRise) / (BandCollapsed - BandMini), BandRise, BandMiniRise);
         // Negative margins keep each layer's slot at its full height: a slot shorter than the layer
         // clips it in its own coordinates, before any offset, which left the band's bottom empty
         var below = double.IsNaN(StageHeight) ? 0 : Math.Max(0, BandFull - visible - _bandOffset);
@@ -329,7 +346,7 @@ public sealed partial class HarbourView : UserControl
 
     private void OnModeChanged()
     {
-        HudVisibility = Compact ? Visibility.Collapsed : Visibility.Visible;
+        HudVisibility = Tight ? Visibility.Collapsed : Visibility.Visible;
         InvalidateMeasure();
         RefreshTags();
         Frame(animate: true);
@@ -497,7 +514,7 @@ public sealed partial class HarbourView : UserControl
             // The float shadow is the resting edge; selected takes a 2 px ink edge, a linked hover a 1 px one
             tag.Edge = selected || lit ? Tokens.Brush("InkInvariantBrush") : Tokens.Transparent;
             tag.EdgeThickness = new Thickness(selected ? 2 : 1);
-            tag.Expanded = selected && !Compact ? Visibility.Visible : Visibility.Collapsed;
+            tag.Expanded = selected && !Tight ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 
@@ -562,7 +579,7 @@ public sealed partial class HarbourView : UserControl
 
             // A vessel out of frame loses its tag rather than pinning it to an edge it is not near.
             // xaml-lint: allow responsive - per-frame projection culling, not a breakpoint
-            var inFrame = x > 0 && x < ActualWidth && y - _bandOffset > (Compact ? 16 : 40) && y - _bandOffset < visible - (Compact ? 8 : 56);
+            var inFrame = x > 0 && x < ActualWidth && y - _bandOffset > (Tight ? 16 : 40) && y - _bandOffset < visible - (Tight ? 8 : 56);
             // xaml-lint: allow codebehind - per-frame projection culling; there is no XAML surface for the camera
             host.Visibility = inFrame ? Visibility.Visible : Visibility.Collapsed;
             if (!inFrame)
@@ -577,7 +594,7 @@ public sealed partial class HarbourView : UserControl
             // The strip keeps its top-right corner clear for the Expand harbour button.
             var right = Compact ? 150 : 10;
             var left = Math.Clamp(x - width / 2, 10, Math.Max(10, ActualWidth - width - right));
-            var minTop = (Compact ? 6 : 52) + _bandOffset;
+            var minTop = (Tight ? 6 : 52) + _bandOffset;
             var top = Math.Max(minTop, y - Lead - height);
             (left, top) = AvoidOverlap(placed, left, top, width, height, minTop, ActualWidth - right);
             placed.Add(new Rect(left, top, width, height));
