@@ -81,7 +81,11 @@ public sealed partial class HarbourView : UserControl
             ApplyStartView();
         }
 
-        SizeChanged += (_, _) => PlaceOverlays();
+        SizeChanged += (_, _) =>
+        {
+            SlideBand();
+            PlaceOverlays();
+        };
         KeyDown += OnKeyDown;
         Loaded += (_, _) =>
         {
@@ -171,6 +175,12 @@ public sealed partial class HarbourView : UserControl
 
     private Storyboard? _heightBoard;
 
+    /// <summary>The band's full height (expanded) and how far the scene rides up when collapsed to 340 (the design).</summary>
+    private const double BandFull = 491, BandCollapsed = 340, BandRise = 110;
+
+    /// <summary>How far the scene sits above the view's top edge right now, in band mode.</summary>
+    private double _bandOffset;
+
     /// <summary>
     /// Between two band heights the stage grows over 320 ms on EaseSmooth; to or from the
     /// proportional stage (a section change) it jumps. The local value is the target and the
@@ -181,6 +191,14 @@ public sealed partial class HarbourView : UserControl
     {
         _heightBoard?.Stop();
         _heightBoard = null;
+
+        // Band mode renders the scene once at full height; the view clips it and slides it, so
+        // growing or shrinking the band never re-bakes or re-frames the scene (it did, every frame)
+        var band = !double.IsNaN(to);
+        SceneHost.Height = TagLayer.Height = band ? BandFull : double.NaN;
+        SceneHost.VerticalAlignment = TagLayer.VerticalAlignment = band ? VerticalAlignment.Top : VerticalAlignment.Stretch;
+        SlideBand();
+
         var current = ActualHeight;
         Height = to;
         if (double.IsNaN(from) || double.IsNaN(to) || current <= 0 || Motion.Reduced)
@@ -205,6 +223,21 @@ public sealed partial class HarbourView : UserControl
         _heightBoard = new Storyboard();
         _heightBoard.Children.Add(animation);
         _heightBoard.Begin();
+    }
+
+    /// <summary>
+    /// Slides the full-height scene up as the band shrinks: flush at 491, the design's 110 px up at 340,
+    /// linear between. The view's own height is what animates; this follows it on SizeChanged.
+    /// </summary>
+    private void SlideBand()
+    {
+        _bandOffset = double.IsNaN(StageHeight) || ActualHeight <= 0
+            ? 0
+            : Math.Clamp((BandFull - ActualHeight) * BandRise / (BandFull - BandCollapsed), 0, BandRise);
+        // Negative margins keep each layer's slot at its full height: a slot shorter than the layer
+        // clips it in its own coordinates, before any offset, which left the band's bottom empty
+        var below = double.IsNaN(StageHeight) ? 0 : Math.Max(0, BandFull - ActualHeight - _bandOffset);
+        SceneHost.Margin = TagLayer.Margin = new Thickness(0, -_bandOffset, 0, -below);
     }
 
     public static readonly DependencyProperty HudVisibilityProperty = DependencyProperty.Register(
@@ -490,7 +523,7 @@ public sealed partial class HarbourView : UserControl
 
             // A vessel out of frame loses its tag rather than pinning it to an edge it is not near.
             // xaml-lint: allow responsive - per-frame projection culling, not a breakpoint
-            var inFrame = x > 0 && x < ActualWidth && y > (Compact ? 16 : 40) && y < ActualHeight - (Compact ? 8 : 56);
+            var inFrame = x > 0 && x < ActualWidth && y - _bandOffset > (Compact ? 16 : 40) && y - _bandOffset < ActualHeight - (Compact ? 8 : 56);
             // xaml-lint: allow codebehind - per-frame projection culling; there is no XAML surface for the camera
             host.Visibility = inFrame ? Visibility.Visible : Visibility.Collapsed;
             if (!inFrame)
@@ -505,7 +538,7 @@ public sealed partial class HarbourView : UserControl
             // The strip keeps its top-right corner clear for the Expand harbour button.
             var right = Compact ? 150 : 10;
             var left = Math.Clamp(x - width / 2, 10, Math.Max(10, ActualWidth - width - right));
-            var minTop = Compact ? 6 : 52;
+            var minTop = (Compact ? 6 : 52) + _bandOffset;
             var top = Math.Max(minTop, y - Lead - height);
             (left, top) = AvoidOverlap(placed, left, top, width, height, minTop, ActualWidth - right);
             placed.Add(new Rect(left, top, width, height));

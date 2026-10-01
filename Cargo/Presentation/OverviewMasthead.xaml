@@ -67,15 +67,15 @@
       </Button>
     </StackPanel>
 
-    <!-- Duty operator: an ID card clipped to the masthead, tilted 1.2° from its clip.
+    <!-- Duty operator: an ID card clipped to the masthead.
          Shadows inline: a Style-supplied collection never applies (Toolkit gotcha G36). -->
     <utu:ShadowContainer Grid.Column="2" Grid.RowSpan="2" Width="252" VerticalAlignment="Center"
                          Background="{StaticResource SurfaceInvariantBrush}"
-                         RenderTransformOrigin="0.5,0" controls:IdCardMotion.IsEnabled="True"
+                         controls:IdCardMotion.IsEnabled="True"
                          Visibility="{utu:Responsive Layout={StaticResource MastheadBreakpoints}, Narrowest=Collapsed, Narrow=Visible}"
                          AutomationProperties.Name="{x:Bind ViewModel.OperatorSummary}">
       <utu:ShadowContainer.RenderTransform>
-        <CompositeTransform Rotation="-1.2" />
+        <TranslateTransform />
       </utu:ShadowContainer.RenderTransform>
       <utu:ShadowContainer.Shadows>
         <utu:ShadowCollection>
