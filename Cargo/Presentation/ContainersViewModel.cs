@@ -124,7 +124,7 @@ public sealed partial class ContainersViewModel : ObservableObject
                 Meta = $"{container.Size} · {container.Carrier.ToUpperInvariant()}",
                 Route = container.Route,
                 State = container.State,
-                StateTone = Tokens.Brush(container.Warn ? "OrangeColor" : "TealColor"),
+                StateTone = Tokens.Brush(container.Warn ? "OrangeColor" : "AccentColor"),
                 Border = State.SelectedContainerId == container.Id
                     ? Tokens.Brush("InkInvariantBrush")
                     : Tokens.Brush("HairlineInvariantBrush"),
@@ -149,20 +149,20 @@ public sealed partial class ContainersViewModel : ObservableObject
             var tone = current && container.Warn
                 ? Tokens.Brush("OrangeInvariantBrush")
                 : current ? Tokens.Brush("InkInvariantBrush")
-                : done ? Tokens.Brush("TealInvariantBrush")
+                : done ? Tokens.Brush("AccentInvariantBrush")
                 : Tokens.Brush("InkColor", 0.18);
 
             Journey.Add(new JourneyStep
             {
                 Label = PortData.JourneyStages[i],
                 Icon = Geo.Path(PortData.JourneyIcons[i]),
-                Background = current ? tone : done ? Tokens.Brush("TealColor", 0.1) : Tokens.Brush("SurfaceInvariantBrush"),
+                Background = current ? tone : done ? Tokens.Brush("AccentColor", 0.1) : Tokens.Brush("SurfaceInvariantBrush"),
                 Border = tone,
-                Foreground = current ? Tokens.Brush("SurfaceInvariantBrush") : done ? Tokens.Brush("TealInvariantBrush") : Tokens.Brush("TextFaintInvariantBrush"),
-                LabelTone = current ? Tokens.Brush("InkInvariantBrush") : done ? Tokens.Brush("TealInvariantBrush") : Tokens.Brush("TextFaintInvariantBrush"),
+                Foreground = current ? Tokens.Brush("SurfaceInvariantBrush") : done ? Tokens.Brush("AccentInvariantBrush") : Tokens.Brush("TextFaintInvariantBrush"),
+                LabelTone = current ? Tokens.Brush("InkInvariantBrush") : done ? Tokens.Brush("AccentInvariantBrush") : Tokens.Brush("TextFaintInvariantBrush"),
                 Connector = i == PortData.JourneyStages.Count - 1
                     ? Tokens.Transparent
-                    : done ? Tokens.Brush("TealInvariantBrush") : Tokens.Brush("InkColor", 0.12)
+                    : done ? Tokens.Brush("AccentInvariantBrush") : Tokens.Brush("InkColor", 0.12)
             });
         }
 
@@ -177,7 +177,7 @@ public sealed partial class ContainersViewModel : ObservableObject
                      ("Destination", container.Destination, null),
                      ("Yard location", container.YardSlot, null),
                      ("Customs", container.Customs,
-                         container.Customs is "Cleared" or "Pre-cleared" ? "TealColor" : "OrangeColor"),
+                         container.Customs is "Cleared" or "Pre-cleared" ? "AccentColor" : "OrangeColor"),
                      ("Inspection", container.Inspection, container.Warn ? "OrangeColor" : null),
                      ("Seal", container.Seal, null),
                      ("Security", container.Security, container.SecurityToken)

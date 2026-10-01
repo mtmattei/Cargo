@@ -126,7 +126,7 @@ public sealed partial class BerthMap : SceneHost
         Scene.Place(Draw.Rule(700, 440, 1170, 440, Tokens.Brush("TextFaintInvariantBrush"), 1, dash: Draw.Dash(3, 5)));
 
         // Nordic Star's approach
-        var approach = Draw.Shape("M700 392 C 760 330 860 260 930 222", null, Tokens.Brush("AmberDeepInvariantBrush"), 1.5);
+        var approach = Draw.Shape("M700 392 C 760 330 860 260 930 222", null, Tokens.Brush("AccentInvariantBrush"), 1.5);
         approach.StrokeDashArray = Draw.Dash(6, 8);
         Scene.Place(approach);
     }
@@ -187,7 +187,7 @@ public sealed partial class BerthMap : SceneHost
             var toneToken = conflict ? "AlertColor" : StatusToken(status);
             if (dragVessel is not null)
             {
-                toneToken = fits ? "TealColor" : "RestrictedColor";
+                toneToken = fits ? "AccentColor" : "RestrictedColor";
             }
 
             var tone = Tokens.Color(toneToken);
@@ -207,10 +207,10 @@ public sealed partial class BerthMap : SceneHost
 
     private static string StatusToken(string status) => status switch
     {
-        "occupied" => "TealColor",
-        "reserved" => "AmberDeepColor",
+        "occupied" => "AccentColor",
+        "reserved" => "AccentColor",
         "restricted" => "RestrictedColor",
-        _ => "TealColor"
+        _ => "AccentColor"
     };
 
     private void DrawVessels(double planHour)

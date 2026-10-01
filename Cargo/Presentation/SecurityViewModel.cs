@@ -203,13 +203,13 @@ public sealed partial class SecurityViewModel : ObservableObject
             Mark = "✓",
             Label = label,
             Time = string.Empty,
-            Tone = Tokens.Brush("TealInvariantBrush")
+            Tone = Tokens.Brush("AccentInvariantBrush")
         }).ToList();
 
         HeldChecks = new[]
         {
-            ("✓", "Seal verified", "TealInvariantBrush"),
-            ("✓", "Manifest matched", "TealInvariantBrush"),
+            ("✓", "Seal verified", "AccentInvariantBrush"),
+            ("✓", "Manifest matched", "AccentInvariantBrush"),
             ("⚠", "Weight variance +1.8 t · manual inspection required", "OrangeInvariantBrush")
         }.Select(entry => new CheckRow
         {

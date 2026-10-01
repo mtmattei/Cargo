@@ -22,9 +22,9 @@ public sealed partial class MovementsChart : SceneHost
         var arrivals = Geo.Mirror(PortData.Arrivals, 1200, 100, 62, -1);
         var departures = Geo.Mirror(PortData.Departures, 1200, 100, 46, 1);
 
-        Scene.Place(new Path { Data = arrivals.Area, Fill = Draw.Fade("TealColor", 0.24) });
+        Scene.Place(new Path { Data = arrivals.Area, Fill = Draw.Fade("AccentColor", 0.24) });
         Scene.Place(new Path { Data = departures.Area, Fill = Draw.Fade("SeaGreenColor", 0.24, up: true) });
-        Scene.Place(new Path { Data = arrivals.Stroke, Stroke = Tokens.Brush("TealInvariantBrush"), StrokeThickness = 1.8 });
+        Scene.Place(new Path { Data = arrivals.Stroke, Stroke = Tokens.Brush("AccentInvariantBrush"), StrokeThickness = 1.8 });
         Scene.Place(new Path { Data = departures.Stroke, Stroke = Tokens.Brush("SeaGreenInvariantBrush"), StrokeThickness = 1.8 });
 
         Scene.Place(Draw.Rule(0, 100, 1200, 100, Tokens.Brush("InkColor", 0.18)));
@@ -49,7 +49,7 @@ public sealed partial class MovementsChart : SceneHost
             var future = hour > PortData.NowHours;
             var tone = future
                 ? Tokens.Brush("AmberInvariantBrush")
-                : arrival ? Tokens.Brush("TealInvariantBrush") : Tokens.Brush("SeaGreenInvariantBrush");
+                : arrival ? Tokens.Brush("AccentInvariantBrush") : Tokens.Brush("SeaGreenInvariantBrush");
 
             Scene.Place(Draw.Rule(x, y, x, arrival ? 22 : 170, tone, 1));
             Scene.Place(Draw.Dot(x, y, 4.5, tone, Tokens.Brush("SurfaceInvariantBrush"), 2));
@@ -177,7 +177,7 @@ public sealed partial class VolumeChart : SceneHost
             var partial = live && j == blocks - 1 && value % 20 != 0;
             var y = 94 - j * 10.5;
             var token = live
-                ? "TealColor"
+                ? "AccentColor"
                 : j % 4 == 1 ? "CargoHazardColor" : j % 4 == 3 ? "CargoOversizeColor" : "CargoStandardColor";
             var color = Tokens.Color(token);
             var opacity = partial ? 0.45 : live ? 1 : 0.8;
@@ -201,9 +201,9 @@ public sealed partial class FlowChart : SceneHost
         var leaving = Geo.MakeSeries(PortData.CargoOut, 300, 132, 14);
 
         Scene.Place(new Path { Data = leaving.Area, Fill = Draw.Fade("AmberColor", 0.30) });
-        Scene.Place(new Path { Data = entering.Area, Fill = Draw.Fade("TealColor", 0.26) });
+        Scene.Place(new Path { Data = entering.Area, Fill = Draw.Fade("AccentColor", 0.26) });
         Scene.Place(new Path { Data = leaving.Stroke, Stroke = Tokens.Brush("AmberInvariantBrush"), StrokeThickness = 1.8 });
-        Scene.Place(new Path { Data = entering.Stroke, Stroke = Tokens.Brush("TealInvariantBrush"), StrokeThickness = 1.8 });
+        Scene.Place(new Path { Data = entering.Stroke, Stroke = Tokens.Brush("AccentInvariantBrush"), StrokeThickness = 1.8 });
 
         Scene.Place(Draw.Rule(0, 132, 300, 132, Tokens.Brush("InkColor", 0.1)));
         Scene.Place(Draw.Text("00:00", 0, 136, 12, Tokens.Brush("TextFaintInvariantBrush")));
@@ -224,7 +224,7 @@ public sealed partial class TideChart : SceneHost
         var x = Math.Clamp((PortData.NowHours - 18) / 12 * 600, 0, 600);
         var y = tide.At((PortData.NowHours - 18) * 2);
         Scene.Place(Draw.Rule(x, 4, x, 62, Tokens.Brush("InkInvariantBrush"), 1, dash: Draw.Dash(3, 3)));
-        Scene.Place(Draw.Dot(x, y, 4, Tokens.Brush("TealInvariantBrush"), Tokens.Brush("SurfaceInvariantBrush"), 2));
+        Scene.Place(Draw.Dot(x, y, 4, Tokens.Brush("AccentInvariantBrush"), Tokens.Brush("SurfaceInvariantBrush"), 2));
     }
 }
 
@@ -236,8 +236,8 @@ public sealed partial class ThroughputChart : SceneHost
         Overflow = 24;
         var series = Geo.MakeSeries(PortData.Volume, 1000, 100, 14);
 
-        Scene.Place(new Path { Data = series.Area, Fill = Draw.Fade("TealColor", 0.22) });
-        Scene.Place(new Path { Data = series.Stroke, Stroke = Tokens.Brush("TealInvariantBrush"), StrokeThickness = 2 });
+        Scene.Place(new Path { Data = series.Area, Fill = Draw.Fade("AccentColor", 0.22) });
+        Scene.Place(new Path { Data = series.Stroke, Stroke = Tokens.Brush("AccentInvariantBrush"), StrokeThickness = 2 });
 
         Scene.Place(Draw.Rule(0, 100, 1000, 100, Tokens.Brush("InkColor", 0.1)));
         Scene.Place(Draw.Rule(874, 8, 874, 100, Tokens.Brush("InkInvariantBrush"), 1, dash: Draw.Dash(3, 3)));

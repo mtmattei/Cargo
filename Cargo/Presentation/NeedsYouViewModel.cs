@@ -116,7 +116,7 @@ public sealed partial class NeedsYouViewModel : ObservableObject
             Meta = "Every arrival has a confirmed berth";
         }
 
-        Ground = done ? Tokens.Brush("SurfaceInvariantBrush") : Tokens.Brush("AmberInvariantBrush", .16);
+        Ground = done ? Tokens.Brush("SurfaceInvariantBrush") : Tokens.Brush("AlertInvariantBrush", .05);
         Edge = done ? Tokens.Brush("HairlineStrongInvariantBrush") : Tokens.Brush("InkInvariantBrush", 0);
         MetaForeground = _error is not null && !done ? Tokens.Brush("AlertInvariantBrush") : Tokens.Brush("TextMutedInvariantBrush");
         NeedsMark = done ? Visibility.Collapsed : Visibility.Visible;

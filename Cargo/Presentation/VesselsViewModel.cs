@@ -127,8 +127,8 @@ public sealed partial class VesselsViewModel : ObservableObject
         Security = vessel.Security;
 
         var cleared = vessel.Security == "Cleared";
-        SecurityBackground = cleared ? Tokens.Brush("TealColor", 0.12) : Tokens.Brush("AmberDeepColor", 0.16);
-        SecurityForeground = cleared ? Tokens.Brush("TealInvariantBrush") : Tokens.Brush("OrangeInkInvariantBrush");
+        SecurityBackground = cleared ? Tokens.Brush("NavyColor", 0.12) : Tokens.Brush("AmberDeepColor", 0.16);
+        SecurityForeground = cleared ? Tokens.Brush("AccentInvariantBrush") : Tokens.Brush("OrangeInkInvariantBrush");
 
         TeuLabel = vessel.Containers.ToString("N0");
         OpsNote = vessel.OpsNote;
@@ -159,7 +159,7 @@ public sealed partial class VesselsViewModel : ObservableObject
                 Line1 = string.Join(" · ", parts.Take(2)),
                 Line2 = SecondLine(vessel, parts),
                 Tone = Tokens.Brush(vessel.AccentToken),
-                Border = selected ? Tokens.Brush("TealInvariantBrush") : Tokens.Brush("HairlineInvariantBrush"),
+                Border = selected ? Tokens.Brush("AccentInvariantBrush") : Tokens.Brush("HairlineInvariantBrush"),
                 Silhouette = Sprites.Source(Sprites.Side(vessel.Id)),
                 Select = State.PickHullVesselCommand
             });
@@ -309,7 +309,7 @@ public sealed partial class VesselsViewModel : ObservableObject
                 "M3 12h18M3 12l4-4M3 12l4 4M21 12l-4-4M21 12l-4 4"),
             ("Discharged", UnloadLive, $"{ashore:N0} discharged", "SeaGreenInvariantBrush",
                 "M12 3v12M12 15l-4-4M12 15l4-4M4 21h16"),
-            ("Loaded", LoadLive, $"{moves} moves/h", "TealInvariantBrush",
+            ("Loaded", LoadLive, $"{moves} moves/h", "AccentInvariantBrush",
                 "M12 21V9M12 9l-4 4M12 9l4 4M4 3h16"),
             ("Departure", vessel.Etd, State.BerthOf(vessel.Id) is { } b ? $"Berth {b}" : "Unassigned", "InkInvariantBrush",
                 "M3 15l2 5h14l2-5zM5 15V9h14v6M9 9V5h6v4")

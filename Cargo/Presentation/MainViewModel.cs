@@ -160,7 +160,7 @@ public sealed partial class MainViewModel : ObservableObject
         var meta = new Dictionary<string, (string Sub, string? Badge)>
         {
             ["overview"] = ("3 alongside · 2 inbound · 2,146 moves today", null),
-            ["berths"] = ($"Nordic Star in {nordicIn} min · Berth 06 frees 21:30", "AmberColor"),
+            ["berths"] = ($"Nordic Star in {nordicIn} min · Berth 06 frees 21:30", "AccentColor"),
             ["cargo"] = ($"4,812 on site · {State.YardOccupancy}% yard · 1 hold", "OrangeColor"),
             ["fleet"] = ("6 underway · 2 running late", "OrangeColor"),
             ["security"] = ("ISPS level 1 · 0 incidents", null)
@@ -186,7 +186,7 @@ public sealed partial class MainViewModel : ObservableObject
             var (sub, badge) = meta[item.Id];
 
             item.Tooltip = $"{item.Label} · {sub}";
-            item.ChipBackground = current ? Tokens.Brush("TealBrightInvariantBrush") : Tokens.Brush("DeckWhiteColor", 0.08);
+            item.ChipBackground = current ? Tokens.Brush("AccentBrightInvariantBrush") : Tokens.Brush("DeckWhiteColor", 0.08);
             item.ChipForeground = current ? Tokens.Brush("InkDeepInvariantBrush") : Tokens.Brush("TextOnDarkMutedBrush");
             item.LabelForeground = current ? Tokens.Brush("SurfaceInvariantBrush") : Tokens.Brush("TextOnDarkBrush");
             item.BadgeBrush = badge is null ? Tokens.Transparent : Tokens.Brush(badge);

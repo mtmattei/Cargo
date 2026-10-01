@@ -174,7 +174,7 @@ public sealed partial class ContainerScanner : Panel
             (new[] { -hx, hx, hx, -hx }, new[] { hy, hy, hy, hy }, new[] { hz, hz, -hz, -hz }, Tokens.Shade(tint, -70))
         };
 
-        var edge = xray ? Tokens.Brush("TealBrightColor", 0.75) : Tokens.Brush("InkColor", 0.35);
+        var edge = xray ? Tokens.Brush("AccentBrightColor", 0.75) : Tokens.Brush("InkColor", 0.35);
 
         var ordered = faces
             .Select(face => (Face: face, Depth: Enumerable.Range(0, 4)

@@ -20,9 +20,9 @@
         <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
 
-      <!-- Needs: an amber square, the legend's "reserved · arriving" swatch. Done: a check. -->
+      <!-- Needs: the alert square the app uses for every needs-you mark. Done: a check. -->
       <Grid VerticalAlignment="Center" AutomationProperties.AccessibilityView="Raw">
-        <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2" Fill="{StaticResource AmberInvariantBrush}"
+        <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2" Fill="{StaticResource AlertInvariantBrush}"
                    Visibility="{x:Bind ViewModel.NeedsMark, Mode=OneWay}" />
         <FontIcon Glyph="&#xE73E;" FontSize="11" Foreground="{StaticResource InkInvariantBrush}"
                   Visibility="{x:Bind ViewModel.DoneMark, Mode=OneWay}" />
@@ -39,14 +39,13 @@
         <Button Content="Review" Style="{StaticResource GhostButton}" MinHeight="40"
                 Command="{x:Bind ViewModel.ReviewCommand, Mode=OneWay}"
                 Visibility="{x:Bind ViewModel.ReviewVisibility, Mode=OneWay}" />
-        <Button Style="{StaticResource PrimaryButton}" MinHeight="40" MinWidth="148" Margin="4,0,0,0"
-                Background="{StaticResource AmberInvariantBrush}" Foreground="{StaticResource InkInvariantBrush}"
+        <Button Style="{StaticResource PrimaryActionButton}" MinHeight="40" MinWidth="148" Margin="4,0,0,0"
                 Command="{x:Bind ViewModel.ConfirmCommand, Mode=OneWay}"
                 Visibility="{x:Bind ViewModel.ConfirmVisibility, Mode=OneWay}"
                 AutomationProperties.Name="{x:Bind ViewModel.ConfirmLabel, Mode=OneWay}">
           <StackPanel Orientation="Horizontal" Spacing="8">
             <ProgressRing Width="12" Height="12" MinWidth="12" MinHeight="12" IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}"
-                          Foreground="{StaticResource InkInvariantBrush}" />
+                          Foreground="{StaticResource OnAccentInvariantBrush}" />
             <TextBlock Text="{x:Bind ViewModel.ConfirmLabel, Mode=OneWay}" Style="{StaticResource ActionLabelText}" />
           </StackPanel>
         </Button>

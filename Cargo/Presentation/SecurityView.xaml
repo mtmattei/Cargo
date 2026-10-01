@@ -65,7 +65,7 @@
               <TextBlock Text="Security timeline" Style="{StaticResource CardTitleText}" />
               <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Right" VerticalAlignment="Center">
                 <StackPanel Orientation="Horizontal" Spacing="5">
-                  <Ellipse Width="7" Height="7" Fill="{StaticResource TealInvariantBrush}" VerticalAlignment="Center" />
+                  <Ellipse Width="7" Height="7" Fill="{StaticResource AccentInvariantBrush}" VerticalAlignment="Center" />
                   <TextBlock Text="clearance" Style="{StaticResource CaptionText}" FontSize="12" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="5">
@@ -92,7 +92,7 @@
               <Border Background="{StaticResource SurfaceSunkInvariantBrush}" CornerRadius="10" Padding="8,3"
                       HorizontalAlignment="Right">
                 <TextBlock Text="Cleared" FontFamily="{StaticResource BodyMediumFont}" FontSize="11"
-                           Foreground="{StaticResource TealInvariantBrush}" />
+                           Foreground="{StaticResource AccentInvariantBrush}" />
               </Border>
             </Grid>
             <ItemsControl ItemsSource="{x:Bind ViewModel.ClearedChecks, Mode=OneWay}">
@@ -202,7 +202,7 @@
                       <TextBlock Text="{x:Bind Name}" FontFamily="{StaticResource BodyStrongFont}" FontSize="13.5" />
                       <TextBlock Text="{x:Bind Role}" Style="{StaticResource CaptionText}" FontSize="12" />
                       <TextBlock Text="{x:Bind Credential}" FontFamily="{StaticResource MonoMediumFont}" FontSize="11"
-                                 Foreground="{StaticResource TealInvariantBrush}" Margin="0,4,0,0" />
+                                 Foreground="{StaticResource AccentInvariantBrush}" Margin="0,4,0,0" />
                     </StackPanel>
                   </Grid>
                 </utu:CardContentControl>

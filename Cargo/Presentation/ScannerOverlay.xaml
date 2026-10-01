@@ -39,9 +39,9 @@
         </Grid.ColumnDefinitions>
         <StackPanel Spacing="8">
           <StackPanel Orientation="Horizontal" Spacing="8">
-            <Ellipse Width="7" Height="7" Fill="{StaticResource TealBrightInvariantBrush}" VerticalAlignment="Center" />
+            <Ellipse Width="7" Height="7" Fill="{StaticResource AccentBrightInvariantBrush}" VerticalAlignment="Center" />
             <TextBlock Text="{x:Bind ViewModel.ScanMode, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}" FontSize="11"
-                       Foreground="{StaticResource TealBrightInvariantBrush}" />
+                       Foreground="{StaticResource AccentBrightInvariantBrush}" />
           </StackPanel>
           <TextBlock Text="{x:Bind ViewModel.ContainerId, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}" FontSize="24"
                      Foreground="{StaticResource PaperInvariantBrush}" />
@@ -119,7 +119,7 @@
       <StackPanel Spacing="18">
         <StackPanel Spacing="8">
           <TextBlock Text="SCAN RESULT" FontFamily="{StaticResource MonoMediumFont}" FontSize="11"
-                     Foreground="{StaticResource TealBrightInvariantBrush}" />
+                     Foreground="{StaticResource AccentBrightInvariantBrush}" />
           <StackPanel Orientation="Horizontal" Spacing="10">
             <Ellipse Width="10" Height="10" Fill="{x:Bind ViewModel.VerdictTone, Mode=OneWay}" VerticalAlignment="Center" />
             <TextBlock Text="{x:Bind ViewModel.Verdict, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}" FontSize="18"
@@ -132,7 +132,7 @@
         <Border Height="1" Background="{StaticResource HairlineOnDarkBrush}" />
         <StackPanel Spacing="12">
           <TextBlock Text="DENSITY MAP" FontFamily="{StaticResource MonoMediumFont}" FontSize="11"
-                     Foreground="{StaticResource TealBrightInvariantBrush}" />
+                     Foreground="{StaticResource AccentBrightInvariantBrush}" />
           <controls:CompositionBar BarHeight="10" Slices="{x:Bind ViewModel.DensitySlices, Mode=OneWay}" />
           <ItemsControl ItemsSource="{x:Bind ViewModel.Density, Mode=OneWay}">
             <ItemsControl.ItemsPanel>
@@ -157,7 +157,7 @@
         <Border Height="1" Background="{StaticResource HairlineOnDarkBrush}" />
         <StackPanel Spacing="12">
           <TextBlock Text="{x:Bind ViewModel.ManifestHeading, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}"
-                     FontSize="11" Foreground="{StaticResource TealBrightInvariantBrush}" />
+                     FontSize="11" Foreground="{StaticResource AccentBrightInvariantBrush}" />
           <ItemsControl ItemsSource="{x:Bind ViewModel.Manifest, Mode=OneWay}">
             <ItemsControl.ItemsPanel>
               <ItemsPanelTemplate><StackPanel Spacing="9" /></ItemsPanelTemplate>

@@ -80,7 +80,7 @@
                   <TextBlock Text="{x:Bind ViewModel.ProfileHint, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12" />
                 </StackPanel>
                 <TextBlock Text="{x:Bind ViewModel.BayLabel, Mode=OneWay}" Style="{StaticResource BodyStrongText}" FontSize="12"
-                           Foreground="{StaticResource TealInvariantBrush}" HorizontalAlignment="Right" VerticalAlignment="Top" />
+                           Foreground="{StaticResource AccentInvariantBrush}" HorizontalAlignment="Right" VerticalAlignment="Top" />
               </Grid>
               <ContentControl x:Name="ProfileHost" HorizontalContentAlignment="Stretch" Margin="0,4,0,0" />
               <ItemsControl ItemsSource="{x:Bind ViewModel.CargoLegend, Mode=OneWay}" Margin="0,10,0,2">
@@ -163,9 +163,9 @@
                   <Grid>
                     <TextBlock Text="Loading" Style="{StaticResource BodyStrongText}" />
                     <TextBlock Text="{x:Bind ViewModel.LoadLive, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}"
-                               FontSize="12.5" Foreground="{StaticResource TealInvariantBrush}" HorizontalAlignment="Right" />
+                               FontSize="12.5" Foreground="{StaticResource AccentInvariantBrush}" HorizontalAlignment="Right" />
                   </Grid>
-                  <controls:TickBar Height="14" LitToken="TealInvariantBrush" Percent="{x:Bind ViewModel.LoadPercent, Mode=OneWay}" />
+                  <controls:TickBar Height="14" LitToken="AccentInvariantBrush" Percent="{x:Bind ViewModel.LoadPercent, Mode=OneWay}" />
                 </StackPanel>
               </Grid>
               <TextBlock Text="{x:Bind ViewModel.OpsNote, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12"
@@ -281,7 +281,7 @@
         <StackPanel Orientation="Horizontal" Spacing="14">
           <TextBlock Text="{x:Bind ViewModel.BayHeading, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}" FontSize="17" />
           <TextBlock Text="{x:Bind ViewModel.BayTotal, Mode=OneWay}" Style="{StaticResource BodyText}"
-                     Foreground="{StaticResource TealInvariantBrush}" VerticalAlignment="Bottom" Margin="0,0,0,2" />
+                     Foreground="{StaticResource AccentInvariantBrush}" VerticalAlignment="Bottom" Margin="0,0,0,2" />
           <TextBlock Text="{x:Bind ViewModel.BayRemaining, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12.5"
                      VerticalAlignment="Bottom" Margin="0,0,0,2" />
         </StackPanel>
@@ -317,7 +317,7 @@
               <StackPanel Grid.Column="2" Spacing="4">
                 <TextBlock Text="Remaining" Style="{StaticResource CaptionText}" />
                 <TextBlock Text="{x:Bind ViewModel.BayLeft, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}"
-                           FontSize="22" Foreground="{StaticResource TealInvariantBrush}" />
+                           FontSize="22" Foreground="{StaticResource AccentInvariantBrush}" />
               </StackPanel>
             </Grid>
             <StackPanel Spacing="2">
@@ -383,7 +383,7 @@
                 <TextBlock Grid.Row="1" Text="Status" Style="{StaticResource MicroText}" />
                 <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind ViewModel.BayContainerStatus, Mode=OneWay}"
                            Style="{StaticResource BodyStrongText}" FontSize="12" HorizontalAlignment="Right"
-                           Foreground="{StaticResource TealInvariantBrush}" />
+                           Foreground="{StaticResource AccentInvariantBrush}" />
               </Grid>
             </StackPanel>
           </Grid>

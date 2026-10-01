@@ -74,7 +74,7 @@ public sealed partial class BayScene : SceneHost
         }
 
         // Bay badge on the hatch cover
-        Scene.Place(Draw.Rect(166, 138, 28, 18, Tokens.Brush("TealInvariantBrush"), 6));
+        Scene.Place(Draw.Rect(166, 138, 28, 18, Tokens.Brush("AccentInvariantBrush"), 6));
         Scene.Place(Draw.Text(bay.Number, 166, 140, 11, Tokens.Brush("SurfaceInvariantBrush"),
             "MonoMediumFont", TextAlignment.Center, 28));
 

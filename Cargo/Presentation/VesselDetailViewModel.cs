@@ -63,7 +63,7 @@ public sealed partial class VesselDetailViewModel : ObservableObject
         Name = vessel.Name;
         Where = berth is null ? "Anchorage" : $"Berth {berth.Number}";
         StateLabel = BerthFacts.State(_state, vessel).ToUpperInvariant();
-        Accent = needs ? Tokens.Brush("AmberInkInvariantBrush") : ink;
+        Accent = needs ? Tokens.Brush("AlertInkInvariantBrush") : ink;
         Note = BerthFacts.Note(vessel);
 
         (Big, BigSub) = vessel.Status switch
@@ -99,7 +99,7 @@ public sealed partial class VesselDetailViewModel : ObservableObject
             var ukc = BerthFacts.UnderKeel(vessel, berth);
             facts.Add(Fact("Berth depth", $"{berth.Depth:0.0} m"));
             // A tight under-keel on the pending arrival is part of the decision, so it takes the status ink
-            facts.Add(Fact("Under-keel", $"{ukc:0.0} m", needs && ukc < 1 ? "AmberInkInvariantBrush" : null));
+            facts.Add(Fact("Under-keel", $"{ukc:0.0} m", needs && ukc < 1 ? "AlertInkInvariantBrush" : null));
         }
 
         SetFacts(facts);

@@ -153,8 +153,9 @@ public sealed partial class FleetViewModel : ObservableObject
     {
         var t when t.StartsWith("Orange") => "OrangeInkInvariantBrush",
         var t when t.StartsWith("Amber") => "AmberInkInvariantBrush",
-        var t when t.StartsWith("SeaGreen") || t.StartsWith("Teal") => "SeaGreenInkInvariantBrush",
-        var t when t.StartsWith("Alert") => "AlertInvariantBrush",
+        var t when t.StartsWith("SeaGreen") => "SeaGreenInkInvariantBrush",
+        var t when t.StartsWith("Accent") => "AccentDarkInvariantBrush",
+        var t when t.StartsWith("Alert") => "AlertInkInvariantBrush",
         _ => "InkInvariantBrush"
     };
 

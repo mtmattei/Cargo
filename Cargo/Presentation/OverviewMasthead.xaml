@@ -24,7 +24,7 @@
 
     <StackPanel VerticalAlignment="Bottom" Spacing="8">
       <TextBlock Style="{StaticResource GreetingText}">
-        <Run Text="Good evening, " /><Run Text="Operations." Foreground="{StaticResource TealInvariantBrush}" />
+        <Run Text="Good evening, " /><Run Text="Operations." Foreground="{StaticResource AccentInvariantBrush}" />
       </TextBlock>
       <TextBlock Text="{x:Bind ViewModel.Subtitle, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="14" />
     </StackPanel>
@@ -40,7 +40,7 @@
 
       <StackPanel Style="{StaticResource FigureStack}">
         <StackPanel Orientation="Horizontal" Spacing="6">
-          <Ellipse Style="{StaticResource StatusDot}" Fill="{StaticResource AmberInvariantBrush}" />
+          <Ellipse Style="{StaticResource StatusDot}" Fill="{StaticResource AccentInvariantBrush}" />
           <TextBlock Text="Inbound" Style="{StaticResource FigureLabelText}" />
         </StackPanel>
         <TextBlock Text="2" Style="{StaticResource MetricText}" />

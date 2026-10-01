@@ -29,9 +29,9 @@ public sealed partial class DockingViewModel : ObservableObject
         State = state;
         Legend = new[]
         {
-            new LegendItem { Label = "Available", Swatch = Tokens.Brush("TealColor", 0.35) },
-            new LegendItem { Label = "Reserved", Swatch = Tokens.Brush("AmberDeepInvariantBrush") },
-            new LegendItem { Label = "Occupied", Swatch = Tokens.Brush("TealInvariantBrush") },
+            new LegendItem { Label = "Available", Swatch = Tokens.Brush("AccentColor", 0.35) },
+            new LegendItem { Label = "Reserved", Swatch = Tokens.Brush("AccentInvariantBrush") },
+            new LegendItem { Label = "Occupied", Swatch = Tokens.Brush("AccentInvariantBrush") },
             new LegendItem { Label = "Restricted", Swatch = Tokens.Brush("RestrictedInvariantBrush") },
             new LegendItem { Label = "Conflict", Swatch = Tokens.Brush("AlertInvariantBrush") }
         };
@@ -186,7 +186,7 @@ public sealed partial class DockingViewModel : ObservableObject
                     vessel.Name,
                     start / PlanHours,
                     (end - start) / PlanHours,
-                    Tokens.Brush(conflicted ? "AlertColor" : window.Start > now ? "AmberDeepColor" : "TealColor"),
+                    Tokens.Brush(conflicted ? "AlertColor" : window.Start > now ? "AccentColor" : "NavyColor"),
                     conflicted ? 0.9 : window.Start > now ? 0.75 : 1));
             }
 

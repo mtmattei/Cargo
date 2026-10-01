@@ -121,7 +121,7 @@ public sealed partial class VesselProfile : SceneHost
             Scene.Place(hit);
 
             var pill = Draw.Rect(x + bayWidth / 2 - 14, pillTop, 28, 18,
-                i == selected ? Tokens.Brush("TealInvariantBrush") : Tokens.Brush("InkColor", 0.55), 6);
+                i == selected ? Tokens.Brush("AccentInvariantBrush") : Tokens.Brush("InkColor", 0.55), 6);
             pill.PointerPressed += (_, _) => _state.SelectedBay = index;
             Scene.Place(pill);
 
@@ -132,7 +132,7 @@ public sealed partial class VesselProfile : SceneHost
         _bayHighlight.Width = bayWidth;
         _bayHighlight.Height = deckHeight + 4;
         _bayHighlight.Fill = Tokens.Brush("DeckWhiteColor", 0.3);
-        _bayHighlight.Stroke = Tokens.Brush("TealBrightInvariantBrush");
+        _bayHighlight.Stroke = Tokens.Brush("AccentBrightInvariantBrush");
         Scene.Place(_bayHighlight);
         RefreshBayHover();
 

@@ -26,7 +26,7 @@
   <Style x:Key="EyebrowText" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource MonoMediumFont}" />
     <Setter Property="FontSize" Value="11" />
-    <Setter Property="Foreground" Value="{StaticResource TealInvariantBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource AccentInvariantBrush}" />
   </Style>
 
   <Style x:Key="CardTitleText" TargetType="TextBlock">
@@ -341,8 +341,15 @@
     <Setter Property="BorderThickness" Value="1" />
   </Style>
 
+  <!-- The primary action on a light ground: accent with white text -->
+  <Style x:Key="PrimaryActionButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+    <Setter Property="Background" Value="{StaticResource AccentInvariantBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource OnAccentInvariantBrush}" />
+  </Style>
+
+  <!-- The primary action on a dark ground (the scanner stage) -->
   <Style x:Key="AccentButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
-    <Setter Property="Background" Value="{StaticResource TealBrightInvariantBrush}" />
+    <Setter Property="Background" Value="{StaticResource AccentBrightInvariantBrush}" />
     <Setter Property="Foreground" Value="{StaticResource InkDeepInvariantBrush}" />
     <Setter Property="FontFamily" Value="{StaticResource BodyStrongFont}" />
   </Style>

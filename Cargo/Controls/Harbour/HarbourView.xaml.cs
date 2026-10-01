@@ -369,14 +369,14 @@ public sealed partial class HarbourView : UserControl
     {
         foreach (var (tag, _) in _tags)
         {
-            // Amber marks the arrival still waiting on a berth decision; confirmed, it is a plain tag
+            // Accent marks the arrival still waiting on a berth decision; confirmed, it is a plain tag
             var needs = _state?.PendingDecision == tag.Id;
             var selected = EffectiveSelection == tag.Id;
             var lit = _state?.HoveredVessel == tag.Id;
-            tag.Background = needs ? Tokens.Brush("AmberInvariantBrush") : Tokens.Brush("SurfaceInvariantBrush");
+            tag.Background = needs ? Tokens.Tint("AccentInvariantBrush", .12) : Tokens.Brush("SurfaceInvariantBrush");
             // The hairline comes straight from the resource: Tokens.Brush() drops brush opacity (audit C1).
             tag.Edge = selected || lit ? Tokens.Brush("InkInvariantBrush")
-                : needs ? Tokens.Brush("AmberDeepInvariantBrush")
+                : needs ? Tokens.Brush("AccentInvariantBrush")
                 : (Brush)Application.Current.Resources["HairlineStrongInvariantBrush"];
             tag.EdgeThickness = new Thickness(selected ? 2 : 1);
             tag.Expanded = selected && !Compact ? Visibility.Visible : Visibility.Collapsed;

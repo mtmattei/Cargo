@@ -426,13 +426,13 @@ public sealed class HarbourRenderer : IDisposable
         }
 
         var k = state.Needs;
-        BerthTile(canvas, berth, _pal.WithAlpha("AmberColor", .22 * k), _pal.WithAlpha("AmberDeepColor", k), dashed: false);
-        GroundText(canvas, berth.Number, berth.X - 34, -17, HarbourWorld.QuayZ + .02, _pal.WithAlpha("AmberDeepColor", k), 9);
+        BerthTile(canvas, berth, _pal.WithAlpha("AccentColor", .12 * k), _pal.WithAlpha("AccentColor", k), dashed: false);
+        GroundText(canvas, berth.Number, berth.X - 34, -17, HarbourWorld.QuayZ + .02, _pal.WithAlpha("AccentColor", k), 9);
 
         var bow = new P2(vessel.X + Math.Cos(vessel.Heading) * (vessel.Length / 2 + 2), vessel.Y + Math.Sin(vessel.Heading) * (vessel.Length / 2 + 2));
         // The dash runs 6 on, 5 off: a falling phase walks the pattern from the bow toward the berth
         var phase = state.Creep ? (float)(11 - seconds / 1.2 % 1 * 11) : 0;
-        Route(canvas, bow, new P2(berth.X + 72, 50), new P2(berth.X, 7.3), _pal.WithAlpha("AmberDeepColor", k), 1.8f, phase);
+        Route(canvas, bow, new P2(berth.X + 72, 50), new P2(berth.X, 7.3), _pal.WithAlpha("AccentColor", k), 1.8f, phase);
     }
 
     private void Route(SKCanvas canvas, P2 from, P2 control, P2 to, SKColor color, float width, float phase = 0)
@@ -513,9 +513,9 @@ public sealed class HarbourRenderer : IDisposable
     {
         // Restricted perimeter around the terminal and the hold at the inspection lane.
         TraceGround(new[] { new P2(-490, -1), new P2(490, -1), new P2(490, -136), new P2(-490, -136) }, HarbourWorld.QuayZ + .02);
-        _fill.Color = _pal.WithAlpha("TealColor", .06);
+        _fill.Color = _pal.WithAlpha("AccentColor", .06);
         canvas.DrawPath(_path, _fill);
-        _stroke.Color = _pal.WithAlpha("TealColor", .8);
+        _stroke.Color = _pal.WithAlpha("AccentColor", .8);
         _stroke.StrokeWidth = 1.4f;
         _stroke.PathEffect = _dashTile;
         canvas.DrawPath(_path, _stroke);
@@ -527,11 +527,11 @@ public sealed class HarbourRenderer : IDisposable
         GroundText(canvas, "TRUCK GATE", 0, -140, HarbourWorld.QuayZ + .03, _pal["AmberDeepColor"], 4);
 
         var hold = _camera.Project(375, -98, HarbourWorld.QuayZ + 3.5);
-        _fill.Color = _pal.WithAlpha("AmberColor", .28);
+        _fill.Color = _pal.WithAlpha("AlertColor", .28);
         canvas.DrawCircle(hold.X, hold.Y, (float)Math.Max(6, 9 * _camera.Scale), _fill);
-        _fill.Color = _pal["AmberDeepColor"];
+        _fill.Color = _pal["AlertColor"];
         canvas.DrawCircle(hold.X, hold.Y, (float)Math.Max(2.5, 3 * _camera.Scale), _fill);
-        GroundText(canvas, "HOLD · CMAU 918204 4", 375, -108, HarbourWorld.QuayZ + .03, _pal["AmberDeepColor"], 3.2f);
+        GroundText(canvas, "HOLD · CMAU 918204 4", 375, -108, HarbourWorld.QuayZ + .03, _pal["AlertInkColor"], 3.2f);
     }
 
     // ── Objects ────────────────────────────────────────────────────────────────
@@ -814,9 +814,9 @@ public sealed class HarbourRenderer : IDisposable
         _stroke.StrokeWidth = 1;
         foreach (var (id, (anchor, tag)) in Leaders)
         {
-            // The pending arrival's leader is amber, and fades to the plain ink leader with its berth
+            // The pending arrival's leader is accent, and fades to the plain ink leader with its berth
             var needs = id == state.NeedsVessel ? state.Needs : 0;
-            var color = Blend(_pal.WithAlpha("InkColor", .5), _pal["AmberDeepColor"], needs);
+            var color = Blend(_pal.WithAlpha("InkColor", .5), _pal["AccentColor"], needs);
             _stroke.Color = color;
             canvas.DrawLine(anchor, tag, _stroke);
             _fill.Color = color;

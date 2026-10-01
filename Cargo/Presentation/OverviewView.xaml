@@ -29,7 +29,7 @@
               <TextBlock Text="Vessel movements" Style="{StaticResource CardTitleText}" />
               <StackPanel Orientation="Horizontal" Spacing="14">
                 <StackPanel Orientation="Horizontal" Spacing="6">
-                  <Ellipse Width="7" Height="7" Fill="{StaticResource TealInvariantBrush}" VerticalAlignment="Center" />
+                  <Ellipse Width="7" Height="7" Fill="{StaticResource AccentInvariantBrush}" VerticalAlignment="Center" />
                   <TextBlock Text="Arrivals" Style="{StaticResource CaptionText}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="6">
@@ -124,7 +124,7 @@
             <TextBlock Text="Cargo flow" Style="{StaticResource CardTitleText}" />
             <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Right" VerticalAlignment="Center">
               <StackPanel Orientation="Horizontal" Spacing="5">
-                <Ellipse Width="6" Height="6" Fill="{StaticResource TealInvariantBrush}" VerticalAlignment="Center" />
+                <Ellipse Width="6" Height="6" Fill="{StaticResource AccentInvariantBrush}" VerticalAlignment="Center" />
                 <TextBlock Text="Entering" Style="{StaticResource CaptionText}" />
               </StackPanel>
               <StackPanel Orientation="Horizontal" Spacing="5">

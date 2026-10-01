@@ -40,7 +40,7 @@
             <TextBlock Text="alongside" Style="{StaticResource MetricLabelText}" />
           </StackPanel>
           <StackPanel Orientation="Horizontal" Spacing="8">
-            <TextBlock Text="{x:Bind ViewModel.Arriving, Mode=OneWay}" Style="{StaticResource MetricText}" Foreground="{StaticResource AmberInkInvariantBrush}" />
+            <TextBlock Text="{x:Bind ViewModel.Arriving, Mode=OneWay}" Style="{StaticResource MetricText}" Foreground="{StaticResource AccentDarkInvariantBrush}" />
             <TextBlock Text="arriving" Style="{StaticResource MetricLabelText}" />
           </StackPanel>
           <StackPanel Orientation="Horizontal" Spacing="8">

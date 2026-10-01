@@ -88,7 +88,7 @@ public sealed partial class TickBar : StackPanel
     }
 
     /// <summary>Token for the lit ticks, e.g. "SeaGreenInvariantBrush".</summary>
-    public string LitToken { get; set; } = "TealInvariantBrush";
+    public string LitToken { get; set; } = "AccentInvariantBrush";
 
     public int Count { get; set; } = 30;
 

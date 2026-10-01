@@ -29,7 +29,7 @@ public sealed partial class GridPaper : UserControl
                 RadiusY = 0.9,
                 GradientStops =
                 {
-                    new GradientStop { Offset = 0, Color = Tokens.Color("TealColor") },
+                    new GradientStop { Offset = 0, Color = Tokens.Color("AccentColor") },
                     new GradientStop { Offset = 1, Color = Windows.UI.Color.FromArgb(0, 0, 0, 0) }
                 }
             },

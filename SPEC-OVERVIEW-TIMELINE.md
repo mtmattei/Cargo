@@ -23,6 +23,16 @@ stay built; this spec restyles them.
 - **Needs you:** a general queue (inspection hold, gate ID check, late orders, berth confirm).
 - **Step 8:** replaced by this design.
 
+Answered 2026-09-30 (the user accepted the defaults):
+- **Lanes:** bespoke `SKCanvasElement` (no LiveCharts2 evaluation).
+- **Header badges:** weather and tide move to Waterways, ISPS level to Security; the header carries none.
+- **Reduced-motion toggle:** in the account menu.
+- **Berth confirm:** stays in the queue (count 4 at 20:58).
+- **Verify driver / View orders:** navigate to their screens; only Confirm berth acts in place.
+- **Duty operator:** clocked in at 18:00 (shift 18:00 → 06:00).
+- **Tide "now" marker:** pinned to NOW, not to the next arrival.
+- **Liveline upstream:** `liveline-window` stays local until Cargo ships.
+
 ## Capability inventory
 
 | Capability (design implies) | Status | Note |

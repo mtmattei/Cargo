@@ -48,8 +48,8 @@ public sealed partial class SecurityZoneMap : SceneHost
         foreach (var camera in PortData.Cameras)
         {
             var group = new Canvas();
-            group.Place(Draw.Shape("M0 0 L-38 -70 A80 80 0 0 1 38 -70 Z", Tokens.Brush("TealColor", 0.13)));
-            group.Place(Draw.Dot(0, 0, 4, Tokens.Brush("TealInvariantBrush")));
+            group.Place(Draw.Shape("M0 0 L-38 -70 A80 80 0 0 1 38 -70 Z", Tokens.Brush("AccentColor", 0.13)));
+            group.Place(Draw.Dot(0, 0, 4, Tokens.Brush("AccentInvariantBrush")));
             Scene.Place(group.At(camera.X, camera.Y));
         }
 
@@ -57,14 +57,14 @@ public sealed partial class SecurityZoneMap : SceneHost
         {
             var main = label == "Main";
             Scene.Place(Draw.Rect(x, y, 44, 18, Tokens.Brush("SurfaceInvariantBrush"), 4,
-                Tokens.Brush(main ? "TealInvariantBrush" : "AmberDeepInvariantBrush"), 1.5));
-            Scene.Place(Draw.Text(label, x, y + 22, 11.5, Tokens.Brush(main ? "TealInvariantBrush" : "AmberDeepInvariantBrush"),
+                Tokens.Brush(main ? "AccentInvariantBrush" : "AmberDeepInvariantBrush"), 1.5));
+            Scene.Place(Draw.Text(label, x, y + 22, 11.5, Tokens.Brush(main ? "AccentInvariantBrush" : "AmberDeepInvariantBrush"),
                 "BodyStrongFont", TextAlignment.Center, 44));
         }
 
         foreach (var point in PortData.AccessPoints)
         {
-            Scene.Place(Draw.Dot(point.X, point.Y, 5, Tokens.Brush("SurfaceInvariantBrush"), Tokens.Brush("TealInvariantBrush"), 2));
+            Scene.Place(Draw.Dot(point.X, point.Y, 5, Tokens.Brush("SurfaceInvariantBrush"), Tokens.Brush("AccentInvariantBrush"), 2));
         }
 
         // The active hold
@@ -221,8 +221,8 @@ public sealed partial class InspectionDiagram : SceneHost
         {
             var ok = step.Kind == "ok";
             var warn = step.Kind == "warn";
-            var badge = ok ? "TealColor" : warn ? "OrangeColor" : "SurfaceSunkAltColor";
-            var border = warn ? "OrangeColor" : ok ? "TealColor" : "InkColor";
+            var badge = ok ? "AccentColor" : warn ? "OrangeColor" : "SurfaceSunkAltColor";
+            var border = warn ? "OrangeColor" : ok ? "AccentColor" : "InkColor";
 
             Scene.Place(Draw.Rect(step.X - 110, step.Y - 32, 220, 64, Tokens.Brush("SurfaceInvariantBrush"), 12,
                 Tokens.Brush(border, warn ? 1 : ok ? 0.4 : 0.1), 1.5));

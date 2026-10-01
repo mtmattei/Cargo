@@ -197,8 +197,8 @@ public sealed partial class YardMap : SceneHost
     private void AddRtg(TranslateTransform transform, double x)
     {
         var rtg = new Canvas { RenderTransform = transform };
-        rtg.Place(Draw.Rect(x, 92, 100, 120, null, 4, Tokens.Brush("TealInvariantBrush", 0.9), 5));
-        rtg.Place(Draw.Rect(x + 44, 96, 14, 112, Tokens.Brush("TealColor", 0.35)));
+        rtg.Place(Draw.Rect(x, 92, 100, 120, null, 4, Tokens.Brush("AccentInvariantBrush", 0.9), 5));
+        rtg.Place(Draw.Rect(x + 44, 96, 14, 112, Tokens.Brush("AccentColor", 0.35)));
         foreach (var (dx, dy) in new[] { (-2d, -4d), (92d, -4d), (-2d, 116d), (92d, 116d) })
         {
             rtg.Place(Draw.Rect(x + dx, 92 + dy, 10, 8, Tokens.Brush("CargoOversizeInvariantBrush"), 2));

@@ -36,13 +36,13 @@
       <!-- Wordmark -->
       <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
         <shapes:Path Data="M5 13c4-5 8-5 12 0s8 5 12 0M5 21c4-5 8-5 12 0s8 5 12 0"
-                     Stroke="{StaticResource TealBrightInvariantBrush}" StrokeThickness="2.6"
+                     Stroke="{StaticResource AccentBrightInvariantBrush}" StrokeThickness="2.6"
                      StrokeStartLineCap="Round" StrokeEndLineCap="Round"
                      Width="26" Height="26" Stretch="Uniform" VerticalAlignment="Center" />
         <TextBlock Text="Westhaven" FontFamily="{StaticResource DisplayBoldFont}" FontSize="15"
                    Foreground="{StaticResource PaperInvariantBrush}" VerticalAlignment="Center" />
         <TextBlock Text="SHIPPING · DISPATCH" FontFamily="{StaticResource MonoMediumFont}" FontSize="10"
-                   Foreground="{StaticResource TealBrightInvariantBrush}" VerticalAlignment="Center" Margin="2,1,0,0" />
+                   Foreground="{StaticResource AccentBrightInvariantBrush}" VerticalAlignment="Center" Margin="2,1,0,0" />
       </StackPanel>
 
       <!-- Sections -->
@@ -84,7 +84,7 @@
                   </Grid>
                 </StackPanel>
                 <Rectangle Height="2" Margin="12,0,12,0" VerticalAlignment="Bottom"
-                           Fill="{StaticResource TealBrightInvariantBrush}" Opacity="{x:Bind UnderlineOpacity, Mode=OneWay}" />
+                           Fill="{StaticResource AccentBrightInvariantBrush}" Opacity="{x:Bind UnderlineOpacity, Mode=OneWay}" />
               </Grid>
             </Button>
           </DataTemplate>
@@ -115,7 +115,7 @@
                     Visibility="{utu:Responsive Layout={StaticResource HeaderBreakpoints}, Narrow=Collapsed, Wide=Visible}"
                     ToolTipService.ToolTip="{x:Bind ViewModel.Tide.Tooltip, Mode=OneWay}">
           <Grid Width="34" Height="16">
-            <shapes:Path Data="{x:Bind ViewModel.Tide.Spark, Mode=OneWay}" Stroke="{StaticResource TealBrightInvariantBrush}"
+            <shapes:Path Data="{x:Bind ViewModel.Tide.Spark, Mode=OneWay}" Stroke="{StaticResource AccentBrightInvariantBrush}"
                          StrokeThickness="3" Stretch="Uniform" />
           </Grid>
           <TextBlock Text="{x:Bind ViewModel.Tide.Label, Mode=OneWay}" Style="{StaticResource CaptionText}"
@@ -136,9 +136,9 @@
           <ToggleButton.Resources>
             <StaticResource x:Key="ToggleButtonBackgroundPointerOver" ResourceKey="HairlineOnDarkBrush" />
             <StaticResource x:Key="ToggleButtonBackgroundPressed" ResourceKey="HairlineOnDarkBrush" />
-            <StaticResource x:Key="ToggleButtonBackgroundChecked" ResourceKey="TealDeepInvariantBrush" />
-            <StaticResource x:Key="ToggleButtonBackgroundCheckedPointerOver" ResourceKey="TealDeepInvariantBrush" />
-            <StaticResource x:Key="ToggleButtonBackgroundCheckedPressed" ResourceKey="TealDeepInvariantBrush" />
+            <StaticResource x:Key="ToggleButtonBackgroundChecked" ResourceKey="AccentDarkInvariantBrush" />
+            <StaticResource x:Key="ToggleButtonBackgroundCheckedPointerOver" ResourceKey="AccentDarkInvariantBrush" />
+            <StaticResource x:Key="ToggleButtonBackgroundCheckedPressed" ResourceKey="AccentDarkInvariantBrush" />
             <StaticResource x:Key="ToggleButtonForegroundPointerOver" ResourceKey="PaperInvariantBrush" />
             <StaticResource x:Key="ToggleButtonForegroundPressed" ResourceKey="PaperInvariantBrush" />
             <StaticResource x:Key="ToggleButtonForegroundChecked" ResourceKey="PaperInvariantBrush" />
@@ -146,9 +146,9 @@
             <StaticResource x:Key="ToggleButtonForegroundCheckedPressed" ResourceKey="PaperInvariantBrush" />
             <StaticResource x:Key="ToggleButtonBorderBrushPointerOver" ResourceKey="HairlineOnDarkBrush" />
             <StaticResource x:Key="ToggleButtonBorderBrushPressed" ResourceKey="HairlineOnDarkBrush" />
-            <StaticResource x:Key="ToggleButtonBorderBrushChecked" ResourceKey="TealDeepInvariantBrush" />
-            <StaticResource x:Key="ToggleButtonBorderBrushCheckedPointerOver" ResourceKey="TealDeepInvariantBrush" />
-            <StaticResource x:Key="ToggleButtonBorderBrushCheckedPressed" ResourceKey="TealDeepInvariantBrush" />
+            <StaticResource x:Key="ToggleButtonBorderBrushChecked" ResourceKey="AccentDarkInvariantBrush" />
+            <StaticResource x:Key="ToggleButtonBorderBrushCheckedPointerOver" ResourceKey="AccentDarkInvariantBrush" />
+            <StaticResource x:Key="ToggleButtonBorderBrushCheckedPressed" ResourceKey="AccentDarkInvariantBrush" />
           </ToggleButton.Resources>
         </ToggleButton>
 
@@ -162,7 +162,7 @@
         </StackPanel>
 
         <!-- xaml-lint: allow card - user avatar -->
-        <Border Width="28" Height="28" CornerRadius="14" Background="{StaticResource TealDeepInvariantBrush}">
+        <Border Width="28" Height="28" CornerRadius="14" Background="{StaticResource AccentDarkInvariantBrush}">
           <TextBlock Text="EL" FontFamily="{StaticResource BodyStrongFont}" FontSize="10.5"
                      Foreground="{StaticResource SurfaceInvariantBrush}"
                      HorizontalAlignment="Center" VerticalAlignment="Center" />

@@ -70,7 +70,7 @@ public sealed partial class OverviewViewModel : ObservableObject
     {
         (string Id, string Name, string Detail, double Hour, string Tone)[] rows =
         {
-            ("nordic", "Nordic Star", "Arrival · Berth 07 · 21:40", 21 + 40 / 60d, "AmberInvariantBrush"),
+            ("nordic", "Nordic Star", "Arrival · Berth 07 · 21:40", 21 + 40 / 60d, "AccentInvariantBrush"),
             ("baltic", "Baltic Crown", "Departure · Berth 06 · 21:30", 21.5, "SeaGreenInvariantBrush"),
             ("levant", "Levant Express", "Arrival · Unassigned · Thu 02:30", 26.5, "TextFaintInvariantBrush")
         };
