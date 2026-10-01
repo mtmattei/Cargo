@@ -2,6 +2,7 @@
 
 Rehearsed 2026-10-01 via the uno-app MCP at 1680x1020, `net10.0-desktop` Debug, `main` at 8e45a3d.
 Story: the evening duty operator takes the harbour over at shift change, reads it, and clears what needs her.
+Scope: the Overview page only. The take never leaves it (see "Stays on Overview" below).
 
 ## Before each take
 
@@ -59,7 +60,7 @@ Segue: "Four things need me."
 | # | Say | Do | Point at |
 |---|---|---|---|
 | 12 | "Nordic Star needs her berth confirmed." | Confirm berth | Row leaves; 4 becomes 3 in both counts; the Berths dot clears; the tag turns light, "arriving 21:40" |
-| 13 | "The hold on this container goes straight to its evidence." | Open inspection, hold 3 s on the inspection page, then the Overview tab | Weight variance +1.8 t |
+| 13 | "The rest stay in the queue, timed: the inspection is due in seventeen minutes, the driver has waited seventeen." | Nothing | "in 17 min", "waiting 17 min" (alert ink) |
 
 Segue: "And the log of the shift so far."
 
@@ -71,14 +72,24 @@ Segue: "And the log of the shift so far."
 | 15 | "Every entry opens in place." | Scroll to Activity, click Driver ID pending at Gate 3 | The row lifting, the column softening, "Logged 20:41 · 17 min ago" |
 | 16 | "Closing it puts the list back." | Click the same row | The default list |
 
-Close on beat 16, or end with "Verify driver" (it drills into Security > Access control) if the take runs long.
+Close on beat 16: the default page, the clock still running.
+
+## Stays on Overview
+
+These controls leave the page. Do not click them in the take:
+- The top tabs (Berths, Cargo, Waterways, Security).
+- The Needs you actions Open inspection, Verify driver and View orders (they open Security or Cargo). Confirm berth is the
+  only one that acts in place.
+- The action button inside an opened Activity row (the same decisions).
+- Next 6 h rows (they open Berths). Hover them only.
+- "Open vessel profile" in a vessel's facts card.
 
 ## Risks found in rehearsal
 
 | Risk | Status | In the take |
 |---|---|---|
 | Dev toolbar covers the wordmark in Debug | Open | Record with `APP_NO_HOTDESIGN=1` or Release |
-| A Next 6 h row opens Berths scrolled mid-page, with the selected row off-screen | Open (bug) | Do not click Next 6 h rows; hover only |
+| A Next 6 h row opens Berths scrolled mid-page, with the selected row off-screen | Open (bug, off-page) | Out of scope: hover only |
 | Selecting a vessel leaves the camera close, and the menu still reads "Overview" | Open (bug) | Beat 9 is last in its section; re-pick Overview |
 | Plan preset hides the Nordic Star tag (in the bottom HUD margin) | By design | Skip Plan |
 | The facts card covers most of Nordic Star's hull | Cosmetic | Hold only 3 s |
