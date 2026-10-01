@@ -1,108 +1,71 @@
-# HANDOFF — Cargo: Overview one-timeline build, steps 0-5 done; decisions queue (step 6) next
-Updated: 2026-09-30
+# HANDOFF — Cargo: Overview one-timeline built (spec steps 0-9) + uno-audit; pushed
+Updated: 2026-10-01
 
 ## Where we are
-**Active plan: `SPEC-OVERVIEW-TIMELINE.md`** (supersedes the needs-you spec's steps 8-9 below).
-- Step 0 done: the uno-audit pass is `3ae27bb`.
-- Step 1 done: Liveline extended in `C:\Users\Platform006\Uno-Builds-net10` (sparse clone, `Liveline/`
-  only), branch `liveline-window`, commit `15ecf9f`, **not pushed**. Uno.Sdk 6.7.30 + android/ios;
-  window mode (`WindowStart/End`, `NowTime`, `Forecast`, `ForecastOpacity`), `Markers`
-  (`LivelineMarker`), brush colours (`LineBrush`, `FillTop/BottomBrush`, `ChartBackground`,
-  `LabelHaloBrush`), `PlotPadding`, `ValueMin/Max`, `Typeface` (SKTypeface), `ShowTrackingLine`,
-  `IsAnimating`. Spec deviation: no `ShowAxisLabels` (`ShowGrid` already draws only the labels; the
-  always-on piece was the tracking line).
-  Verified (Release desktop, PrintWindow captures, no MCP): solid past / 50% forecast / HW + now
-  markers / transparent ground / NOW advancing / HW marker drops after the last high water; settled
-  CPU 0-3% of one core vs ~57% with the live feed on. Library 0 warnings on desktop, wasm, android, ios.
-- Step 2 done (`b97e930`, `2182b74`). Spec questions answered (defaults), recorded in the spec.
-  - Palette: design tokens in `Themes/Tokens.xaml`; teal renamed to accent everywhere (incl. string
-    keys). Status: reserved/arriving = accent, needs-you = alert (tint .05, count-badge plate white on
-    AlertInk), vessel/happened/occupied = navy. Amber stays only for caution (customs pending, security
-    zones, truck gate, yard "moved", Overview "Leaving" chart). `PrimaryActionButton` = light-ground
-    primary; `AccentButton` stays the on-dark (scanner) variant.
-  - Type: ramp 11/12/13/14/15/18/20/24/30/40. `Type*` styles (family+size, no colour) + role styles.
-    104 inline sizes migrated by script; none left outside MainPage, OverviewView, OverviewMasthead,
-    ActivityView, HarbourView (rebuilt in steps 3-8) plus two FontIcon glyph sizes.
-  - Fonts renamed to underscores (Android hyphen gotcha). `IBMPlexMono_SemiBold.ttf` NOT added:
-    the Google Fonts download was denied in-session; needed by steps 6-8 (mono 600).
-  - Verified (uno-app MCP, 1680x1020 + 1100x900): Overview, Berths (incl. Docking, Vessels), Cargo,
-    Waterways, Security (zones, inspection). Scanner overlay not runtime-verified (style refactor only).
-  - Key gate: every string token key in C#/XAML resolves (`Tokens.Color` returns transparent on a
-    miss, so a missed rename is silent). Script: session scratchpad `keycheck.py`; worth adding to tools/.
-- Step 3 done (`68c9b73`): light header, text tabs (`NavTabButton`), needs-you dots from
-  `PortState.SectionNeedsYou`, account Flyout (operator + reduced-motion ToggleSwitch). Spec deviation:
-  Flyout, not MenuFlyout (disabled MenuFlyout items were unreadable).
-- Step 4 done (`bc07fe0`): masthead figures (Alongside / Inbound / Needs you = `PortState.NeedsYouCount`,
-  4 at 20:58), duty ID card (ShadowContainer, -1.2°, shift ProgressBar), `PortData.Operator`.
-  `MetricText` is Archivo 600 app-wide. Card entrance and the figure's link to the queue: steps 9 / 6.
-- Step 5 done (`4f88234`, `2366547`, `5ee764f`): light/dark harbour tags, anchor rings, dashed reserved
-  berth; HUD floats (camera MenuFlyout Top with radio items, sliding layer segments, Key flyout,
-  scale/north/zoom group); `SegmentIndicator` control (Toolkit 9.1.3 has no Simple/Material
-  SegmentedStyle); `Themes/Icons.xaml` as Path styles; Overview band 340 ↔ 491 (`StageHeight`, 320 ms).
-  MenuFlyout Placement=Top spike: works on Skia desktop.
-- Next: step 6 (decisions queue). Cargo does not reference Liveline yet (lands in step 7).
-
-Previous (needs-you spec), 2026-09-30, third session: the spec's six questions are answered (amber; Confirm writes a real
-assignment; full bar on Berths plus a panel mode on Overview; minutes-only clock roll; Nordic Star
-only; Activity as a Map panel mode), recorded under *Decisions* in `SPEC-BERTHS-NEEDS-YOU.md`.
-Plan steps 1-7 are built, runtime-verified and committed: motion tokens + `RollingText` clock;
-`PortState` decision state; the Berths needs-you bar, status list and vessel detail; linked hover
-(rows, tags, bar, hull); the sliding camera pill; the creeping route with confirm/undo fade; rolling
-countdowns and the sliding cargo bar. Steps 8 (Overview context panel) and 9 (reduced-motion pass,
-critique) remain.
+`SPEC-OVERVIEW-TIMELINE.md` is built end to end. App-wide: the design palette (teal → accent; reserved/arriving
+accent, needs-you alert, vessel/happened navy), the type ramp (11/12/13/14/15/18/20/24/30/40, `Type*` + role
+styles), fonts renamed for Android, a light header with text tabs, needs-you dots and an account flyout.
+Overview: masthead figures + duty ID card; a 340/491 harbour band with the design's HUD floats and tags; the
+`Today at North Quay` timeline (Skia lanes + the extended Liveline tide lane, Chart/Table); the Needs-you queue
+(`PortState.Decisions`); Next 6 h with to-scale ship glyphs; Activity in two columns with NEEDS ACTION chips;
+responsive bands at 1280/1040; linked hover from chart dots and Next 6 h rows; card entrance/hover motion.
+Container volume / Cargo flow moved to Cargo, Sea & weather to Waterways. Then an uno-audit pass.
 
 ## Last verified state
-- Build: pass, `net10.0-desktop`, Uno.Sdk 6.7.30, 0 warnings, 0 errors (full `--no-incremental` at step 1; incremental since).
-- Runtime (uno-app MCP): clock roll mid-flight (60 s probe); Confirm → busy → done → Undo; Review; free-berth pick; keyboard-focus link sets `HoveredVessel` and lights tag + row; pill slide, re-target mid-slide (20 s probe) and zoom fade; route creep (frame diff); confirm fade mid-flight (20 s probe); countdown roll at a minute boundary; stacked layout at 1020 px.
-- Git: `main` at 32b4e3b, 8 commits ahead of origin (not pushed); tree clean.
-- Lint: CARD 0 · HEX 0 · TOKENTHEME 0 · BACKBAR 0 · CODEBEHIND 0 · OVERLAY 0 · RESPONSIVE 0 · BUILTIN 0 · ICON 0.
+- Build: pass, 0 warnings / 0 errors, `net10.0-desktop` (full `--no-incremental`) and `net10.0-android`.
+- Runtime (uno-app MCP, 1680×1020 / 1100×900 / tall captures): every section; Overview top to bottom; Expand
+  340↔491; camera MenuFlyout (Placement Top works); layer pill; Chart↔Table; Confirm berth from the queue
+  (row leaves, count 4→3, Berths dot clears, tag turns light); account flyout + reduced-motion switch; 1100 band.
+  Overview idle CPU 17-25% of one core (Debug; baseline was 48-53%).
+- Git: `main` pushed to origin (see the push commit in `git log`). Liveline: `C:\Users\Platform006\Uno-Builds-net10`,
+  branch `liveline-window` at `15ecf9f`, **local only**.
+- Lint: CARD 0 · HEX 0 · TOKENTHEME 0 · BACKBAR 0 · CODEBEHIND 0 · OVERLAY 0 · RESPONSIVE 0 · BUILTIN 0 · ICON 0 · WORKAROUND 1 (gotcha recorded).
 
 ## Guidance applied
 | Skill / rule / decision | Applied at (file:line) |
 |---|---|
-| xaml-design-polish: house curves as tokens | Themes/MotionTokens.xaml:10 `EaseSmooth`; Domain/Motion.cs:57 `CreateCubicBezierEasingFunction` |
-| xaml-design-polish: SetIsTranslationEnabled before Translation | Controls/RollingText.cs:150 |
-| xaml-design-polish: reduced motion jumps to end | Controls/RollingText.cs:66; Controls/Slide.cs:35; Controls/Harbour/HarbourView.xaml.cs:598 |
-| uno-toolkit: `{utu:Responsive}` breakpoints | Presentation/BerthsView.xaml:24, :58 (`BerthsBreakpoints`) |
-| project convention: work only while shown (Live) | Presentation/BerthsView.xaml.cs:25, :27 |
-| gotcha: router builds view models off the UI thread | Presentation/BerthsViewModel.cs:17 `dispatcher.TryEnqueue` |
-| gotcha: whitespace TextBlock measures zero | Controls/RollingText.cs:56 `SpaceAdvance()` |
-| new gotcha: BrushTransition drops Opacity | Presentation/BerthsView.xaml:98; Domain/Tokens.cs:64 `Tint` |
-| spec: hover outlines in the live layer | Controls/Harbour/HarbourScene.cs:410; Controls/Harbour/HarbourRenderer.cs:412 `DrawNeeds` |
-| spec a11y: polite live regions | Presentation/NeedsYouBar.xaml:14; Presentation/BerthsView.xaml:144 |
+| skiasharp-uno: snapshot state, reuse paints, bake alpha | Controls/TimelineLanes.cs:234; Controls/CanvasFonts.cs:20 |
+| xaml-design-polish: reduced motion jumps to the end | Controls/SegmentIndicator.cs:106; Presentation/TimelineViewModel.cs:199 |
+| gotcha G60: FillBehavior Stop over local values | Controls/Harbour/HarbourView.xaml.cs:194; Controls/IdCardMotion.cs:98 |
+| uno-toolkit / gotcha G36: ShadowContainer shadows inline | Presentation/OverviewMasthead.xaml:81 |
+| uno-scaffolding Breakpoints: `{utu:Responsive}` incl. structure | Presentation/OverviewView.xaml:35 |
+| gotcha BrushTransition: alpha in the colour (`Tokens.Tint`) | Presentation/NextSixHoursViewModel.cs:56 |
+| capability-coverage: icons from one keyed file, sources named | Themes/Icons.xaml:43; Presentation/NeedsYouPanel.xaml:44 |
+| navigation-xaml: `uen:Navigation.Request` tabs | Presentation/MainPage.xaml:50 |
+| spec: Liveline by ProjectReference | Cargo.csproj:39 |
+| workaround protocol (new gotcha) | Presentation/MainPage.xaml:122; docs/evidence/2026-10-01-shadowcontainer-offset-paint.md |
 Read, not applied: none.
 
 ## Next actions (in order)
-0. Add `Assets/Fonts/IBMPlexMono_SemiBold.ttf` (static TTF, Android 2.2 UA via Google Fonts css2) and a `MonoStrongFont` resource.
-0b. `SPEC-OVERVIEW-TIMELINE.md` step 6 (decisions queue), then 7-9. Items 1-2 below are superseded by it.
-1. (superseded) Plan step 8, Overview context panel (spec section *Overview context panel*): `OverviewContextViewModel` with the mode priority (needs-you, selection, berth hover after a 300 ms dwell, layer); one view per mode in a Visibility region or VSM (no code-behind toggling); reuse `NeedsYouBar`; move Container volume and Cargo flow to Cargo, Sea & weather and tide to Waterways; Activity becomes a Map panel mode. Verify each mode at 1680 x 1020 and 1100 x 900, no vertical scroll at 1020 high.
-2. Plan step 9: reduced-motion pass over every new motion, lint, `ui-craft` self-critique, HANDOFF.
-3. Push `main` once step 8 lands (8 commits local).
-4. Then the queued items: `GLCanvasElement` harbour trial (uno-build-options), MainPage design pass (gold-standard-pass).
+1. Decide on Liveline: push `liveline-window` (or open the PR) so a fresh clone of Cargo builds; today `main`
+   references a local-only branch.
+2. Add `Assets/Fonts/IBMPlexMono_SemiBold.ttf` (download was blocked in-session); point `CountBadgeText`,
+   the NOW-row values and the moves rate at it.
+3. Motion the spec lists but left instant: tab hover (160 ms), Chart→Table fade (200 ms), Expand icon
+   cross-fade, the departing ship's wake loop (3.6 s; budget its CPU first).
+4. Accessibility: keyboard focus for the timeline's vessel dots (the table is the alternative today); the
+   masthead "Needs you" hover ring on the queue.
+5. Queued from before: `GLCanvasElement` harbour trial (uno-build-options), MainPage gold-standard pass.
 
 ## Open questions
-- `SegmentIndicator` is custom (lint BUILTIN allowed): Windows Community Toolkit 8 `Segmented` is the ladder's next rung but a new package (stop condition). Adopt it, or keep the custom indicator?
-- Camera menu radio items render as circles under SimpleTheme; the design shows a check mark.
-- `HarbourView.TopInset` / `HarbourCamera.TopInset` are now always 0 (the masthead no longer overlays the stage): dead path to remove in the step 9 cleanup.
-- Security zone sub-labels ("Personnel & visitors", "Gates 1–3") spill below the 34 px zone outlines; drawn in C# (`SecurityScenes.cs:43`), pre-existing.
-- Canvas scenes (`SecurityScenes`, `OverviewCharts`...) still pass literal text sizes to `Draw.Text`; the ramp migration covered XAML only.
-- Vessels: the floated key-figure cards cover bays 01-03 of the side profile at panel widths below ~1300 (pre-existing layout intent: "over the empty water at the bow").
-- One Cargo launch exited after a window resize during startup; not reproduced when resizing after first frame.
-- uno-app MCP rejects `uno_app_select_solution` for a solution outside the session root (Liveline); the demo was verified by exe + PrintWindow + Get-Process instead.
-- One Liveline demo instance exited with no event-log entry after a synthetic click near the Feed switch; not reproduced. UIA `TogglePattern.Toggle()` on that ToggleSwitch reported Off without raising `Toggled` (one observation).
-- Row 07 recolours through the row's 150 ms hover transition; the spec's 400 ms for the confirm recolour is not separate.
-- The row ground `BrushTransition` (150 ms) is not gated by reduced motion (colour only, no movement).
-- Berths is clipped below ~1200 px wide on `main` too: `VesselsView` has fixed columns (240 + min 560 + 290). Pre-existing, not in this spec.
-- The harbour cannot frame a free berth: "Show on map" on a berth only opens the stage.
-- Confirm's error state (berth taken) is wired but not driven at runtime; the demo data never makes berth 07 unfit.
-- The pill slide uses a Storyboard with a dependent Width animation, not Composition (Composition would scale the pill and stretch its corners at rest).
-- SPEC.md still lists the compact strip as deferred; `GLCanvasElement` never evaluated (Android and iOS unsupported per docs).
-- Evidence for the BrushTransition gotcha is exported (`docs/evidence/2026-09-30-brushtransition-drops-opacity.md`); the 2026-09-29 gotchas (RouteChanged segments, off-UI-thread view models, RowSpan overlay) still have none.
+- `SegmentIndicator` is custom (Toolkit 9.1.3 has no Simple/Material SegmentedStyle). Adopt WCT 8 `Segmented` (new package)?
+- Camera menu radio items show circles under SimpleTheme; the design shows a check mark.
+- Header uses a Flyout, not the spec's MenuFlyout (disabled MenuFlyout items were unreadable).
+- Cargo lane scale fitted to the data (to 170/h); the design's 0.66 assumed ~50.
+- Activity shows 12 entries (the data), the design 7; chips derive from open decisions (2 today).
+- Skia `SKPaint`s in `TimelineLanes`/`ShipGlyph` are left to finalizers (disposing on Unloaded breaks re-parenting, G63).
+- Security zone sub-labels spill below 34 px zones (`SecurityScenes.cs:43`); canvas scenes still pass literal text sizes.
+- Vessels key-figure cards cover bays 01-03 below ~1300 px panel width (pre-existing layout intent).
+- Berths clips its right column below ~1200 px (pre-existing, fixed columns).
+- Scanner overlay restyle (`CloseOnDarkButton`) not runtime-verified; `CARGO_SCANNER=1` opens it at launch.
+- uno-app MCP cannot select a solution outside the session root (Liveline demo verified by exe + PrintWindow).
 
 ## Relaunch
 ```
 cd C:\Users\Platform006\Cargo\Cargo
 dotnet build -f net10.0-desktop
-$env:APP_NO_HOTDESIGN='1'; $env:CARGO_START_SECTION='berths'; .\bin\Debug\net10.0-desktop\Cargo.exe
+$env:APP_NO_HOTDESIGN='1'; .\bin\Debug\net10.0-desktop\Cargo.exe
 ```
-With the App MCP: `uno_app_start`, then click Berths in the header (the start section is env-only). `uno_app_start` does not always kill the old instance: `taskkill /IM Cargo.exe /F` first, and never in parallel with the start. Screenshot frames are often stale right after a click; take a second capture.
+With the App MCP: `uno_app_start`, wait for the first frame before resizing (a resize during startup once
+killed the app). `taskkill /IM Cargo.exe /F` first; the running app locks `Cargo.exe` and `Liveline.dll`.
+Liveline must be cloned at `C:\Users\Platform006\Uno-Builds-net10` on branch `liveline-window`.
