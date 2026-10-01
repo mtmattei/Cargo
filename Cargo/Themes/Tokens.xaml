@@ -17,7 +17,6 @@
   <Color x:Key="PaperWarmColor">#FFF3F2EE</Color>
   <!-- Surface: header, panels, light tags, HUD floats, popovers -->
   <Color x:Key="SurfaceColor">#FFFBFBFA</Color>
-  <Color x:Key="SecondaryHoverColor">#FFF2F3F2</Color>
   <Color x:Key="SurfaceSunkColor">#FFF0F0ED</Color>
   <Color x:Key="SurfaceSunkAltColor">#FFE9EAE6</Color>
   <Color x:Key="LandColor">#FFE6E7E2</Color>
@@ -32,7 +31,6 @@
   <!-- Accent: active tab, primary button, focus ring, links, reserved berth, approach route, MOVES lane -->
   <Color x:Key="AccentColor">#FF1C6E9E</Color>
   <Color x:Key="AccentDarkColor">#FF155A82</Color>
-  <Color x:Key="AccentHoverColor">#FF185F88</Color>
   <!-- Text and marks on accent and alert-ink grounds (avatar initials, primary button, count badge) -->
   <Color x:Key="OnAccentColor">#FFFFFFFF</Color>
   <!-- Accent on dark grounds (scanner, dark tag): the water blue holds 5.9:1 on ink -->
@@ -188,10 +186,8 @@
   <SolidColorBrush x:Key="TextOnDarkMutedBrush" Color="{StaticResource TextOnDarkMutedColor}" />
   <SolidColorBrush x:Key="TextOnDarkBrush" Color="{StaticResource TextOnDarkColor}" />
 
-  <SolidColorBrush x:Key="SecondaryHoverInvariantBrush" Color="{StaticResource SecondaryHoverColor}" />
   <SolidColorBrush x:Key="AccentInvariantBrush" Color="{StaticResource AccentColor}" />
   <SolidColorBrush x:Key="AccentDarkInvariantBrush" Color="{StaticResource AccentDarkColor}" />
-  <SolidColorBrush x:Key="AccentHoverInvariantBrush" Color="{StaticResource AccentHoverColor}" />
   <SolidColorBrush x:Key="OnAccentInvariantBrush" Color="{StaticResource OnAccentColor}" />
   <SolidColorBrush x:Key="AccentBrightInvariantBrush" Color="{StaticResource AccentBrightColor}" />
   <SolidColorBrush x:Key="AccentPaleInvariantBrush" Color="{StaticResource AccentPaleColor}" />
@@ -248,7 +244,6 @@
   <!-- The header tab's hover underline -->
   <SolidColorBrush x:Key="TabHoverInvariantBrush" Color="{StaticResource InkColor}" Opacity="0.16" />
   <SolidColorBrush x:Key="HairlineOnDarkBrush" Color="#FFFFFFFF" Opacity="0.10" />
-  <SolidColorBrush x:Key="ScrimInvariantBrush" Color="{StaticResource InkDeepColor}" Opacity="0.86" />
   <!-- Dims the page behind a floating panel (the container scanner) without hiding where you were -->
   <SolidColorBrush x:Key="PageDimInvariantBrush" Color="{StaticResource InkDeepColor}" Opacity="0.55" />
 

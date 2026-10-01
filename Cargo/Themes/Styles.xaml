@@ -111,11 +111,6 @@
     <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
     <Setter Property="FontSize" Value="15" />
   </Style>
-  <Style x:Key="TypeDisplayBold15" TargetType="TextBlock">
-    <Setter Property="FontFamily" Value="{StaticResource DisplayBoldFont}" />
-    <Setter Property="FontSize" Value="15" />
-  </Style>
-
   <Style x:Key="GreetingText" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
     <Setter Property="FontSize" Value="40" />
@@ -416,13 +411,6 @@
 
   <Style x:Key="FigureLabelText" TargetType="TextBlock" BasedOn="{StaticResource CaptionText}">
     <Setter Property="FontSize" Value="13" />
-    <Setter Property="VerticalAlignment" Value="Center" />
-  </Style>
-
-  <!-- Status is a dot before an ink word; the dot is the only colour -->
-  <Style x:Key="StatusDot" TargetType="Ellipse">
-    <Setter Property="Width" Value="7" />
-    <Setter Property="Height" Value="7" />
     <Setter Property="VerticalAlignment" Value="Center" />
   </Style>
 

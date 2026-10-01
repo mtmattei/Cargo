@@ -1,5 +1,4 @@
 using Microsoft.UI.Input;
-using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 
 namespace Cargo.Controls;
