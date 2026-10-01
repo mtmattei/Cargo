@@ -1,5 +1,3 @@
-using Uno.Resizetizer;
-
 namespace Cargo;
 
 public partial class App : Application

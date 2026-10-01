@@ -4,7 +4,6 @@ using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Hosting;
-using Microsoft.UI.Xaml.Media;
 
 namespace Cargo.Controls;
 
@@ -20,7 +19,7 @@ public sealed partial class RollingText : ContentControl
 {
     public static readonly DependencyProperty TextProperty = DependencyProperty.Register(
         nameof(Text), typeof(string), typeof(RollingText),
-        new PropertyMetadata(string.Empty, (d, e) => ((RollingText)d).Apply((string?)e.OldValue, (string?)e.NewValue)));
+        new PropertyMetadata(string.Empty, (d, e) => ((RollingText)d).Apply((string?)e.NewValue)));
 
     private readonly StackPanel _row = new() { Orientation = Orientation.Horizontal };
     private readonly List<Cell> _cells = [];
@@ -37,7 +36,7 @@ public sealed partial class RollingText : ContentControl
         set => SetValue(TextProperty, value);
     }
 
-    private void Apply(string? old, string? text)
+    private void Apply(string? text)
     {
         text ??= string.Empty;
         AutomationProperties.SetName(this, text);

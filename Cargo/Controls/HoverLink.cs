@@ -1,6 +1,4 @@
-using System.Windows.Input;
 using Microsoft.UI.Input;
-using Microsoft.UI.Xaml.Input;
 
 namespace Cargo.Controls;
 

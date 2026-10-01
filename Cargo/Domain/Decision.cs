@@ -1,5 +1,3 @@
-using System.Windows.Input;
-
 namespace Cargo.Domain;
 
 public enum DecisionKind

@@ -1,4 +1,3 @@
-using Microsoft.UI.Xaml.Shapes;
 using Path = Microsoft.UI.Xaml.Shapes.Path;
 
 namespace Cargo.Controls;

@@ -1,4 +1,3 @@
-using Microsoft.UI.Xaml.Media;
 using Windows.UI;
 
 namespace Cargo.Domain;

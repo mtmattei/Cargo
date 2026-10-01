@@ -1,4 +1,3 @@
-using System.Windows.Input;
 using Microsoft.UI.Xaml.Media;
 
 namespace Cargo.Presentation;

@@ -483,19 +483,6 @@ public static class PortData
 
     // ── Series ────────────────────────────────────────────────────────────────
 
-    /// <summary>Arrivals per hour, midnight to midnight.</summary>
-    public static readonly IReadOnlyList<double> Arrivals = new[]
-    {
-        0.2, 0.2, 0.4, 0.9, 1, 0.9, 0.6, 0.5, 0.5, 0.9, 1.3, 1.4, 1.4,
-        1.1, 0.7, 0.5, 0.6, 0.9, 1.2, 1.3, 1.2, 1.0, 0.5, 0.4, 0.3
-    };
-
-    public static readonly IReadOnlyList<double> Departures = new[]
-    {
-        0.1, 0.1, 0.2, 0.3, 0.6, 0.8, 0.7, 0.5, 0.4, 0.5, 0.7, 0.9, 1,
-        0.9, 0.7, 0.6, 0.7, 0.8, 0.7, 0.5, 0.6, 0.9, 0.5, 0.3, 0.2
-    };
-
     public static readonly IReadOnlyList<(string Name, double Hour, bool Arrival)> Movements = new[]
     {
         ("Sirius Bay", 3d, true),

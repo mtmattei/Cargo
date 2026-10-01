@@ -1,5 +1,3 @@
-using Microsoft.UI.Xaml.Media;
-
 namespace Cargo.Controls;
 
 /// <summary>

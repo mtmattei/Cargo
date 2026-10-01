@@ -1,8 +1,6 @@
-using System.Windows.Input;
 using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using SkiaSharp;
 using Uno.WinUI.Graphics2DSK;
@@ -229,6 +227,7 @@ public sealed partial class HarbourView : UserControl
     /// Slides the full-height scene up as the band shrinks: flush at 491, the design's 110 px up at 340,
     /// linear between. The view's own height is what animates; this follows it on SizeChanged.
     /// </summary>
+    // xaml-lint: allow responsive - follows the band's height animation frame by frame; no size class or threshold
     private void SlideBand()
     {
         _bandOffset = double.IsNaN(StageHeight) || ActualHeight <= 0

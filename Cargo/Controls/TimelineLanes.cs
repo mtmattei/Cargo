@@ -1,4 +1,3 @@
-using System.Windows.Input;
 using Cargo.Presentation;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml.Input;
@@ -20,7 +19,7 @@ public sealed partial class TimelineLanes : SKCanvasElement
     public const double DesignHeight = 580;
     public const float PlotLeft = 168, PlotRightInset = 12;
     private const float PlotTop = 28, PlotBottom = 540;
-    private const float VesselsTop = 28, TideTop = 164, MovesTop = 300, CargoTop = 428;
+    private const float TideTop = 164, MovesTop = 300, CargoTop = 428;
     private const float Baseline = 92, ArrivalDot = 84, DepartureDot = 100;
 
     private readonly SKPaint _fill = new() { IsAntialias = true, Style = SKPaintStyle.Fill };

@@ -1,5 +1,4 @@
 using Cargo.Controls;
-using Microsoft.UI.Xaml.Media;
 
 namespace Cargo.Presentation;
 

@@ -1,6 +1,5 @@
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml.Media.Animation;
-using Windows.Storage;
 using Windows.UI.ViewManagement;
 
 namespace Cargo.Domain;

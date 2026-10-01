@@ -12,4 +12,3 @@ global using Microsoft.Extensions.Hosting;
 global using Microsoft.Extensions.Logging;
 global using Cargo.Domain;
 global using Cargo.Presentation;
-global using ApplicationExecutionState = Windows.ApplicationModel.Activation.ApplicationExecutionState;

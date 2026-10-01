@@ -1,5 +1,3 @@
-using Microsoft.UI.Xaml.Media;
-
 namespace Cargo.Controls;
 
 /// <summary>Cross-section through one bay, looking forward from the bridge.</summary>

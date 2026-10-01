@@ -249,7 +249,6 @@
 
   <!-- ── Type ─────────────────────────────────────────────────── -->
   <FontFamily x:Key="DisplayFont">ms-appx:///Assets/Fonts/BricolageGrotesque_SemiBold.ttf#Bricolage Grotesque SemiBold</FontFamily>
-  <FontFamily x:Key="DisplayBoldFont">ms-appx:///Assets/Fonts/BricolageGrotesque_Bold.ttf#Bricolage Grotesque</FontFamily>
   <FontFamily x:Key="BodyFont">ms-appx:///Assets/Fonts/Archivo_Regular.ttf#Archivo</FontFamily>
   <FontFamily x:Key="BodyMediumFont">ms-appx:///Assets/Fonts/Archivo_Medium.ttf#Archivo Medium</FontFamily>
   <FontFamily x:Key="BodyStrongFont">ms-appx:///Assets/Fonts/Archivo_SemiBold.ttf#Archivo SemiBold</FontFamily>

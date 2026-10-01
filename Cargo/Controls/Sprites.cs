@@ -1,4 +1,3 @@
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Windows.Foundation;
 
@@ -35,23 +34,13 @@ internal static class Sprites
         ["cont-white-side"] = new(121, 73),
         ["cont-yellow"] = new(130, 88),
         ["cont-yellow-side"] = new(80, 69),
-        ["crane-leg-0"] = new(48, 50),
-        ["crane-leg-1"] = new(46, 50),
-        ["crane-leg-2"] = new(46, 50),
-        ["crane-leg-3"] = new(46, 50),
         ["crane-rtg-1"] = new(149, 186),
         ["crane-side"] = new(380, 280),
-        ["levant-anchor"] = new(180, 60),
-        ["msc-bow"] = new(178, 240),
         ["msc-plan"] = new(844, 134),
         ["msc-side"] = new(845, 245),
-        ["nordic-approach"] = new(170, 170),
-        ["ship-bow"] = new(178, 268),
         ["ship-plan"] = new(934, 142),
         ["ship-side"] = new(1018, 274),
-        ["terminal-strip"] = new(1328, 128),
         ["tug-plan-b"] = new(240, 99),
-        ["water-tile"] = new(280, 80)
     };
 
     private static readonly Dictionary<string, BitmapImage> Cache = new();

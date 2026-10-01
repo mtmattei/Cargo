@@ -1,5 +1,4 @@
 using Microsoft.UI.Xaml.Automation;
-using Microsoft.UI.Xaml.Media;
 using Windows.Foundation;
 
 namespace Cargo.Controls;

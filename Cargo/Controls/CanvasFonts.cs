@@ -1,5 +1,4 @@
 using SkiaSharp;
-using Windows.Storage;
 
 namespace Cargo.Controls;
 
@@ -15,7 +14,6 @@ public static class CanvasFonts
     public const string MonoMedium = "IBMPlexMono_Medium.ttf";
     public const string Mono = "IBMPlexMono_Regular.ttf";
     public const string BodyMedium = "Archivo_Medium.ttf";
-    public const string BodyStrong = "Archivo_SemiBold.ttf";
 
     public static Task<SKTypeface?> Load(string file)
     {

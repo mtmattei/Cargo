@@ -122,7 +122,7 @@ public sealed class HarbourRenderer : IDisposable
         DrawNeeds(canvas, seconds, state);
         DrawLive(canvas, seconds, state);
         DrawAtmosphere(canvas, width, height);
-        DrawLeaders(canvas, state);
+        DrawLeaders(canvas);
     }
 
     /// <summary>
@@ -813,7 +813,7 @@ public sealed class HarbourRenderer : IDisposable
     /// Ink leaders from each hull to its tag, ending in an anchor ring: filled navy with a surface
     /// edge for a vessel alongside, a hollow navy ring for one still inbound.
     /// </summary>
-    private void DrawLeaders(SKCanvas canvas, HarbourFrameState state)
+    private void DrawLeaders(SKCanvas canvas)
     {
         foreach (var (id, (anchor, tag)) in Leaders)
         {
@@ -836,12 +836,6 @@ public sealed class HarbourRenderer : IDisposable
         var step = (int)Math.Round(phase * 2) % _dashCreep.Length;
         return _dashCreep[step] ??= SKPathEffect.CreateDash(new[] { 6f, 5f }, step / 2f);
     }
-
-    private static SKColor Blend(SKColor a, SKColor b, double t) => new(
-        (byte)(a.Red + (b.Red - a.Red) * t),
-        (byte)(a.Green + (b.Green - a.Green) * t),
-        (byte)(a.Blue + (b.Blue - a.Blue) * t),
-        (byte)(a.Alpha + (b.Alpha - a.Alpha) * t));
 
     // ── Paths ──────────────────────────────────────────────────────────────────
 

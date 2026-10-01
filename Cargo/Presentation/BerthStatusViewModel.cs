@@ -1,4 +1,3 @@
-using System.Windows.Input;
 using Microsoft.UI.Xaml.Media;
 
 namespace Cargo.Presentation;
@@ -147,7 +146,7 @@ public sealed partial class BerthStatusViewModel : ObservableObject
         row.Plate = "A";
         row.StateLabel = "AT ANCHOR";
         row.Name = vessel.Name;
-        row.Meta = BerthFacts.FitsLine(_state, vessel);
+        row.Meta = BerthFacts.FitsLine(vessel);
         row.When = BerthFacts.Clock(vessel.Eta);
         row.AccessibleName = $"Anchorage, {vessel.Name}, at anchor, arrival window {row.When}, {row.Meta}";
         row.Kind = RowKind.Vessel;
@@ -269,7 +268,7 @@ internal static class BerthFacts
             : "Closed";
 
     /// <summary>"Unassigned · fits berths 01, 04, 06": the berths whose depth clears the draft.</summary>
-    public static string FitsLine(PortState state, Vessel vessel)
+    public static string FitsLine(Vessel vessel)
     {
         var fits = PortData.Berths.Where(b => b.State != "restricted" && b.Depth >= vessel.Draft).Select(b => b.Number).ToList();
         return fits.Count == 0 ? "Unassigned · no berth deep enough" : $"Unassigned · fits berths {string.Join(", ", fits)}";

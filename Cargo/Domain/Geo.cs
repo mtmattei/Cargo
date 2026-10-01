@@ -1,5 +1,4 @@
 using Microsoft.UI.Xaml.Markup;
-using Microsoft.UI.Xaml.Media;
 using Windows.Foundation;
 
 namespace Cargo.Domain;
@@ -110,22 +109,6 @@ public static class Geo
             Points = points,
             Stroke = Smooth(points),
             Area = SmoothArea(points, height)
-        };
-    }
-
-    /// <summary>A series mirrored about a baseline — the arrivals/departures ribbon.</summary>
-    public static Series Mirror(IReadOnlyList<double> values, double width, double baseline, double amplitude, int direction)
-    {
-        var max = values.Max();
-        var points = values
-            .Select((v, i) => new Point(i * width / (values.Count - 1), baseline + direction * (v / max) * amplitude))
-            .ToList();
-
-        return new Series
-        {
-            Points = points,
-            Stroke = Smooth(points),
-            Area = SmoothArea(points, baseline)
         };
     }
 }
