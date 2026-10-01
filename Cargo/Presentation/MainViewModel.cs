@@ -65,9 +65,7 @@ public sealed partial class MainViewModel : ObservableObject
 
     public string AccountName => $"Account and settings: {Operator.ShortName}";
 
-    public string OperatorLine => $"{Operator.Role} · {Operator.Badge} · {Clock(Operator.ClockedIn)} to {Clock(Operator.ShiftEnd)}";
-
-    private static string Clock(double hours) => TimeSpan.FromHours(hours % 24).ToString(@"hh\:mm");
+    public string OperatorLine => $"{Operator.Role} · {Operator.Badge} · {Operator.ClockedInText} to {Operator.ShiftEndText}";
 
     /// <summary>The account menu's reduced-motion toggle, saved between launches (see <see cref="Motion"/>).</summary>
     public bool ReduceMotion

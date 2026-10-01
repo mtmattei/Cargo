@@ -39,6 +39,13 @@ public sealed partial class OverviewViewModel : ObservableObject
             BuildNextUp();
             Refresh();
             state.Ticked += (_, _) => Refresh();
+            state.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == nameof(PortState.NeedsYouCount))
+                {
+                    OnPropertyChanged(nameof(NeedsYouText));
+                }
+            };
         });
     }
 
@@ -55,10 +62,27 @@ public sealed partial class OverviewViewModel : ObservableObject
     [ObservableProperty]
     private string _movesNow = string.Empty;
 
+    /// <summary>The operator on shift, for the masthead's ID card.</summary>
+    public DutyOperator Operator => PortData.Operator;
+
+    public string OperatorSince => $"{Operator.Role} · in {Operator.ClockedInText}";
+
+    public string OperatorUntil => $"until {Operator.ShiftEndText}";
+
+    public string OperatorSummary => $"{Operator.Role} {Operator.Name}, {Operator.Badge}, on shift {Operator.ClockedInText} to {Operator.ShiftEndText}";
+
+    /// <summary>The masthead's needs-you figure, as text for the figure's TextBlock.</summary>
+    public string NeedsYouText => State.NeedsYouCount.ToString();
+
+    /// <summary>How much of the shift has passed, 0 to 1.</summary>
+    [ObservableProperty]
+    private double _shiftProgress;
+
     private void Refresh()
     {
         NowHours = State.NowHours;
         MovesNow = PortState.MovesAt(NowHours).ToString();
+        ShiftProgress = Math.Clamp((NowHours - Operator.ClockedIn) / (Operator.ShiftEnd - Operator.ClockedIn), 0, 1);
 
         foreach (var row in NextUp)
         {

@@ -122,7 +122,13 @@ public sealed record CargoItem(string Name, string TintToken, bool Flagged = fal
 
 /// <summary>The operator on shift. Times are hours on the app's clock; past 24 is the next morning.</summary>
 public sealed record DutyOperator(string Name, string ShortName, string Initials, string Role, string Badge,
-    double ClockedIn, double ShiftEnd);
+    double ClockedIn, double ShiftEnd)
+{
+    public string ClockedInText => Clock(ClockedIn);
+    public string ShiftEndText => Clock(ShiftEnd);
+
+    private static string Clock(double hours) => TimeSpan.FromHours(hours % 24).ToString(@"hh\:mm");
+}
 
 public sealed record ChatLine(string Who, string Text, double Hour);
 

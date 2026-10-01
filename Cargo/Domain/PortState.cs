@@ -453,17 +453,25 @@ public sealed partial class PortState : ObservableObject
 
     public bool NeedsDecision => PendingDecision is not null;
 
+    private static bool HasHold => PortData.Containers.Any(c => c.Security == "Hold");
+    private static bool HasDriverCheck => PortData.Vehicles.Any(v => v.Authorization == "Awaiting driver ID");
+    private static bool HasLateOrders => PortData.RiverFleet.Any(v => v.SlipMinutes > 0);
+
     /// <summary>
     /// Whether a section holds something waiting on the dispatcher, for the header's needs-you
-    /// dots: Berths the unconfirmed arrival, Cargo the late orders, Security the inspection hold.
+    /// dots: Berths the unconfirmed arrival, Cargo the late orders, Security the inspection hold
+    /// and the driver ID check.
     /// </summary>
     public bool SectionNeedsYou(string section) => section switch
     {
         "berths" => NeedsDecision,
-        "cargo" => PortData.RiverFleet.Any(v => v.SlipMinutes > 0),
-        "security" => PortData.Containers.Any(c => c.Security == "Hold"),
+        "cargo" => HasLateOrders,
+        "security" => HasHold || HasDriverCheck,
         _ => false
     };
+
+    /// <summary>What needs you, counted as the queue lists it: the berth, the hold, the driver check, the late orders.</summary>
+    public int NeedsYouCount => (NeedsDecision ? 1 : 0) + (HasHold ? 1 : 0) + (HasDriverCheck ? 1 : 0) + (HasLateOrders ? 1 : 0);
 
     public bool IsConfirmed(string vesselId) => _confirmed.Contains(vesselId);
 
@@ -505,6 +513,7 @@ public sealed partial class PortState : ObservableObject
     {
         OnPropertyChanged(nameof(PendingDecision));
         OnPropertyChanged(nameof(NeedsDecision));
+        OnPropertyChanged(nameof(NeedsYouCount));
     }
 
     /// <summary>Give every movable vessel the shallowest berth that still clears its draft.</summary>

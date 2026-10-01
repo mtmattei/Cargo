@@ -111,7 +111,7 @@
            below the greeting's height (HarbourView.TopInset), so it covers no ship, tag or HUD. -->
       <local:OverviewMasthead x:Name="Masthead" DataContext="{x:Bind ViewModel.Overview, Mode=OneWay}"
                               Visibility="{x:Bind ViewModel.IsOverview, Mode=OneWay}"
-                              VerticalAlignment="Top" Margin="24,20,24,0" />
+                              VerticalAlignment="Top" Margin="40,20,40,0" />
       <!-- Layer switcher: centred on the HUD row; below Normal (1040) the row cannot hold presets, layers and
            zoom (292 + 330 + 266 px plus gutters), so it stacks above the camera presets (16 + 36 + 8 px up) -->
       <Border Style="{StaticResource HarbourHudPanel}" Padding="3" VerticalAlignment="Bottom"

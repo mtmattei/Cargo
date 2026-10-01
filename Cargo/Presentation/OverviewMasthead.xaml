@@ -4,15 +4,15 @@
              xmlns:utu="using:Uno.Toolkit.UI">
 
   <UserControl.Resources>
-    <!-- Greeting (~560 px) + figures (~510 px) + gutters need ~1150 px on one line; below 1240 the
-         figures move under the greeting instead of sliding beneath it -->
-    <utu:ResponsiveLayout x:Key="MastheadBreakpoints" Narrowest="0" Narrow="0" Normal="1240" Wide="100000" Widest="100000" />
+    <!-- Greeting (~520 px) + figures (~290 px) + the ID card (252 px) + gutters need ~1240 px on one
+         line: below 1240 the figures move under the greeting; below 1040 the card leaves (its
+         operator and shift are in the account flyout) -->
+    <utu:ResponsiveLayout x:Key="MastheadBreakpoints" Narrowest="0" Narrow="1040" Normal="1240" Wide="100000" Widest="100000" />
   </UserControl.Resources>
 
-  <!-- The Overview greeting and the shift's headline figures, laid over the top of the harbour
-       stage. Greeting left, figures right, both on one bottom line. Figures are ink; colour only
-       marks status, as a dot before the label. -->
-  <Grid ColumnSpacing="32">
+  <!-- The Overview greeting, the shift's headline figures and the duty operator's ID card.
+       Figures are ink; colour only marks status, as the mark before each label. -->
+  <Grid ColumnSpacing="40">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
@@ -20,63 +20,113 @@
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="*" />
       <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="Auto" />
     </Grid.ColumnDefinitions>
 
-    <StackPanel VerticalAlignment="Bottom" Spacing="8">
+    <StackPanel VerticalAlignment="Center" Spacing="8">
       <TextBlock Style="{StaticResource GreetingText}">
-        <Run Text="Good evening, " /><Run Text="Operations." Foreground="{StaticResource AccentInvariantBrush}" />
+        <Run Text="Good evening, " /><Run Text="Operations." Foreground="{StaticResource AccentDarkInvariantBrush}" />
       </TextBlock>
-      <TextBlock Text="{x:Bind ViewModel.Subtitle, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="14" />
+      <TextBlock Text="{x:Bind ViewModel.Subtitle, Mode=OneWay}" Style="{StaticResource DateLineText}" />
     </StackPanel>
 
-    <StackPanel Orientation="Horizontal" Spacing="32" VerticalAlignment="Bottom"
+    <StackPanel Orientation="Horizontal" Spacing="28" VerticalAlignment="Center" Padding="0,4,0,0"
                 Grid.Row="{utu:Responsive Layout={StaticResource MastheadBreakpoints}, Narrow=1, Normal=0}"
                 Grid.Column="{utu:Responsive Layout={StaticResource MastheadBreakpoints}, Narrow=0, Normal=1}"
                 Margin="{utu:Responsive Layout={StaticResource MastheadBreakpoints}, Narrow='0,20,0,0', Normal='0'}">
       <StackPanel Style="{StaticResource FigureStack}">
-        <TextBlock Text="Alongside" Style="{StaticResource FigureLabelText}" />
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <Ellipse Width="8" Height="8" Fill="{StaticResource NavyInvariantBrush}" VerticalAlignment="Center" />
+          <TextBlock Text="Alongside" Style="{StaticResource FigureLabelText}" />
+        </StackPanel>
         <TextBlock Text="3" Style="{StaticResource MetricText}" />
       </StackPanel>
 
       <StackPanel Style="{StaticResource FigureStack}">
         <StackPanel Orientation="Horizontal" Spacing="6">
-          <Ellipse Style="{StaticResource StatusDot}" Fill="{StaticResource AccentInvariantBrush}" />
+          <Ellipse Width="8" Height="8" Stroke="{StaticResource NavyInvariantBrush}" StrokeThickness="1.6" VerticalAlignment="Center" />
           <TextBlock Text="Inbound" Style="{StaticResource FigureLabelText}" />
         </StackPanel>
         <TextBlock Text="2" Style="{StaticResource MetricText}" />
       </StackPanel>
 
-      <StackPanel Style="{StaticResource FigureStack}">
-        <TextBlock Text="Moves / h" Style="{StaticResource FigureLabelText}" />
-        <TextBlock Text="{x:Bind ViewModel.MovesNow, Mode=OneWay}" Style="{StaticResource MetricText}" />
-      </StackPanel>
-
-      <Button Style="{StaticResource BareButton}" Command="{x:Bind ViewModel.State.GoCommand, Mode=OneWay}" CommandParameter="fleet"
-              ToolTipService.ToolTip="Open Waterways" AutomationProperties.Name="2 orders late, open Waterways">
-        <StackPanel Style="{StaticResource FigureStack}">
-          <StackPanel Orientation="Horizontal" Spacing="6">
-            <Ellipse Style="{StaticResource StatusDot}" Fill="{StaticResource OrangeInvariantBrush}" />
-            <TextBlock Text="Orders late" Style="{StaticResource FigureLabelText}" />
-          </StackPanel>
-          <TextBlock Text="2" Style="{StaticResource MetricText}" />
-        </StackPanel>
-      </Button>
-
-      <Button Style="{StaticResource BareButton}" Command="{x:Bind ViewModel.State.OpenSecurityCommand, Mode=OneWay}"
-              ToolTipService.ToolTip="Open Security" AutomationProperties.Name="1 hold, open Security">
-        <StackPanel Style="{StaticResource FigureStack}">
-          <StackPanel Orientation="Horizontal" Spacing="6">
-            <Ellipse Style="{StaticResource StatusDot}" Fill="{StaticResource OrangeInvariantBrush}" />
-            <TextBlock Text="Holds" Style="{StaticResource FigureLabelText}" />
-          </StackPanel>
-          <TextBlock Text="1" Style="{StaticResource MetricText}" />
-        </StackPanel>
-      </Button>
+      <Rectangle Width="1" Fill="{StaticResource HairlineStrongInvariantBrush}" />
 
       <StackPanel Style="{StaticResource FigureStack}">
-        <TextBlock Text="Incidents" Style="{StaticResource FigureLabelText}" />
-        <TextBlock Text="0" Style="{StaticResource MetricText}" />
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <Rectangle Width="8" Height="8" RadiusX="2" RadiusY="2" Fill="{StaticResource AlertInvariantBrush}" VerticalAlignment="Center" />
+          <TextBlock Text="Needs you" Style="{StaticResource FigureLabelText}" />
+        </StackPanel>
+        <TextBlock Text="{x:Bind ViewModel.NeedsYouText, Mode=OneWay}" Style="{StaticResource MetricText}"
+                   Foreground="{StaticResource AlertInkInvariantBrush}" />
       </StackPanel>
     </StackPanel>
+
+    <!-- Duty operator: an ID card clipped to the masthead, tilted 1.2° from its clip.
+         Shadows inline: a Style-supplied collection never applies (Toolkit gotcha G36). -->
+    <utu:ShadowContainer Grid.Column="2" Grid.RowSpan="2" Width="252" VerticalAlignment="Center"
+                         Background="{StaticResource SurfaceInvariantBrush}"
+                         RenderTransformOrigin="0.5,0"
+                         Visibility="{utu:Responsive Layout={StaticResource MastheadBreakpoints}, Narrowest=Collapsed, Narrow=Visible}"
+                         AutomationProperties.Name="{x:Bind ViewModel.OperatorSummary}">
+      <utu:ShadowContainer.RenderTransform>
+        <RotateTransform Angle="-1.2" />
+      </utu:ShadowContainer.RenderTransform>
+      <utu:ShadowContainer.Shadows>
+        <utu:ShadowCollection>
+          <utu:Shadow Spread="1" BlurRadius="0" Color="{StaticResource InkColor}" Opacity="0.08" />
+          <utu:Shadow OffsetY="1" BlurRadius="2" Color="{StaticResource InkColor}" Opacity="0.06" />
+          <utu:Shadow OffsetY="12" BlurRadius="28" Color="{StaticResource InkColor}" Opacity="0.08" />
+        </utu:ShadowCollection>
+      </utu:ShadowContainer.Shadows>
+
+      <Grid CornerRadius="12" Padding="16,18,16,14" RowSpacing="12">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- xaml-lint: allow card - the ID card's clip slot, a 28x4 punched mark -->
+        <Border Width="28" Height="4" CornerRadius="2" Margin="0,-11,0,0" VerticalAlignment="Top"
+                Background="{StaticResource PaperInvariantBrush}"
+                BorderBrush="{StaticResource HairlineStrongInvariantBrush}" BorderThickness="1" />
+
+        <!-- The sub-line spans under the badge: in the badge's column alone it would clip at 252 px -->
+        <Grid ColumnSpacing="12" RowSpacing="3">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="36" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
+          <Grid Grid.RowSpan="2" Width="36" Height="36" VerticalAlignment="Center">
+            <Ellipse Fill="{StaticResource AccentInvariantBrush}" />
+            <TextBlock Text="{x:Bind ViewModel.Operator.Initials}" Style="{StaticResource CardInitialsText}" />
+          </Grid>
+          <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.Operator.Name}" Style="{StaticResource CardNameText}"
+                     TextTrimming="CharacterEllipsis" />
+          <TextBlock Grid.Column="2" Text="{x:Bind ViewModel.Operator.Badge}" Style="{StaticResource BadgeMonoText}"
+                     VerticalAlignment="Center" />
+          <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Text="{x:Bind ViewModel.OperatorSince}"
+                     Style="{StaticResource CaptionText}" />
+        </Grid>
+
+        <Grid Grid.Row="1" ColumnSpacing="10">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+          </Grid.ColumnDefinitions>
+          <ProgressBar Value="{x:Bind ViewModel.ShiftProgress, Mode=OneWay}" Maximum="1" VerticalAlignment="Center"
+                       Height="3" MinHeight="3" CornerRadius="1.5"
+                       Foreground="{StaticResource AccentInvariantBrush}" Background="{StaticResource HairlineInvariantBrush}"
+                       AutomationProperties.Name="Shift progress" />
+          <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.OperatorUntil}" Style="{StaticResource TypeMono11}"
+                     Foreground="{StaticResource TextMutedInvariantBrush}" />
+        </Grid>
+      </Grid>
+    </utu:ShadowContainer>
   </Grid>
 </UserControl>

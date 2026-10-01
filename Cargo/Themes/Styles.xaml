@@ -111,8 +111,8 @@
 
   <Style x:Key="GreetingText" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
-    <Setter Property="FontSize" Value="44" />
-    <Setter Property="LineHeight" Value="46" />
+    <Setter Property="FontSize" Value="40" />
+    <Setter Property="LineHeight" Value="44" />
     <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />
   </Style>
 
@@ -183,8 +183,9 @@
     <Setter Property="Foreground" Value="{StaticResource TextFaintInvariantBrush}" />
   </Style>
 
+  <!-- Headline figures: Archivo 600 (the design keeps Bricolage for the wordmark and headings) -->
   <Style x:Key="MetricText" TargetType="TextBlock">
-    <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+    <Setter Property="FontFamily" Value="{StaticResource BodyStrongFont}" />
     <Setter Property="FontSize" Value="30" />
     <Setter Property="LineHeight" Value="30" />
     <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />
@@ -271,6 +272,25 @@
     <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
     <Setter Property="FontSize" Value="19" />
     <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />
+  </Style>
+
+  <!-- Masthead: the date under the greeting and the duty operator's ID card -->
+  <Style x:Key="DateLineText" TargetType="TextBlock" BasedOn="{StaticResource TypeBody15}">
+    <Setter Property="Foreground" Value="{StaticResource TextMutedInvariantBrush}" />
+  </Style>
+
+  <Style x:Key="CardNameText" TargetType="TextBlock" BasedOn="{StaticResource TypeStrong14}">
+    <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />
+  </Style>
+
+  <Style x:Key="BadgeMonoText" TargetType="TextBlock" BasedOn="{StaticResource TypeMonoMedium11}">
+    <Setter Property="Foreground" Value="{StaticResource TextMutedInvariantBrush}" />
+  </Style>
+
+  <Style x:Key="CardInitialsText" TargetType="TextBlock" BasedOn="{StaticResource TypeStrong13}">
+    <Setter Property="Foreground" Value="{StaticResource OnAccentInvariantBrush}" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="VerticalAlignment" Value="Center" />
   </Style>
 
   <Style x:Key="AvatarInitialsText" TargetType="TextBlock" BasedOn="{StaticResource TypeStrong12}">
