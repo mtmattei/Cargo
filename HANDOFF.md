@@ -1,4 +1,4 @@
-# HANDOFF — Cargo: Overview one-timeline build, steps 0-2 done; header + account menu next
+# HANDOFF — Cargo: Overview one-timeline build, steps 0-5 done; decisions queue (step 6) next
 Updated: 2026-09-30
 
 ## Where we are
@@ -29,7 +29,18 @@ Updated: 2026-09-30
     Waterways, Security (zones, inspection). Scanner overlay not runtime-verified (style refactor only).
   - Key gate: every string token key in C#/XAML resolves (`Tokens.Color` returns transparent on a
     miss, so a missed rename is silent). Script: session scratchpad `keycheck.py`; worth adding to tools/.
-- Next: step 3 (header + account menu). Cargo does not reference Liveline yet (lands in step 7).
+- Step 3 done (`68c9b73`): light header, text tabs (`NavTabButton`), needs-you dots from
+  `PortState.SectionNeedsYou`, account Flyout (operator + reduced-motion ToggleSwitch). Spec deviation:
+  Flyout, not MenuFlyout (disabled MenuFlyout items were unreadable).
+- Step 4 done (`bc07fe0`): masthead figures (Alongside / Inbound / Needs you = `PortState.NeedsYouCount`,
+  4 at 20:58), duty ID card (ShadowContainer, -1.2°, shift ProgressBar), `PortData.Operator`.
+  `MetricText` is Archivo 600 app-wide. Card entrance and the figure's link to the queue: steps 9 / 6.
+- Step 5 done (`4f88234`, `2366547`, `5ee764f`): light/dark harbour tags, anchor rings, dashed reserved
+  berth; HUD floats (camera MenuFlyout Top with radio items, sliding layer segments, Key flyout,
+  scale/north/zoom group); `SegmentIndicator` control (Toolkit 9.1.3 has no Simple/Material
+  SegmentedStyle); `Themes/Icons.xaml` as Path styles; Overview band 340 ↔ 491 (`StageHeight`, 320 ms).
+  MenuFlyout Placement=Top spike: works on Skia desktop.
+- Next: step 6 (decisions queue). Cargo does not reference Liveline yet (lands in step 7).
 
 Previous (needs-you spec), 2026-09-30, third session: the spec's six questions are answered (amber; Confirm writes a real
 assignment; full bar on Berths plus a panel mode on Overview; minutes-only clock roll; Nordic Star
@@ -63,13 +74,16 @@ Read, not applied: none.
 
 ## Next actions (in order)
 0. Add `Assets/Fonts/IBMPlexMono_SemiBold.ttf` (static TTF, Android 2.2 UA via Google Fonts css2) and a `MonoStrongFont` resource.
-0b. `SPEC-OVERVIEW-TIMELINE.md` step 3 (header + account menu), then 4-9. Items 1-2 below are superseded by it.
+0b. `SPEC-OVERVIEW-TIMELINE.md` step 6 (decisions queue), then 7-9. Items 1-2 below are superseded by it.
 1. (superseded) Plan step 8, Overview context panel (spec section *Overview context panel*): `OverviewContextViewModel` with the mode priority (needs-you, selection, berth hover after a 300 ms dwell, layer); one view per mode in a Visibility region or VSM (no code-behind toggling); reuse `NeedsYouBar`; move Container volume and Cargo flow to Cargo, Sea & weather and tide to Waterways; Activity becomes a Map panel mode. Verify each mode at 1680 x 1020 and 1100 x 900, no vertical scroll at 1020 high.
 2. Plan step 9: reduced-motion pass over every new motion, lint, `ui-craft` self-critique, HANDOFF.
 3. Push `main` once step 8 lands (8 commits local).
 4. Then the queued items: `GLCanvasElement` harbour trial (uno-build-options), MainPage design pass (gold-standard-pass).
 
 ## Open questions
+- `SegmentIndicator` is custom (lint BUILTIN allowed): Windows Community Toolkit 8 `Segmented` is the ladder's next rung but a new package (stop condition). Adopt it, or keep the custom indicator?
+- Camera menu radio items render as circles under SimpleTheme; the design shows a check mark.
+- `HarbourView.TopInset` / `HarbourCamera.TopInset` are now always 0 (the masthead no longer overlays the stage): dead path to remove in the step 9 cleanup.
 - Security zone sub-labels ("Personnel & visitors", "Gates 1–3") spill below the 34 px zone outlines; drawn in C# (`SecurityScenes.cs:43`), pre-existing.
 - Canvas scenes (`SecurityScenes`, `OverviewCharts`...) still pass literal text sizes to `Draw.Text`; the ramp migration covered XAML only.
 - Vessels: the floated key-figure cards cover bays 01-03 of the side profile at panel widths below ~1300 (pre-existing layout intent: "over the empty water at the bow").
