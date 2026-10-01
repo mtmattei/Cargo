@@ -1,7 +1,6 @@
 using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media.Animation;
 using SkiaSharp;
 using Uno.WinUI.Graphics2DSK;
 using Windows.Foundation;
@@ -171,7 +170,6 @@ public sealed partial class HarbourView : UserControl
         set => SetValue(StageHeightProperty, value);
     }
 
-    private Storyboard? _heightBoard;
 
     /// <summary>The band's full height (expanded) and how far the scene rides up when collapsed to 340 (the design).</summary>
     private const double BandFull = 491, BandCollapsed = 340, BandRise = 110;
@@ -179,65 +177,102 @@ public sealed partial class HarbourView : UserControl
     /// <summary>How far the scene sits above the view's top edge right now, in band mode.</summary>
     private double _bandOffset;
 
+    // The band's grow, stepped per frame (see OnStageHeightChanged)
+    private double _bandFrom, _bandTo;
+    private DateTimeOffset _bandStart;
+    private bool _bandTicking;
+
     /// <summary>
     /// Between two band heights the stage grows over 320 ms on EaseSmooth; to or from the
-    /// proportional stage (a section change) it jumps. The local value is the target and the
-    /// animation runs From the current height with FillBehavior Stop, so a finished board never
-    /// holds a stale value (gotcha G60).
+    /// proportional stage (a section change) it jumps. The grow is stepped per frame and each step
+    /// sets the height, the scene's slide, the clip and the edge fades together. Animating Height
+    /// and following it from SizeChanged put those one frame behind the height, which shimmered at
+    /// the band's edges while it moved.
     /// </summary>
     private void OnStageHeightChanged(double from, double to)
     {
-        _heightBoard?.Stop();
-        _heightBoard = null;
-
         // Band mode renders the scene once at full height; the view clips it and slides it, so
-        // growing or shrinking the band never re-bakes or re-frames the scene (it did, every frame)
+        // growing or shrinking the band never re-bakes or re-frames the scene
         var band = !double.IsNaN(to);
         SceneHost.Height = TagLayer.Height = band ? BandFull : double.NaN;
         SceneHost.VerticalAlignment = TagLayer.VerticalAlignment = band ? VerticalAlignment.Top : VerticalAlignment.Stretch;
-        SlideBand();
 
-        var current = ActualHeight;
-        Height = to;
-        if (double.IsNaN(from) || double.IsNaN(to) || current <= 0 || Motion.Reduced)
+        var current = _bandTicking ? Height : ActualHeight;
+        StopBand();
+        if (double.IsNaN(from) || !band || current <= 0 || Motion.Reduced)
         {
+            SetBand(to);
             return;
         }
 
-        var animation = new DoubleAnimationUsingKeyFrames
+        (_bandFrom, _bandTo, _bandStart) = (current, to, DateTimeOffset.Now);
+        SetBand(current);
+        CompositionTarget.Rendering += OnBandFrame;
+        _bandTicking = true;
+
+        // Rendering stops when a frame changes nothing on screen, so the last step is guaranteed by a timer
+        var start = _bandStart;
+        var finish = DispatcherQueue.CreateTimer();
+        finish.Interval = Motion.Duration("DurationExpandMs") + TimeSpan.FromMilliseconds(50);
+        finish.IsRepeating = false;
+        finish.Tick += (_, _) =>
         {
-            EnableDependentAnimation = true,
-            FillBehavior = FillBehavior.Stop
+            if (_bandTicking && _bandStart == start)
+            {
+                SetBand(_bandTo);
+                StopBand();
+            }
         };
-        animation.KeyFrames.Add(new DiscreteDoubleKeyFrame { KeyTime = TimeSpan.Zero, Value = current });
-        animation.KeyFrames.Add(new SplineDoubleKeyFrame
-        {
-            KeyTime = Motion.Duration("DurationExpandMs"),
-            Value = to,
-            KeySpline = (KeySpline)Application.Current.Resources["EaseSmooth"]
-        });
-        Storyboard.SetTarget(animation, this);
-        Storyboard.SetTargetProperty(animation, "Height");
-        _heightBoard = new Storyboard();
-        _heightBoard.Children.Add(animation);
-        _heightBoard.Begin();
+        finish.Start();
     }
+
+    // xaml-lint: allow codebehind - the band's per-frame step (CompositionTarget.Rendering has no XAML surface)
+    private void OnBandFrame(object? sender, object e)
+    {
+        var k = (DateTimeOffset.Now - _bandStart).TotalMilliseconds / Motion.Duration("DurationExpandMs").TotalMilliseconds;
+        SetBand(k >= 1 ? _bandTo : _bandFrom + (_bandTo - _bandFrom) * Motion.Curve(k));
+        if (k >= 1)
+        {
+            StopBand();
+        }
+    }
+
+    private void StopBand()
+    {
+        if (_bandTicking)
+        {
+            CompositionTarget.Rendering -= OnBandFrame;
+            _bandTicking = false;
+        }
+    }
+
+    /// <summary>One band step: the height, then everything that follows it, in the same frame.</summary>
+    private void SetBand(double height)
+    {
+        Height = height;
+        SlideBand();
+        PlaceOverlays();
+    }
+
+    /// <summary>The band's height as set this frame (layout catches up after); otherwise the laid-out height.</summary>
+    private double VisibleHeight => !double.IsNaN(StageHeight) && !double.IsNaN(Height) ? Height : ActualHeight;
 
     /// <summary>
     /// Slides the full-height scene up as the band shrinks: flush at 491, the design's 110 px up at 340,
-    /// linear between. The view's own height is what animates; this follows it on SizeChanged.
+    /// linear between. Called per band step, and on SizeChanged for width changes.
     /// </summary>
     // xaml-lint: allow responsive - follows the band's height animation frame by frame; no size class or threshold
     private void SlideBand()
     {
-        _bandOffset = double.IsNaN(StageHeight) || ActualHeight <= 0
+        var visible = VisibleHeight;
+        _bandOffset = double.IsNaN(StageHeight) || visible <= 0
             ? 0
-            : Math.Clamp((BandFull - ActualHeight) * BandRise / (BandFull - BandCollapsed), 0, BandRise);
+            : Math.Clamp((BandFull - visible) * BandRise / (BandFull - BandCollapsed), 0, BandRise);
         // Negative margins keep each layer's slot at its full height: a slot shorter than the layer
         // clips it in its own coordinates, before any offset, which left the band's bottom empty
-        var below = double.IsNaN(StageHeight) ? 0 : Math.Max(0, BandFull - ActualHeight - _bandOffset);
+        var below = double.IsNaN(StageHeight) ? 0 : Math.Max(0, BandFull - visible - _bandOffset);
         SceneHost.Margin = TagLayer.Margin = new Thickness(0, -_bandOffset, 0, -below);
-        _scene?.SetWindow(double.IsNaN(StageHeight) ? double.NaN : _bandOffset, _bandOffset + ActualHeight);
+        _scene?.SetWindow(double.IsNaN(StageHeight) ? double.NaN : _bandOffset, _bandOffset + visible);
     }
 
     public static readonly DependencyProperty HudVisibilityProperty = DependencyProperty.Register(
@@ -504,12 +539,14 @@ public sealed partial class HarbourView : UserControl
     // xaml-lint: allow responsive - ActualWidth/Height clamp tags inside the frame; this is projection, not a breakpoint
     private void PlaceOverlays()
     {
-        if (_scene is null || ActualWidth <= 0 || ActualHeight <= 0)
+        var visible = VisibleHeight;
+        // xaml-lint: allow responsive - a zero-size guard before projecting, not a breakpoint
+        if (_scene is null || ActualWidth <= 0 || visible <= 0)
         {
             return;
         }
 
-        Clip = new RectangleGeometry { Rect = new Rect(0, 0, ActualWidth, ActualHeight) };
+        Clip = new RectangleGeometry { Rect = new Rect(0, 0, ActualWidth, visible) };
         _scene.SyncCamera();
         var camera = _scene.Camera;
         var leaders = new Dictionary<string, (SKPoint, SKPoint)>();
@@ -523,7 +560,7 @@ public sealed partial class HarbourView : UserControl
 
             // A vessel out of frame loses its tag rather than pinning it to an edge it is not near.
             // xaml-lint: allow responsive - per-frame projection culling, not a breakpoint
-            var inFrame = x > 0 && x < ActualWidth && y - _bandOffset > (Compact ? 16 : 40) && y - _bandOffset < ActualHeight - (Compact ? 8 : 56);
+            var inFrame = x > 0 && x < ActualWidth && y - _bandOffset > (Compact ? 16 : 40) && y - _bandOffset < visible - (Compact ? 8 : 56);
             // xaml-lint: allow codebehind - per-frame projection culling; there is no XAML surface for the camera
             host.Visibility = inFrame ? Visibility.Visible : Visibility.Collapsed;
             if (!inFrame)
