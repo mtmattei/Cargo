@@ -15,18 +15,33 @@ namespace Cargo.Controls.Harbour;
 public sealed partial class HarbourTag : ObservableObject
 {
     public required string Id { get; init; }
-    public required string Title { get; init; }
-    public required string Line { get; init; }
+    public required string Name { get; init; }
+
+    /// <summary>The light tag's status: "B04 · discharging".</summary>
+    public required string Sub { get; init; }
+
+    /// <summary>The dark tag's second line for the arrival waiting on its berth: "B07 · pilot aboard".</summary>
+    public required string PendingSub { get; init; }
+
+    /// <summary>Hours on the app clock when the vessel arrives, for the dark tag's countdown.</summary>
+    public required double EtaHours { get; init; }
+
     public required string AccessibleName { get; init; }
-    public required Brush Foreground { get; init; }
-    public required Brush SubForeground { get; init; }
     public required IReadOnlyList<Fact> Facts { get; init; }
     public required ICommand Toggle { get; init; }
     public required ICommand Open { get; init; }
     public required ICommand Hover { get; init; }
 
+    /// <summary>"in 41 min" on the dark tag.</summary>
     [ObservableProperty]
-    private Brush _background = Tokens.Transparent;
+    private string _countdown = string.Empty;
+
+    /// <summary>The light tag, or the dark one for the arrival still waiting on a berth decision.</summary>
+    [ObservableProperty]
+    private Visibility _lightVisibility = Visibility.Visible;
+
+    [ObservableProperty]
+    private Visibility _darkVisibility = Visibility.Collapsed;
 
     [ObservableProperty]
     private Brush _edge = Tokens.Transparent;
@@ -105,6 +120,7 @@ public sealed partial class HarbourView : UserControl
             SyncScene();
             BuildTags();
             this.RebuildWhenVisible(value, OnStructureChanged);
+            this.TickWhenVisible(value, TickTags);
             // Hover outlines draw in the live layer, so a hover never re-bakes the still frame
             this.RepaintWhenVisible(value, () =>
             {
@@ -314,15 +330,14 @@ public sealed partial class HarbourView : UserControl
         foreach (var shape in _scene.World.Vessels)
         {
             var vessel = PortData.Vessel(shape.Id);
-            var needs = vessel.Status == "Arriving";
             var tag = new HarbourTag
             {
                 Id = vessel.Id,
-                Title = vessel.Name.ToUpperInvariant(),
-                Line = TagLine(vessel),
+                Name = vessel.Name,
+                Sub = TagLine(vessel),
+                PendingSub = $"B{vessel.HomeBerth} · pilot aboard",
+                EtaHours = ClockHours(vessel.Eta),
                 AccessibleName = $"{vessel.Name}, {vessel.StatusLine}",
-                Foreground = Tokens.Brush("InkInvariantBrush"),
-                SubForeground = needs ? Tokens.Brush("InkInvariantBrush") : Tokens.Brush("TextMutedInvariantBrush"),
                 Facts = new[]
                 {
                     new Fact { Key = "Arrival", Value = vessel.Eta },
@@ -340,21 +355,44 @@ public sealed partial class HarbourView : UserControl
             _tags.Add((tag, host));
         }
 
+        TickTags();
         RefreshTags();
     }
 
-    private static string TagLine(Vessel v)
+    private static string TagLine(Vessel v) => v.Status switch
     {
-        static string Clock(string s) => s.Replace("Today ", string.Empty).ToUpperInvariant();
-        return v.Status switch
+        // The berth leads: a selected vessel's tag sits over its painted berth number
+        "Docked" when v.UnloadPercent is > 0 and < 100 => $"B{v.HomeBerth} · discharging",
+        "Docked" => $"B{v.HomeBerth} · loading",
+        "Departing" => $"B{v.HomeBerth} · departing",
+        "Arriving" => $"B{v.HomeBerth} · arriving {Clock(v.Eta)}",
+        _ => "anchored · unassigned"
+    };
+
+    private static string Clock(string when) => when[^5..];
+
+    /// <summary>"Today 21:40" is 21.67; another day's time ("Thu 02:30") is past midnight, 26.5.</summary>
+    private static double ClockHours(string when) =>
+        TimeSpan.TryParse(when[^5..], out var t) ? t.TotalHours + (when.StartsWith("Today") ? 0 : 24) : 0;
+
+    /// <summary>"in 41 min", "in 1 h 55": minutes only, so the dark tag changes once a minute.</summary>
+    private static string Until(double hours)
+    {
+        var minutes = (int)Math.Ceiling(hours * 60);
+        return minutes <= 0 ? "now" : minutes < 60 ? $"in {minutes} min" : $"in {minutes / 60} h {minutes % 60:D2}";
+    }
+
+    private void TickTags()
+    {
+        if (_state is null)
         {
-            // The berth leads: a selected vessel's tag sits over its painted berth number
-            "Docked" when v.UnloadPercent is > 0 and < 100 => $"B{v.HomeBerth} · DISCH {v.UnloadPercent}% · ETD {Clock(v.Etd)}",
-            "Docked" => $"B{v.HomeBerth} · LOADING {v.LoadPercent}% · ETD {Clock(v.Etd)}",
-            "Departing" => $"B{v.HomeBerth} · DEPARTING · {Clock(v.Etd)}",
-            "Arriving" => $"ETA {Clock(v.Eta)} · B{v.HomeBerth}",
-            _ => "ANCHORED · UNASSIGNED"
-        };
+            return;
+        }
+
+        foreach (var (tag, _) in _tags)
+        {
+            tag.Countdown = Until(tag.EtaHours - _state.NowHours);
+        }
     }
 
     private void RefreshTags()
@@ -369,15 +407,14 @@ public sealed partial class HarbourView : UserControl
     {
         foreach (var (tag, _) in _tags)
         {
-            // Accent marks the arrival still waiting on a berth decision; confirmed, it is a plain tag
+            // The arrival still waiting on a berth decision wears the dark tag; confirmed, it is a light one
             var needs = _state?.PendingDecision == tag.Id;
             var selected = EffectiveSelection == tag.Id;
             var lit = _state?.HoveredVessel == tag.Id;
-            tag.Background = needs ? Tokens.Tint("AccentInvariantBrush", .12) : Tokens.Brush("SurfaceInvariantBrush");
-            // The hairline comes straight from the resource: Tokens.Brush() drops brush opacity (audit C1).
-            tag.Edge = selected || lit ? Tokens.Brush("InkInvariantBrush")
-                : needs ? Tokens.Brush("AccentInvariantBrush")
-                : (Brush)Application.Current.Resources["HairlineStrongInvariantBrush"];
+            tag.LightVisibility = needs ? Visibility.Collapsed : Visibility.Visible;
+            tag.DarkVisibility = needs ? Visibility.Visible : Visibility.Collapsed;
+            // The float shadow is the resting edge; selected takes a 2 px ink edge, a linked hover a 1 px one
+            tag.Edge = selected || lit ? Tokens.Brush("InkInvariantBrush") : Tokens.Transparent;
             tag.EdgeThickness = new Thickness(selected ? 2 : 1);
             tag.Expanded = selected && !Compact ? Visibility.Visible : Visibility.Collapsed;
         }

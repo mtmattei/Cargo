@@ -379,7 +379,7 @@ public sealed class HarbourRenderer : IDisposable
         _fill.Color = fill;
         canvas.DrawPath(_path, _fill);
         _stroke.Color = stroke;
-        _stroke.StrokeWidth = 1.4f;
+        _stroke.StrokeWidth = dashed ? 1.5f : 1.4f;
         _stroke.PathEffect = dashed ? _dashTile : null;
         canvas.DrawPath(_path, _stroke);
         _stroke.PathEffect = null;
@@ -426,13 +426,13 @@ public sealed class HarbourRenderer : IDisposable
         }
 
         var k = state.Needs;
-        BerthTile(canvas, berth, _pal.WithAlpha("AccentColor", .12 * k), _pal.WithAlpha("AccentColor", k), dashed: false);
+        BerthTile(canvas, berth, _pal.WithAlpha("AccentColor", .12 * k), _pal.WithAlpha("AccentColor", k), dashed: true);
         GroundText(canvas, berth.Number, berth.X - 34, -17, HarbourWorld.QuayZ + .02, _pal.WithAlpha("AccentColor", k), 9);
 
         var bow = new P2(vessel.X + Math.Cos(vessel.Heading) * (vessel.Length / 2 + 2), vessel.Y + Math.Sin(vessel.Heading) * (vessel.Length / 2 + 2));
         // The dash runs 6 on, 5 off: a falling phase walks the pattern from the bow toward the berth
         var phase = state.Creep ? (float)(11 - seconds / 1.2 % 1 * 11) : 0;
-        Route(canvas, bow, new P2(berth.X + 72, 50), new P2(berth.X, 7.3), _pal.WithAlpha("AccentColor", k), 1.8f, phase);
+        Route(canvas, bow, new P2(berth.X + 72, 50), new P2(berth.X, 7.3), _pal.WithAlpha("AccentColor", k), 2f, phase);
     }
 
     private void Route(SKCanvas canvas, P2 from, P2 control, P2 to, SKColor color, float width, float phase = 0)
@@ -809,18 +809,25 @@ public sealed class HarbourRenderer : IDisposable
         _fill.Shader = null;
     }
 
+    /// <summary>
+    /// Ink leaders from each hull to its tag, ending in an anchor ring: filled navy with a surface
+    /// edge for a vessel alongside, a hollow navy ring for one still inbound.
+    /// </summary>
     private void DrawLeaders(SKCanvas canvas, HarbourFrameState state)
     {
-        _stroke.StrokeWidth = 1;
         foreach (var (id, (anchor, tag)) in Leaders)
         {
-            // The pending arrival's leader is accent, and fades to the plain ink leader with its berth
-            var needs = id == state.NeedsVessel ? state.Needs : 0;
-            var color = Blend(_pal.WithAlpha("InkColor", .5), _pal["AccentColor"], needs);
-            _stroke.Color = color;
+            _stroke.StrokeWidth = 1.25f;
+            _stroke.Color = _pal["InkColor"];
             canvas.DrawLine(anchor, tag, _stroke);
-            _fill.Color = color;
-            canvas.DrawCircle(anchor, 2, _fill);
+
+            var status = PortData.Vessel(id).Status;
+            var alongside = status is "Docked" or "Departing";
+            _fill.Color = alongside ? _pal["NavyColor"] : _pal["SurfaceColor"];
+            canvas.DrawCircle(anchor, 5.5f, _fill);
+            _stroke.StrokeWidth = alongside ? 2f : 1.6f;
+            _stroke.Color = alongside ? _pal["SurfaceColor"] : _pal["NavyColor"];
+            canvas.DrawCircle(anchor, alongside ? 5.5f : 4.7f, _stroke);
         }
     }
 

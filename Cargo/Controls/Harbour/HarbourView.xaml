@@ -27,8 +27,7 @@
                 <DataTemplate x:DataType="presentation:Fact">
                   <StackPanel Spacing="2">
                     <TextBlock Text="{x:Bind Key}" Style="{StaticResource CaptionText}" />
-                    <TextBlock Text="{x:Bind Value}" FontFamily="{StaticResource BodyMediumFont}" FontSize="12"
-                               Foreground="{StaticResource InkInvariantBrush}" />
+                    <TextBlock Text="{x:Bind Value}" Style="{StaticResource BodyStrongSmallText}" />
                   </StackPanel>
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
@@ -41,16 +40,52 @@
         <Button Style="{StaticResource BareButton}" Command="{x:Bind Toggle}" CommandParameter="{x:Bind Id}"
                 controls:HoverLink.Command="{x:Bind Hover}" controls:HoverLink.Key="{x:Bind Id}"
                 AutomationProperties.Name="{x:Bind AccessibleName}" HorizontalAlignment="Center">
-          <!-- xaml-lint: allow card - a data-tag chip on a leader line, not a content card -->
-          <Border Background="{x:Bind Background, Mode=OneWay}" BorderBrush="{x:Bind Edge, Mode=OneWay}"
-                  BorderThickness="{x:Bind EdgeThickness, Mode=OneWay}" CornerRadius="4" Padding="7,4,7,5">
-            <StackPanel Spacing="1">
-              <TextBlock Text="{x:Bind Title}" FontFamily="{StaticResource MonoMediumFont}" FontSize="11"
-                         Foreground="{x:Bind Foreground}" />
-              <TextBlock Text="{x:Bind Line}" FontFamily="{StaticResource MonoFont}" FontSize="11"
-                         Foreground="{x:Bind SubForeground}" />
-            </StackPanel>
-          </Border>
+          <Grid>
+            <!-- Light tag: name and status on one 30 px line, on the float shadow.
+                 Shadows inline: a Style-supplied collection never applies (Toolkit gotcha G36). -->
+            <utu:ShadowContainer Background="{StaticResource SurfaceInvariantBrush}" Visibility="{x:Bind LightVisibility, Mode=OneWay}">
+              <utu:ShadowContainer.Shadows>
+                <utu:ShadowCollection>
+                  <utu:Shadow Spread="1" BlurRadius="0" Color="{StaticResource InkColor}" Opacity="0.08" />
+                  <utu:Shadow OffsetY="1" BlurRadius="2" Color="{StaticResource InkColor}" Opacity="0.06" />
+                  <utu:Shadow OffsetY="6" BlurRadius="20" Color="{StaticResource InkColor}" Opacity="0.07" />
+                </utu:ShadowCollection>
+              </utu:ShadowContainer.Shadows>
+              <!-- xaml-lint: allow card - a data-tag chip on a leader line, not a content card -->
+              <Border CornerRadius="8" Height="30" Padding="10,0"
+                      BorderBrush="{x:Bind Edge, Mode=OneWay}" BorderThickness="{x:Bind EdgeThickness, Mode=OneWay}">
+                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                  <TextBlock Text="{x:Bind Name}" Style="{StaticResource TypeStrong13}" Foreground="{StaticResource InkInvariantBrush}" />
+                  <TextBlock Text="{x:Bind Sub}" Style="{StaticResource TypeMono12}" Foreground="{StaticResource TextMutedInvariantBrush}" />
+                </StackPanel>
+              </Border>
+            </utu:ShadowContainer>
+
+            <!-- Dark tag: the arrival waiting on its berth, with the time to go -->
+            <utu:ShadowContainer Background="{StaticResource InkInvariantBrush}" Visibility="{x:Bind DarkVisibility, Mode=OneWay}">
+              <utu:ShadowContainer.Shadows>
+                <utu:ShadowCollection>
+                  <utu:Shadow OffsetY="6" BlurRadius="20" Color="{StaticResource InkColor}" Opacity="0.18" />
+                </utu:ShadowCollection>
+              </utu:ShadowContainer.Shadows>
+              <!-- xaml-lint: allow card - a data-tag chip on a leader line, not a content card -->
+              <Border CornerRadius="8" Padding="12,8"
+                      BorderBrush="{x:Bind Edge, Mode=OneWay}" BorderThickness="{x:Bind EdgeThickness, Mode=OneWay}">
+                <StackPanel Spacing="3">
+                  <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="*" />
+                      <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{x:Bind Name}" Style="{StaticResource TypeStrong13}" Foreground="{StaticResource SurfaceInvariantBrush}" />
+                    <TextBlock Grid.Column="1" Text="{x:Bind Countdown, Mode=OneWay}" Style="{StaticResource TypeMonoMedium12}"
+                               Foreground="{StaticResource SurfaceInvariantBrush}" />
+                  </Grid>
+                  <TextBlock Text="{x:Bind PendingSub}" Style="{StaticResource TypeMono12}" Foreground="{StaticResource TextOnDarkBrush}" />
+                </StackPanel>
+              </Border>
+            </utu:ShadowContainer>
+          </Grid>
         </Button>
       </StackPanel>
     </DataTemplate>
