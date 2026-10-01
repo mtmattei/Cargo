@@ -58,6 +58,25 @@ public sealed partial class MainPage : Page
     }
 
     /// <summary>
+    /// The fold gives the content 311 px, so the offset a small scroll reached would carry the first section up
+    /// under the mini band. A small scroll (within the fold) settles with the section's top 24 px below the band,
+    /// clear of its fade; a long jump (PageDown, End, a fling) keeps its offset.
+    /// </summary>
+    private void SnapToFirstSection(double offset)
+    {
+        if (overview is not { } view || SectionScroll.Content is not UIElement content)
+        {
+            return;
+        }
+
+        var target = Math.Max(8, view.FirstSectionTop(content) - 24);
+        if (offset < target + CondenseFrees + 48)
+        {
+            SectionScroll.ChangeView(null, target, null, true);
+        }
+    }
+
+    /// <summary>
     /// Overview condenses once scrolled past 48 px and restores at the top (4 px), so the edge never flaps.
     /// It condenses only when the content stays scrollable after the chrome gives back its 311 px; otherwise
     /// the larger viewport would clamp the offset to the top and restore it straight away.
@@ -76,9 +95,10 @@ public sealed partial class MainPage : Page
             _returning = false;
             state.OverviewCondensed = false;
         }
-        else if (y > 48 && !_returning && (state.OverviewCondensed || SectionScroll.ScrollableHeight > CondenseFrees + 48))
+        else if (y > 48 && !_returning && !state.OverviewCondensed && SectionScroll.ScrollableHeight > CondenseFrees + 48)
         {
             state.OverviewCondensed = true;
+            SnapToFirstSection(y);
         }
     }
 

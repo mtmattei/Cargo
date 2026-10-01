@@ -33,7 +33,7 @@
 
       <!-- Today at North Quay: four lanes on one time axis, or the same hours as a table. It stretches
            to the row so its bottom meets the aside's (Needs you + Next 6 h) when they sit side by side -->
-      <utu:CardContentControl Grid.ColumnSpan="{utu:Responsive Layout={StaticResource OverviewBreakpoints}, Normal=12, Wide=8}"
+      <utu:CardContentControl x:Name="FirstSection" Grid.ColumnSpan="{utu:Responsive Layout={StaticResource OverviewBreakpoints}, Normal=12, Wide=8}"
                               Style="{StaticResource OutlinedPanel}" Padding="24" VerticalAlignment="Stretch" VerticalContentAlignment="Top">
         <StackPanel Spacing="16">
           <Grid ColumnSpacing="16">

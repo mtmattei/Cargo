@@ -10,6 +10,10 @@ public sealed partial class OverviewView : Page
 
     public OverviewViewModel? ViewModel => DataContext as OverviewViewModel;
 
+    /// <summary>Where the first section (Today at North Quay) starts, in the coordinates of <paramref name="content"/>.</summary>
+    public double FirstSectionTop(UIElement content) =>
+        FirstSection.TransformToVisual(content).TransformPoint(new Windows.Foundation.Point(0, 0)).Y;
+
     /// <summary>A Next 6 h row's spoken name: "Nordic Star, arrives Berth 07, in 42 min".</summary>
     public static string SixName(string name, string sub, string countdown) => $"{name}, {sub}, {countdown}";
 
