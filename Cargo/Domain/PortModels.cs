@@ -118,6 +118,12 @@ public sealed partial record ContainerDef(
     string SecurityToken,
     bool Warn = false);
 
+public sealed partial record ContainerDef
+{
+    /// <summary>The ISO 6346 number as it is painted on the box: owner, serial, check digit.</summary>
+    public string DisplayId => $"{Id[..4]} {Id[4..10]} {Id[10..]}";
+}
+
 public sealed record CargoItem(string Name, string TintToken, bool Flagged = false);
 
 /// <summary>The operator on shift. Times are hours on the app's clock; past 24 is the next morning.</summary>

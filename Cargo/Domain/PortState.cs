@@ -53,6 +53,8 @@ public sealed partial class PortState : ObservableObject
         }
 #endif
 
+        RebuildDecisions();
+
         _clock = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
         _clock.Tick += (_, _) => Tick();
         _clock.Start();
@@ -85,6 +87,7 @@ public sealed partial class PortState : ObservableObject
         OnPropertyChanged(nameof(NowMinutes));
         OnPropertyChanged(nameof(NowSeconds));
         OnPropertyChanged(nameof(NowHours));
+        TickDecisions();
         Ticked?.Invoke(this, EventArgs.Empty);
     }
 
@@ -488,25 +491,134 @@ public sealed partial class PortState : ObservableObject
 
     public bool NeedsDecision => PendingDecision is not null;
 
-    private static bool HasHold => PortData.Containers.Any(c => c.Security == "Hold");
-    private static bool HasDriverCheck => PortData.Vehicles.Any(v => v.Authorization == "Awaiting driver ID");
-    private static bool HasLateOrders => PortData.RiverFleet.Any(v => v.SlipMinutes > 0);
-
     /// <summary>
     /// Whether a section holds something waiting on the dispatcher, for the header's needs-you
     /// dots: Berths the unconfirmed arrival, Cargo the late orders, Security the inspection hold
-    /// and the driver ID check.
+    /// and the driver check.
     /// </summary>
-    public bool SectionNeedsYou(string section) => section switch
+    public bool SectionNeedsYou(string section) => Decisions.Any(d => d.Kind switch
     {
-        "berths" => NeedsDecision,
-        "cargo" => HasLateOrders,
-        "security" => HasHold || HasDriverCheck,
-        _ => false
-    };
+        DecisionKind.BerthConfirm => section == "berths",
+        DecisionKind.LateOrders => section == "cargo",
+        _ => section == "security"
+    });
 
-    /// <summary>What needs you, counted as the queue lists it: the berth, the hold, the driver check, the late orders.</summary>
-    public int NeedsYouCount => (NeedsDecision ? 1 : 0) + (HasHold ? 1 : 0) + (HasDriverCheck ? 1 : 0) + (HasLateOrders ? 1 : 0);
+    /// <summary>What needs you, counted as the queue lists it.</summary>
+    public int NeedsYouCount => Decisions.Count;
+
+    // ── Needs-you queue ─────────────────────────────────────────────────────
+
+    /// <summary>The physical inspection on the held container is booked for 21:15.</summary>
+    private const double InspectionDue = 21.25;
+
+    /// <summary>Everything waiting on the dispatcher: the hold, the driver check, the late orders, the berth.</summary>
+    public ObservableCollection<Decision> Decisions { get; } = new();
+
+    /// <summary>
+    /// Rebuilds the queue from the data and the berth decision, in the design's order. Called at
+    /// start and when what needs deciding changes; the clock only updates the rows' timings.
+    /// </summary>
+    private void RebuildDecisions()
+    {
+        Decisions.Clear();
+
+        if (PortData.Containers.FirstOrDefault(c => c.Security == "Hold") is { } held)
+        {
+            Decisions.Add(new Decision
+            {
+                Id = $"hold-{held.Id}", Kind = DecisionKind.InspectionHold,
+                Title = $"Hold on {held.DisplayId}", Sub = $"Inspection due {Clock(InspectionDue)}",
+                ActionLabel = "Open inspection", IsPrimary = true, Command = OpenInspectionCommand
+            });
+        }
+
+        if (PortData.Vehicles.FirstOrDefault(v => v.Authorization == "Awaiting driver ID") is { } truck)
+        {
+            Decisions.Add(new Decision
+            {
+                Id = $"driver-{truck.Id}", Kind = DecisionKind.DriverCheck,
+                Title = $"Driver ID pending at {truck.Gate.Split(" · ")[0]}", Sub = $"{truck.Id} at the barrier",
+                ActionLabel = "Verify driver", IsPrimary = false, Command = OpenAccessCommand
+            });
+        }
+
+        var late = PortData.RiverFleet.Count(v => v.SlipMinutes > 0);
+        if (late > 0)
+        {
+            Decisions.Add(new Decision
+            {
+                Id = "late-orders", Kind = DecisionKind.LateOrders,
+                Title = late == 1 ? "1 order late" : $"{late} orders late", Sub = late == 1 ? "In the yard queue" : "Both in the yard queue",
+                ActionLabel = "View orders", IsPrimary = false, Command = GoCommand, CommandParameter = "fleet"
+            });
+        }
+
+        if (PendingDecision is { } vessel)
+        {
+            var v = PortData.Vessel(vessel);
+            Decisions.Add(new Decision
+            {
+                Id = $"berth-{vessel}", Kind = DecisionKind.BerthConfirm,
+                Title = $"{v.Name} needs berth {BerthOf(vessel)} confirmed", Sub = "Pilot aboard",
+                ActionLabel = "Confirm berth", IsPrimary = false, Command = ConfirmDecisionCommand,
+                CommandParameter = vessel, VesselId = vessel
+            });
+        }
+
+        TickDecisions();
+        OnPropertyChanged(nameof(NeedsYouCount));
+    }
+
+    /// <summary>Updates each row's timing in place: due or overdue, waiting since, arriving in.</summary>
+    private void TickDecisions()
+    {
+        foreach (var d in Decisions)
+        {
+            switch (d.Kind)
+            {
+                case DecisionKind.InspectionHold:
+                    var due = (int)Math.Round((InspectionDue - NowHours) * 60);
+                    d.IsLate = due < 0;
+                    d.When = due < 0 ? $"{-due} min late" : $"in {due} min";
+                    break;
+                case DecisionKind.DriverCheck:
+                    var since = PortData.Vehicles.First(v => v.Authorization == "Awaiting driver ID").Entry;
+                    var waiting = TimeSpan.TryParse(since, out var t) ? (int)Math.Round((NowHours - t.TotalHours) * 60) : 0;
+                    d.IsLate = true;
+                    d.When = $"waiting {Math.Max(0, waiting)} min";
+                    break;
+                case DecisionKind.BerthConfirm:
+                    var eta = PortData.Vessel(d.VesselId!).Eta;
+                    d.When = $"arrives {eta[^5..]}";
+                    break;
+            }
+        }
+    }
+
+    private static string Clock(double hours) => TimeSpan.FromHours(hours % 24).ToString(@"hh\:mm");
+
+    /// <summary>Confirms the berth from the queue: the row leaves the list, the berth and harbour follow.</summary>
+    [RelayCommand]
+    private void ConfirmDecision(string vesselId) => Confirm(vesselId);
+
+    /// <summary>Bumped by the masthead's Needs-you figure; the queue scrolls into view and takes focus.</summary>
+    [ObservableProperty]
+    private int _needsYouReveal;
+
+    [RelayCommand]
+    private void RevealNeedsYou()
+    {
+        Section = "overview";
+        NeedsYouReveal++;
+    }
+
+    [RelayCommand]
+    private void OpenAccess()
+    {
+        SecurityTab = "access";
+        Section = "security";
+    }
+
 
     public bool IsConfirmed(string vesselId) => _confirmed.Contains(vesselId);
 
@@ -546,9 +658,10 @@ public sealed partial class PortState : ObservableObject
 
     private void OnDecisionChanged()
     {
+        // The queue first: the header's dots read it when NeedsDecision changes
+        RebuildDecisions();
         OnPropertyChanged(nameof(PendingDecision));
         OnPropertyChanged(nameof(NeedsDecision));
-        OnPropertyChanged(nameof(NeedsYouCount));
     }
 
     /// <summary>Give every movable vessel the shallowest berth that still clears its draft.</summary>

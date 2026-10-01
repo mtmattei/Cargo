@@ -120,7 +120,7 @@ public sealed partial class ScannerViewModel : ObservableObject
 
         var container = State.SelectedContainer;
 
-        ContainerId = $"{container.Id[..4]} {container.Id[4..10]} {container.Id[10..]}";
+        ContainerId = container.DisplayId;
         ContainerMeta = $"{container.Size} · {container.Carrier} · {container.Route}";
 
         ScanMode = State.Xray ? "X-RAY · 160 kV · SCANNING" : "OPTICAL · 3D INSPECTION";

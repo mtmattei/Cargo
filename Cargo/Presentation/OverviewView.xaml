@@ -2,23 +2,26 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:Cargo.Presentation"
-             xmlns:controls="using:Cargo.Controls">
+             xmlns:controls="using:Cargo.Controls"
+             xmlns:utu="using:Uno.Toolkit.UI">
 
-  <Grid Style="{StaticResource PageFrame}">
+  <!-- Main: max 1440 with 32/40/56 padding (the design's frame, not PageFrame's) -->
+  <Grid Style="{StaticResource PageFrame}" Padding="40,32,40,56" MaxWidth="1440" RowSpacing="24">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
-    <!-- ── Row 0: movements + what's next ───────────────────────── -->
-    <Grid Grid.Row="0" ColumnSpacing="40">
+    <!-- ── Row 0: the day's timeline (span 8) + the aside (span 4) on the design's 12-column grid ── -->
+    <Grid Grid.Row="0" ColumnSpacing="24">
       <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*" />
-        <ColumnDefinition Width="300" />
+        <ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" />
+        <ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" />
+        <ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" />
       </Grid.ColumnDefinitions>
 
-      <Border Style="{StaticResource RuledPanel}">
+      <Border Grid.ColumnSpan="8" Style="{StaticResource RuledPanel}">
         <StackPanel Spacing="4">
           <Grid ColumnSpacing="18">
             <Grid.ColumnDefinitions>
@@ -53,9 +56,14 @@
         </StackPanel>
       </Border>
 
-      <Border Grid.Column="1" Style="{StaticResource RuledPanel}" Padding="0,18,20,14">
-        <StackPanel Spacing="14">
-          <TextBlock Text="Next up" Style="{StaticResource PanelTitleText}" />
+      <!-- Aside: the Needs-you queue bleeding to the card's edges, a full-bleed rule, then what's next -->
+      <utu:CardContentControl Grid.Column="8" Grid.ColumnSpan="4" Style="{StaticResource OutlinedPanel}" Padding="0"
+                              VerticalAlignment="Top">
+        <StackPanel>
+          <local:NeedsYouPanel x:Name="NeedsYou" DataContext="{x:Bind ViewModel.State}" />
+          <Rectangle Height="1" Fill="{StaticResource HairlineStrongInvariantBrush}" />
+          <StackPanel Spacing="14" Padding="24">
+          <TextBlock Text="Next up" Style="{StaticResource PanelHeadingText}" />
           <ItemsControl ItemsSource="{x:Bind ViewModel.NextUp, Mode=OneWay}">
             <ItemsControl.ItemsPanel>
               <ItemsPanelTemplate><StackPanel Spacing="14" /></ItemsPanelTemplate>
@@ -92,8 +100,9 @@
               </DataTemplate>
             </ItemsControl.ItemTemplate>
           </ItemsControl>
+          </StackPanel>
         </StackPanel>
-      </Border>
+      </utu:CardContentControl>
     </Grid>
 
     <!-- ── Row 1: throughput, flow, weather ─────────────────────── -->

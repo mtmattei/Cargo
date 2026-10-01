@@ -52,14 +52,18 @@
 
       <Rectangle Width="1" Fill="{StaticResource HairlineStrongInvariantBrush}" />
 
-      <StackPanel Style="{StaticResource FigureStack}">
-        <StackPanel Orientation="Horizontal" Spacing="6">
-          <Rectangle Width="8" Height="8" RadiusX="2" RadiusY="2" Fill="{StaticResource AlertInvariantBrush}" VerticalAlignment="Center" />
-          <TextBlock Text="Needs you" Style="{StaticResource FigureLabelText}" />
+      <!-- A link to the queue: scrolls it into view and focuses its heading -->
+      <Button Style="{StaticResource BareButton}" Command="{x:Bind ViewModel.State.RevealNeedsYouCommand}"
+              AutomationProperties.Name="{x:Bind ViewModel.NeedsYouLink, Mode=OneWay}">
+        <StackPanel Style="{StaticResource FigureStack}">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <Rectangle Width="8" Height="8" RadiusX="2" RadiusY="2" Fill="{StaticResource AlertInvariantBrush}" VerticalAlignment="Center" />
+            <TextBlock Text="Needs you" Style="{StaticResource FigureLabelText}" />
+          </StackPanel>
+          <TextBlock Text="{x:Bind ViewModel.NeedsYouText, Mode=OneWay}" Style="{StaticResource MetricText}"
+                     Foreground="{StaticResource AlertInkInvariantBrush}" />
         </StackPanel>
-        <TextBlock Text="{x:Bind ViewModel.NeedsYouText, Mode=OneWay}" Style="{StaticResource MetricText}"
-                   Foreground="{StaticResource AlertInkInvariantBrush}" />
-      </StackPanel>
+      </Button>
     </StackPanel>
 
     <!-- Duty operator: an ID card clipped to the masthead, tilted 1.2° from its clip.

@@ -120,7 +120,7 @@ public sealed partial class ContainersViewModel : ObservableObject
             Cards.Add(new ContainerCard
             {
                 Id = container.Id,
-                IdPretty = Pretty(container.Id),
+                IdPretty = container.DisplayId,
                 Meta = $"{container.Size} · {container.Carrier.ToUpperInvariant()}",
                 Route = container.Route,
                 State = container.State,
@@ -134,11 +134,9 @@ public sealed partial class ContainersViewModel : ObservableObject
         }
     }
 
-    private static string Pretty(string id) => $"{id[..4]} {id[4..10]} {id[10..]}";
-
     private void BuildDetail(ContainerDef container)
     {
-        SelectedId = Pretty(container.Id);
+        SelectedId = container.DisplayId;
         SelectedMeta = $"{container.Size} · {container.Carrier} · {container.Route}";
 
         Journey.Clear();

@@ -44,6 +44,7 @@ public sealed partial class OverviewViewModel : ObservableObject
                 if (e.PropertyName == nameof(PortState.NeedsYouCount))
                 {
                     OnPropertyChanged(nameof(NeedsYouText));
+                    OnPropertyChanged(nameof(NeedsYouLink));
                 }
             };
         });
@@ -73,6 +74,8 @@ public sealed partial class OverviewViewModel : ObservableObject
 
     /// <summary>The masthead's needs-you figure, as text for the figure's TextBlock.</summary>
     public string NeedsYouText => State.NeedsYouCount.ToString();
+
+    public string NeedsYouLink => $"{State.NeedsYouCount} need you, show the queue";
 
     /// <summary>How much of the shift has passed, 0 to 1.</summary>
     [ObservableProperty]

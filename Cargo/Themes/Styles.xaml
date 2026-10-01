@@ -293,6 +293,16 @@
     <Setter Property="VerticalAlignment" Value="Center" />
   </Style>
 
+  <!-- Panel headings on Overview (Today at North Quay, Needs you, Next 6 h, Activity): 18/600 -->
+  <Style x:Key="PanelHeadingText" TargetType="TextBlock" BasedOn="{StaticResource TypeStrong18}">
+    <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />
+  </Style>
+
+  <!-- A count badge: mono on alert ink (SemiBold in the design; Medium until the SemiBold face ships) -->
+  <Style x:Key="CountBadgeText" TargetType="TextBlock" BasedOn="{StaticResource TypeMonoMedium13}">
+    <Setter Property="Foreground" Value="{StaticResource OnAccentInvariantBrush}" />
+  </Style>
+
   <Style x:Key="AvatarInitialsText" TargetType="TextBlock" BasedOn="{StaticResource TypeStrong12}">
     <Setter Property="Foreground" Value="{StaticResource OnAccentInvariantBrush}" />
     <Setter Property="HorizontalAlignment" Value="Center" />
@@ -619,6 +629,26 @@
   <Style x:Key="KeyRowText" TargetType="TextBlock" BasedOn="{StaticResource TypeBody13}">
     <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />
     <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <!-- Needs-you queue actions: 44 px, radius 8, 14 px; the queue's one primary in accent, the rest
+       on the surface with an 18% ring -->
+  <Style x:Key="QueuePrimaryButton" TargetType="Button" BasedOn="{StaticResource PrimaryActionButton}">
+    <Setter Property="Height" Value="44" />
+    <Setter Property="Padding" Value="16,0" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="FontSize" Value="14" />
+  </Style>
+
+  <Style x:Key="QueueSecondaryButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+    <Setter Property="Height" Value="44" />
+    <Setter Property="Padding" Value="16,0" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="Background" Value="{StaticResource SurfaceInvariantBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />
+    <Setter Property="BorderBrush" Value="{StaticResource HairlineStrongInvariantBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
   </Style>
 
   <!-- The × that closes a detail panel, top-right of its header -->
