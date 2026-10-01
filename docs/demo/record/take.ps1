@@ -1,81 +1,72 @@
-param([string]$Out = "C:\Users\Platform006\Videos\Cargo\overview-walkthrough-take2-raw.mp4")
+param([string]$Out = "C:\Users\Platform006\Videos\Cargo\overview-walkthrough-v2-raw.mp4")
 . "$PSScriptRoot\drive.ps1"
 
+# Coordinates are the maximized client (1920x1129 at 0,23 on the 1920x1200 display).
 Get-Process Cargo -ErrorAction SilentlyContinue | Stop-Process -Force
 Start-Sleep -Milliseconds 800
 
-# 1. Recording first
+# Recording first: the maximized client area (1128 high, even for H.264)
 $ff = New-Object System.Diagnostics.Process
 $ff.StartInfo.FileName = "ffmpeg"
-$ff.StartInfo.Arguments = "-hide_banner -loglevel error -y -f lavfi -i ddagrab=output_idx=0:framerate=30:offset_x=8:offset_y=31:video_size=1664x980:draw_mouse=1 -vf hwdownload,format=bgra -c:v libx264 -preset veryfast -pix_fmt yuv420p -crf 16 `"$Out`""
+$ff.StartInfo.Arguments = "-hide_banner -loglevel error -y -f lavfi -i ddagrab=output_idx=0:framerate=30:offset_x=0:offset_y=23:video_size=1920x1128:draw_mouse=1 -vf hwdownload,format=bgra -c:v libx264 -preset veryfast -pix_fmt yuv420p -crf 16 `"$Out`""
 $ff.StartInfo.UseShellExecute = $false
 $ff.StartInfo.RedirectStandardInput = $true
 $ff.Start() | Out-Null
 $clock = [Diagnostics.Stopwatch]::StartNew()
-Start-Sleep -Milliseconds 1200
+Start-Sleep -Milliseconds 1000
 "recording live"
 
-# 2. Fresh app, pinned at the recorded rect the moment its window exists
-$env:APP_NO_HOTDESIGN = '1'
-Start-Process "C:\Users\Platform006\Cargo\Cargo\bin\Debug\net10.0-desktop\Cargo.exe"
-$h = [IntPtr]::Zero
-while ($h -eq [IntPtr]::Zero) {
-    Start-Sleep -Milliseconds 30
-    $p = Get-Process Cargo -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 } | Select-Object -First 1
-    if ($p) { $h = $p.MainWindowHandle }
-}
-[U]::SetWindowPos($h, [IntPtr](-1), 0, 0, 0, 0, 0x0001 -bor 0x0040) | Out-Null
-[U]::SetForegroundWindow($h) | Out-Null
-Use-Window $h
-"pinned at {0:N1} s" -f $clock.Elapsed.TotalSeconds
-[U]::SetCursorPos($script:Origin.X + 1500, $script:Origin.Y + 940) | Out-Null
+$h = Start-CargoMaximized
+"maximized at {0:N1} s" -f $clock.Elapsed.TotalSeconds
+[U]::SetCursorPos($script:Origin.X + 1700, $script:Origin.Y + 1000) | Out-Null
 
-# 1. Arrive
-Wait 5500                                   # intro: greeting, harbour, the duty card drops in
-Move-To 1497 117 900; Wait 2200             # hover the duty card: it lifts
-Move-To 1270 118 700; Wait 1800             # the figures: 3, 2, Needs you 4
+# 1. Arrive (the page rebuilds twice while maximizing during startup; it is stable about 7 s in)
+Wait 8500
+Move-To 1754 117 700; Wait 1400            # the duty card lifts
+Move-To 1520 105 500; Wait 1100            # Needs you 4
 
 # 2. Read the harbour
-Move-To 1246 346 800; Wait 2200             # Nordic Star, pilot aboard, 42 min
-Click 96 478; Wait 900                      # camera menu
-Click 104 353 500; Wait 2800                # From sea
-Click 96 478; Wait 900
-Click 104 317 500; Wait 2400                # Overview
-Click 775 478; Wait 2000                    # Yard
-Click 868 478; Wait 2000                    # Security
-Click 968 478; Wait 2000                    # Traffic
-Click 690 478; Wait 1600                    # Map
-Click 1270 478 700; Wait 2800               # Key
-Key 0x1B; Wait 1000
-Click 1574 212 800; Wait 2800               # Expand
-Click 1572 212 300; Wait 2200               # Collapse
-Drag 640 430 900 400 1600; Wait 1600        # orbit by hand
-Click 90 478 700; Wait 900
-Click 104 317 500; Wait 2400                # back to Overview
-Click-Tag; Wait 3800                        # select Nordic Star: fly-to + facts card
-Click-Tag; Wait 1400                        # close the card (found wherever the fly-to put it)
-Click 90 478 700; Wait 900
-Click 104 317 500; Wait 2400                # Overview again
+Move-To 1375 345 600; Wait 1300            # Nordic Star, pilot aboard
+Click 96 478 500; Wait 600                 # camera menu
+Click 104 353 350; Wait 1900               # From sea
+Click 96 478 400; Wait 600
+Click 104 317 350; Wait 1600               # Overview
+Click 902 478 500; Wait 1300               # Yard
+Click 996 478 300; Wait 1300               # Security
+Click 1097 478 300; Wait 1300              # Traffic
+Click 820 478 400; Wait 1000               # Map
+Click 1526 478 500; Wait 1800              # Key
+Key 0x1B; Wait 700
+Click 1830 212 600; Wait 1800              # Expand
+Click 1830 212 250; Wait 1500              # Collapse
+Drag 900 430 1150 410 1200; Wait 1000      # orbit by hand
+Click 90 478 500; Wait 600
+Click 104 317 350; Wait 1600               # back to Overview
+Click-Tag; Wait 2600                       # select Nordic Star: fly-to + facts card
+Click-Tag; Wait 1000                       # close the card
+Click 90 478 500; Wait 600
+Click 104 317 350; Wait 1600               # Overview again
 
 # 3. Read the day
-Move-To 781 750 900; Wait 2400              # hover Nordic Star on the timeline: its tag lights
-Move-To 776 767 400; Wait 1800              # Baltic Crown
-Click 985 596 600; Wait 2800                # Table
-Click 913 596 300; Wait 1600                # Chart
+Move-To 908 750 700; Wait 1600             # hover Nordic Star on the timeline: its tag lights
+Move-To 904 767 300; Wait 1200             # Baltic Crown
+Click 1113 596 500; Wait 1800              # Table
+Click 1041 596 250; Wait 1000              # Chart
 
 # 4. Act
-Click 1425 875 900; Wait 3400               # Confirm berth: 4 -> 3, tag turns light
-Move-To 1290 650 700; Wait 2600             # the rest stay queued, timed
+Click 1554 875 700; Wait 2400              # Confirm berth: 4 -> 3, the tag turns light
+Move-To 1420 650 500; Wait 1500            # the rest stay queued, timed
 
-# 5. Look back
-Click 260 583 700; Wait 400                  # focus the page (the timeline heading, not a control)
-Key 0x22; Wait 3000                          # PageDown: Next 6 h, ships to scale
-Key 0x23; Wait 2000                          # End: Activity
-Click 400 637 700; Wait 3800                # open Driver ID pending: lift, blur back, detail
-Click 400 636 300; Wait 2200                # close: the list returns to default
-Move-To 1500 940 900; Wait 2500             # end hold
+# 5. Scroll: the masthead folds, the harbour condenses to its strip
+Click 389 583 600; Wait 300                # focus the page (the timeline heading, not a control)
+Key 0x22; Wait 2200                        # PageDown: Next 6 h and Activity under the mini band
+Move-To 1340 340 600; Wait 1800            # hover Nordic Star in Next 6 h: its tag lights in the strip
+Move-To 1340 410 300; Wait 1200            # Kaida Maru
+Click 500 785 600; Wait 2600               # open Driver ID pending: lift, blur back, detail
+Click 500 784 250; Wait 1500               # close: the list returns to default
+Click 1812 91 700; Wait 2500               # Show harbour: back to the top, full band
+Move-To 1700 1000 600; Wait 1500           # end hold
 
-# Stop
 $ff.StandardInput.Write("q"); $ff.StandardInput.Flush()
 $ff.WaitForExit(15000) | Out-Null
 "stopped at {0:N1} s" -f $clock.Elapsed.TotalSeconds

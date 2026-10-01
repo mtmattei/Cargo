@@ -108,3 +108,29 @@ function Click-Tag {
     $t = Find-DarkTag
     if ($t) { Click $t.X $t.Y 700; "tag at $($t.X),$($t.Y) ($($t.N))" } else { "tag not found" }
 }
+
+Add-Type @"
+using System; using System.Runtime.InteropServices;
+public static class U2 {
+  [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr h, int cmd);
+}
+"@
+
+# Maximized (title bar and taskbar stay), kept above other windows for the take.
+# Not borderless fullscreen: Windows flips a screen-covering GL window to direct presentation,
+# and both GDI copies and desktop duplication then captured black.
+function Start-CargoMaximized {
+    Get-Process Cargo -ErrorAction SilentlyContinue | Stop-Process -Force; Start-Sleep -Milliseconds 800
+    $env:APP_NO_HOTDESIGN = '1'
+    Start-Process "C:\Users\Platform006\Cargo\Cargo\bin\Debug\net10.0-desktop\Cargo.exe"
+    $h = [IntPtr]::Zero
+    while ($h -eq [IntPtr]::Zero) { Start-Sleep -Milliseconds 30; $p = Get-Process Cargo -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 } | Select-Object -First 1; if ($p) { $h = $p.MainWindowHandle } }
+    [U2]::ShowWindow($h, 3) | Out-Null
+    [U]::SetWindowPos($h, [IntPtr](-1), 0, 0, 0, 0, 0x0001 -bor 0x0002 -bor 0x0040) | Out-Null
+    [U]::SetForegroundWindow($h) | Out-Null
+    Start-Sleep -Milliseconds 300
+    Use-Window $h
+    $h
+}
+
+function Snap($name) { $r = Get-ClientRect; $b = New-Object System.Drawing.Bitmap $r.W, $r.H; $g = [System.Drawing.Graphics]::FromImage($b); $g.CopyFromScreen($r.X, $r.Y, 0, 0, $b.Size); $g.Dispose(); $b.Save("$env:TEMP\$name.png"); $b.Dispose() }

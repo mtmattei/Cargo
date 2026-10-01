@@ -101,9 +101,16 @@ These controls leave the page. Do not click them in the take:
 
 ## Recorded take (scripted)
 
-`docs/demo/record/take.ps1` records the beats above with real OS input: it starts ffmpeg (`ddagrab`, the client
-rect at 1664x980, 30 fps), launches a fresh toolbar-free app, pins the window top-left and topmost, then drives the
-cursor (eased moves, real hovers, a drag orbit). Tag clicks find the dark Nordic Star tag on screen (`Find-DarkTag`),
-because where the fly-to leaves it depends on the camera. Scrolling uses PageDown and End after clicking the timeline
-heading; the mouse wheel did not scroll the page. Run it with `pwsh -File docs/demo/record/take.ps1`, hands off the
-mouse for about two minutes. Trim the head to the first painted frame (about 4.5 s: startup paints, blanks, then paints again).
+`docs/demo/record/take.ps1` records the beats above with real OS input: it starts ffmpeg (`ddagrab`, the maximized
+client rect at 0,23 1920x1128 on the 1920x1200 display, 30 fps), launches a fresh toolbar-free app maximized and
+topmost, then drives the cursor (eased moves, real hovers, a drag orbit). Tag clicks find the dark Nordic Star tag on
+screen (`Find-DarkTag`), because where the fly-to leaves it depends on the camera. One PageDown (after clicking the
+timeline heading) condenses the page and reaches Next 6 h and Activity under the mini band; the take hovers Next 6 h
+rows there (their tags light in the strip) and ends on Show harbour. The mouse wheel did not scroll the page.
+
+Run it with `pwsh -File docs/demo/record/take.ps1`, hands off the mouse for about 95 s. Trim the head to the settled
+page (about 11 s: maximizing during startup rebuilds the page twice). Do not record borderless fullscreen: Windows
+switches a screen-covering GL window to direct presentation and both GDI and desktop-duplication capture go black.
+`probe.ps1` re-takes the coordinates (stills of the top, PageDown and End states) when the layout changes.
+
+Latest: `C:\Users\Platform006\Videos\Cargo\overview-walkthrough-v2.mp4` (2026-10-01, 1:23, 1920x1128).
