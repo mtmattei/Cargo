@@ -40,18 +40,16 @@
         <StackPanel Spacing="8">
           <StackPanel Orientation="Horizontal" Spacing="8">
             <Ellipse Width="7" Height="7" Fill="{StaticResource AccentBrightInvariantBrush}" VerticalAlignment="Center" />
-            <TextBlock Text="{x:Bind ViewModel.ScanMode, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}" FontSize="11"
+            <TextBlock Text="{x:Bind ViewModel.ScanMode, Mode=OneWay}" Style="{StaticResource TypeMonoMedium11}"
                        Foreground="{StaticResource AccentBrightInvariantBrush}" />
           </StackPanel>
-          <TextBlock Text="{x:Bind ViewModel.ContainerId, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}" FontSize="24"
+          <TextBlock Text="{x:Bind ViewModel.ContainerId, Mode=OneWay}" Style="{StaticResource TypeMonoMedium24}"
                      Foreground="{StaticResource PaperInvariantBrush}" />
-          <TextBlock Text="{x:Bind ViewModel.ContainerMeta, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12.5"
+          <TextBlock Text="{x:Bind ViewModel.ContainerMeta, Mode=OneWay}" Style="{StaticResource SubtitleText}"
                      Foreground="{StaticResource TextOnDarkMutedBrush}" />
         </StackPanel>
-        <Button Grid.Column="1" Style="{StaticResource GhostButton}" Content="×" Command="{x:Bind ViewModel.CloseCommand, Mode=OneWay}"
-                VerticalAlignment="Top" Width="34" Height="34" CornerRadius="17" Padding="0" FontSize="18"
-                Background="{StaticResource HairlineOnDarkBrush}" Foreground="{StaticResource PaperInvariantBrush}"
-                BorderBrush="{StaticResource HairlineOnDarkBrush}" />
+        <Button Grid.Column="1" Style="{StaticResource CloseOnDarkButton}" Content="×" Command="{x:Bind ViewModel.CloseCommand, Mode=OneWay}"
+                AutomationProperties.Name="Close scanner" />
       </Grid>
 
       <Grid Grid.Row="2" Padding="28,0,20,24" ColumnSpacing="20">
@@ -71,7 +69,7 @@
                   <!-- xaml-lint: allow card - a view-preset toggle; the Simple theme ships no segmented style -->
                   <Border Background="{x:Bind Background}" BorderBrush="{StaticResource HairlineOnDarkBrush}"
                           BorderThickness="1" CornerRadius="8" Padding="12,7">
-                    <TextBlock Text="{x:Bind Label}" FontFamily="{StaticResource BodyMediumFont}" FontSize="12"
+                    <TextBlock Text="{x:Bind Label}" Style="{StaticResource TypeMedium12}"
                                Foreground="{StaticResource PaperInvariantBrush}" />
                   </Border>
                 </Button>
@@ -89,13 +87,13 @@
                 <shapes:Path Data="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"
                              Stroke="{x:Bind ViewModel.XrayForeground, Mode=OneWay}" StrokeThickness="2"
                              Width="13" Height="13" Stretch="Uniform" VerticalAlignment="Center" />
-                <TextBlock Text="X-ray" FontFamily="{StaticResource BodyMediumFont}" FontSize="12"
+                <TextBlock Text="X-ray" Style="{StaticResource TypeMedium12}"
                            Foreground="{x:Bind ViewModel.XrayForeground, Mode=OneWay}" />
               </StackPanel>
             </Border>
           </Button>
 
-          <TextBlock Text="Drag to rotate" Style="{StaticResource CaptionText}" FontSize="11.5"
+          <TextBlock Text="Drag to rotate" Style="{StaticResource CaptionText}"
                      Foreground="{StaticResource TextOnDarkMutedBrush}" VerticalAlignment="Center" Margin="10,0,0,0" />
         </StackPanel>
 
@@ -118,20 +116,20 @@
                   VerticalScrollBarVisibility="Auto">
       <StackPanel Spacing="18">
         <StackPanel Spacing="8">
-          <TextBlock Text="SCAN RESULT" FontFamily="{StaticResource MonoMediumFont}" FontSize="11"
+          <TextBlock Text="SCAN RESULT" Style="{StaticResource TypeMonoMedium11}"
                      Foreground="{StaticResource AccentBrightInvariantBrush}" />
           <StackPanel Orientation="Horizontal" Spacing="10">
             <Ellipse Width="10" Height="10" Fill="{x:Bind ViewModel.VerdictTone, Mode=OneWay}" VerticalAlignment="Center" />
-            <TextBlock Text="{x:Bind ViewModel.Verdict, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}" FontSize="18"
+            <TextBlock Text="{x:Bind ViewModel.Verdict, Mode=OneWay}" Style="{StaticResource TypeStrong18}"
                        Foreground="{StaticResource PaperInvariantBrush}" />
           </StackPanel>
-          <TextBlock Text="{x:Bind ViewModel.VerdictNote, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12.5"
+          <TextBlock Text="{x:Bind ViewModel.VerdictNote, Mode=OneWay}" Style="{StaticResource SubtitleText}"
                      Foreground="{StaticResource TextOnDarkMutedBrush}" TextWrapping="Wrap" LineHeight="19" />
         </StackPanel>
 
         <Border Height="1" Background="{StaticResource HairlineOnDarkBrush}" />
         <StackPanel Spacing="12">
-          <TextBlock Text="DENSITY MAP" FontFamily="{StaticResource MonoMediumFont}" FontSize="11"
+          <TextBlock Text="DENSITY MAP" Style="{StaticResource TypeMonoMedium11}"
                      Foreground="{StaticResource AccentBrightInvariantBrush}" />
           <controls:CompositionBar BarHeight="10" Slices="{x:Bind ViewModel.DensitySlices, Mode=OneWay}" />
           <ItemsControl ItemsSource="{x:Bind ViewModel.Density, Mode=OneWay}">
@@ -156,8 +154,7 @@
 
         <Border Height="1" Background="{StaticResource HairlineOnDarkBrush}" />
         <StackPanel Spacing="12">
-          <TextBlock Text="{x:Bind ViewModel.ManifestHeading, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}"
-                     FontSize="11" Foreground="{StaticResource AccentBrightInvariantBrush}" />
+          <TextBlock Text="{x:Bind ViewModel.ManifestHeading, Mode=OneWay}" Style="{StaticResource TypeMonoMedium11}" Foreground="{StaticResource AccentBrightInvariantBrush}" />
           <ItemsControl ItemsSource="{x:Bind ViewModel.Manifest, Mode=OneWay}">
             <ItemsControl.ItemsPanel>
               <ItemsPanelTemplate><StackPanel Spacing="9" /></ItemsPanelTemplate>
@@ -173,8 +170,7 @@
                   <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2" Fill="{x:Bind Tone}" VerticalAlignment="Center" />
                   <TextBlock Grid.Column="1" Text="{x:Bind Name}" Style="{StaticResource BodyText}"
                              Foreground="{StaticResource PaperInvariantBrush}" TextWrapping="Wrap" />
-                  <TextBlock Grid.Column="2" Text="{x:Bind Flag}" FontFamily="{StaticResource MonoMediumFont}"
-                             FontSize="11.5" Foreground="{x:Bind FlagTone}" />
+                  <TextBlock Grid.Column="2" Text="{x:Bind Flag}" Style="{StaticResource TypeMonoMedium12}" Foreground="{x:Bind FlagTone}" />
                 </Grid>
               </DataTemplate>
             </ItemsControl.ItemTemplate>
@@ -191,7 +187,7 @@
               <Grid Padding="0,9" BorderBrush="{StaticResource HairlineOnDarkBrush}" BorderThickness="0,0,0,1">
                 <TextBlock Text="{x:Bind Key}" Style="{StaticResource BodyText}"
                            Foreground="{StaticResource TextOnDarkMutedBrush}" />
-                <TextBlock Text="{x:Bind Value}" FontFamily="{StaticResource MonoMediumFont}" FontSize="12.5"
+                <TextBlock Text="{x:Bind Value}" Style="{StaticResource TypeMonoMedium13}"
                            Foreground="{StaticResource PaperInvariantBrush}" HorizontalAlignment="Right" />
               </Grid>
             </DataTemplate>

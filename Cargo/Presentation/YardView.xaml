@@ -36,7 +36,7 @@
           <DataTemplate x:DataType="local:LegendItem">
             <StackPanel Orientation="Horizontal" Spacing="5">
               <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2" Fill="{x:Bind Swatch}" VerticalAlignment="Center" />
-              <TextBlock Text="{x:Bind Label}" Style="{StaticResource CaptionText}" FontSize="12" />
+              <TextBlock Text="{x:Bind Label}" Style="{StaticResource CaptionText}" />
             </StackPanel>
           </DataTemplate>
         </ItemsControl.ItemTemplate>
@@ -59,13 +59,11 @@
         <StackPanel Spacing="14">
           <Grid>
             <StackPanel Spacing="3">
-              <TextBlock Text="{x:Bind ViewModel.SlotTitle, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}" FontSize="17" />
+              <TextBlock Text="{x:Bind ViewModel.SlotTitle, Mode=OneWay}" Style="{StaticResource TypeStrong18}" />
               <TextBlock Text="{x:Bind ViewModel.SlotSubtitle, Mode=OneWay}" Style="{StaticResource CaptionText}" />
             </StackPanel>
-            <Button Style="{StaticResource BareButton}" Content="×" Command="{x:Bind ViewModel.CloseStackCommand, Mode=OneWay}"
-                    AutomationProperties.Name="Close stack"
-                    HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="18"
-                    Foreground="{StaticResource TextFaintInvariantBrush}" />
+            <Button Style="{StaticResource CloseButton}" Content="×" Command="{x:Bind ViewModel.CloseStackCommand, Mode=OneWay}"
+                    AutomationProperties.Name="Close stack" />
           </Grid>
 
           <controls:StackTiers Boxes="{x:Bind ViewModel.StackBoxes, Mode=OneWay}" />
@@ -80,7 +78,7 @@
                 <Grid>
                   <StackPanel Orientation="Horizontal" Spacing="8">
                     <Rectangle Width="9" Height="9" RadiusX="2" RadiusY="2" Fill="{x:Bind Tone}" VerticalAlignment="Center" />
-                    <TextBlock Text="{x:Bind Id}" FontFamily="{StaticResource MonoMediumFont}" FontSize="12" />
+                    <TextBlock Text="{x:Bind Id}" Style="{StaticResource TypeMonoMedium12}" />
                   </StackPanel>
                   <TextBlock Text="{x:Bind Detail}" Style="{StaticResource CaptionText}" HorizontalAlignment="Right" />
                 </Grid>

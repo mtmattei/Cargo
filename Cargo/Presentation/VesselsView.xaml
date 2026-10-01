@@ -43,7 +43,7 @@
                     <StackPanel Spacing="5">
                       <StackPanel Orientation="Horizontal" Spacing="8">
                         <Ellipse Width="7" Height="7" Fill="{x:Bind Tone}" VerticalAlignment="Center" />
-                        <TextBlock Text="{x:Bind Name}" FontFamily="{StaticResource BodyStrongFont}" FontSize="13" />
+                        <TextBlock Text="{x:Bind Name}" Style="{StaticResource TypeStrong13}" />
                       </StackPanel>
                       <TextBlock Text="{x:Bind Line1}" Style="{StaticResource CaptionText}" Margin="15,0,0,0"
                                  TextTrimming="CharacterEllipsis" />
@@ -63,7 +63,7 @@
                 Background="{StaticResource SurfaceInvariantBrush}" CornerRadius="12" Padding="16,12"
                 HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
           <Grid>
-            <TextBlock Text="View all in Docking" FontFamily="{StaticResource BodyMediumFont}" FontSize="12.5" />
+            <TextBlock Text="View all in Docking" Style="{StaticResource TypeMedium13}" />
             <TextBlock Text="↗" Foreground="{StaticResource TextMutedInvariantBrush}" HorizontalAlignment="Right" />
           </Grid>
         </Button>
@@ -77,9 +77,9 @@
               <Grid>
                 <StackPanel Spacing="4">
                   <TextBlock Text="Side profile" Style="{StaticResource CardTitleText}" />
-                  <TextBlock Text="{x:Bind ViewModel.ProfileHint, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12" />
+                  <TextBlock Text="{x:Bind ViewModel.ProfileHint, Mode=OneWay}" Style="{StaticResource CaptionText}" />
                 </StackPanel>
-                <TextBlock Text="{x:Bind ViewModel.BayLabel, Mode=OneWay}" Style="{StaticResource BodyStrongText}" FontSize="12"
+                <TextBlock Text="{x:Bind ViewModel.BayLabel, Mode=OneWay}" Style="{StaticResource BodyStrongSmallText}"
                            Foreground="{StaticResource AccentInvariantBrush}" HorizontalAlignment="Right" VerticalAlignment="Top" />
               </Grid>
               <ContentControl x:Name="ProfileHost" HorizontalContentAlignment="Stretch" Margin="0,4,0,0" />
@@ -92,7 +92,7 @@
                     <StackPanel Orientation="Horizontal" Spacing="6">
                       <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2" Fill="{x:Bind Swatch}"
                                  VerticalAlignment="Center" />
-                      <TextBlock Text="{x:Bind Label}" Style="{StaticResource CaptionText}" FontSize="12" />
+                      <TextBlock Text="{x:Bind Label}" Style="{StaticResource CaptionText}" />
                     </StackPanel>
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>
@@ -116,9 +116,9 @@
                                    StrokeThickness="2" Width="11" Height="11" Stretch="Uniform" />
                       </Border>
                       <TextBlock Text="{x:Bind Key}" Style="{StaticResource MicroText}" />
-                      <TextBlock Text="{x:Bind Value, Mode=OneWay}" FontFamily="{StaticResource DisplayFont}" FontSize="15"
+                      <TextBlock Text="{x:Bind Value, Mode=OneWay}" Style="{StaticResource TypeDisplay15}"
                                  Foreground="{x:Bind Tone}" />
-                      <TextBlock Text="{x:Bind Detail, Mode=OneWay}" Style="{StaticResource MicroText}" FontSize="10.5" />
+                      <TextBlock Text="{x:Bind Detail, Mode=OneWay}" Style="{StaticResource MicroText}" />
                     </StackPanel>
                   </utu:CardContentControl>
                 </DataTemplate>
@@ -154,21 +154,19 @@
                 <StackPanel Spacing="8">
                   <Grid>
                     <TextBlock Text="Unloading" Style="{StaticResource BodyStrongText}" />
-                    <TextBlock Text="{x:Bind ViewModel.UnloadLive, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}"
-                               FontSize="12.5" Foreground="{StaticResource SeaGreenInvariantBrush}" HorizontalAlignment="Right" />
+                    <TextBlock Text="{x:Bind ViewModel.UnloadLive, Mode=OneWay}" Style="{StaticResource TypeMonoMedium13}" Foreground="{StaticResource SeaGreenInvariantBrush}" HorizontalAlignment="Right" />
                   </Grid>
                   <controls:TickBar Height="14" LitToken="SeaGreenInvariantBrush" Percent="{x:Bind ViewModel.UnloadPercent, Mode=OneWay}" />
                 </StackPanel>
                 <StackPanel Grid.Column="1" Spacing="8">
                   <Grid>
                     <TextBlock Text="Loading" Style="{StaticResource BodyStrongText}" />
-                    <TextBlock Text="{x:Bind ViewModel.LoadLive, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}"
-                               FontSize="12.5" Foreground="{StaticResource AccentInvariantBrush}" HorizontalAlignment="Right" />
+                    <TextBlock Text="{x:Bind ViewModel.LoadLive, Mode=OneWay}" Style="{StaticResource TypeMonoMedium13}" Foreground="{StaticResource AccentInvariantBrush}" HorizontalAlignment="Right" />
                   </Grid>
                   <controls:TickBar Height="14" LitToken="AccentInvariantBrush" Percent="{x:Bind ViewModel.LoadPercent, Mode=OneWay}" />
                 </StackPanel>
               </Grid>
-              <TextBlock Text="{x:Bind ViewModel.OpsNote, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12"
+              <TextBlock Text="{x:Bind ViewModel.OpsNote, Mode=OneWay}" Style="{StaticResource CaptionText}"
                          TextWrapping="Wrap" Margin="0,2,0,0" />
             </StackPanel>
           </utu:CardContentControl>
@@ -203,9 +201,8 @@
                 <Grid Grid.Column="1" Width="104" Height="104">
                   <controls:DonutChart Radius="38" Thickness="14" Slices="{x:Bind ViewModel.CompositionSlices, Mode=OneWay}" />
                   <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <TextBlock Text="{x:Bind ViewModel.TeuLabel, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}"
-                               FontSize="15" HorizontalAlignment="Center" />
-                    <TextBlock Text="TEU" Style="{StaticResource MicroText}" FontSize="10" HorizontalAlignment="Center" />
+                    <TextBlock Text="{x:Bind ViewModel.TeuLabel, Mode=OneWay}" Style="{StaticResource TypeStrong15}" HorizontalAlignment="Center" />
+                    <TextBlock Text="TEU" Style="{StaticResource MicroText}" HorizontalAlignment="Center" />
                   </StackPanel>
                 </Grid>
               </Grid>
@@ -218,15 +215,14 @@
       <utu:CardContentControl Style="{StaticResource PanelCard}" Grid.Column="2" Padding="22,20">
         <StackPanel Spacing="16">
           <Grid>
-            <TextBlock Text="Voyage" Style="{StaticResource PanelTitleText}" FontSize="15" VerticalAlignment="Center" />
+            <TextBlock Text="Voyage" Style="{StaticResource TitleText}" VerticalAlignment="Center" />
             <!-- xaml-lint: allow card - status pill; half-height radius (99 draws an oval on Skia) -->
             <Border Background="{x:Bind ViewModel.SecurityBackground, Mode=OneWay}" CornerRadius="11" Padding="10,4"
                     HorizontalAlignment="Right">
-              <TextBlock Text="{x:Bind ViewModel.Security, Mode=OneWay}" FontFamily="{StaticResource BodyMediumFont}"
-                         FontSize="11" Foreground="{x:Bind ViewModel.SecurityForeground, Mode=OneWay}" />
+              <TextBlock Text="{x:Bind ViewModel.Security, Mode=OneWay}" Style="{StaticResource TypeMedium11}" Foreground="{x:Bind ViewModel.SecurityForeground, Mode=OneWay}" />
             </Border>
           </Grid>
-          <TextBlock Text="{x:Bind ViewModel.Voyage, Mode=OneWay}" Style="{StaticResource BodyText}" FontSize="13.5"
+          <TextBlock Text="{x:Bind ViewModel.Voyage, Mode=OneWay}" Style="{StaticResource BodyLargeText}"
                      TextWrapping="Wrap" LineHeight="20" />
 
           <ItemsControl ItemsSource="{x:Bind ViewModel.Facts, Mode=OneWay}">
@@ -236,8 +232,8 @@
             <ItemsControl.ItemTemplate>
               <DataTemplate x:DataType="local:Fact">
                 <StackPanel Spacing="3">
-                  <TextBlock Text="{x:Bind Key}" Style="{StaticResource MicroText}" FontSize="11.5" />
-                  <TextBlock Text="{x:Bind Value}" Style="{StaticResource BodyStrongText}" FontSize="13.5" />
+                  <TextBlock Text="{x:Bind Key}" Style="{StaticResource CaptionText}" />
+                  <TextBlock Text="{x:Bind Value}" Style="{StaticResource BodyStrongLargeText}" />
                 </StackPanel>
               </DataTemplate>
             </ItemsControl.ItemTemplate>
@@ -245,7 +241,7 @@
 
           <Border Height="1" Background="{StaticResource HairlineInvariantBrush}" />
           <StackPanel Spacing="10">
-            <TextBlock Text="Security clearance" Style="{StaticResource BodyStrongText}" FontSize="13.5" />
+            <TextBlock Text="Security clearance" Style="{StaticResource BodyStrongLargeText}" />
             <ItemsControl ItemsSource="{x:Bind ViewModel.Checks, Mode=OneWay}">
               <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate><StackPanel Spacing="8" /></ItemsPanelTemplate>
@@ -258,11 +254,10 @@
                       <ColumnDefinition Width="*" />
                       <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Text="{x:Bind Mark}" FontFamily="{StaticResource BodyStrongFont}" FontSize="12.5"
+                    <TextBlock Text="{x:Bind Mark}" Style="{StaticResource TypeStrong13}"
                                Foreground="{x:Bind Tone}" />
                     <TextBlock Grid.Column="1" Text="{x:Bind Label}" Style="{StaticResource BodyText}" />
-                    <TextBlock Grid.Column="2" Text="{x:Bind Time}" FontFamily="{StaticResource MonoFont}"
-                               FontSize="11.5" Foreground="{StaticResource TextFaintInvariantBrush}" />
+                    <TextBlock Grid.Column="2" Text="{x:Bind Time}" Style="{StaticResource TypeMono12}" Foreground="{StaticResource TextFaintInvariantBrush}" />
                   </Grid>
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
@@ -279,10 +274,10 @@
     <utu:CardContentControl Style="{StaticResource PanelCard}" Grid.Row="2" Padding="22,18">
       <StackPanel Spacing="12">
         <StackPanel Orientation="Horizontal" Spacing="14">
-          <TextBlock Text="{x:Bind ViewModel.BayHeading, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}" FontSize="17" />
+          <TextBlock Text="{x:Bind ViewModel.BayHeading, Mode=OneWay}" Style="{StaticResource TypeStrong18}" />
           <TextBlock Text="{x:Bind ViewModel.BayTotal, Mode=OneWay}" Style="{StaticResource BodyText}"
                      Foreground="{StaticResource AccentInvariantBrush}" VerticalAlignment="Bottom" Margin="0,0,0,2" />
-          <TextBlock Text="{x:Bind ViewModel.BayRemaining, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12.5"
+          <TextBlock Text="{x:Bind ViewModel.BayRemaining, Mode=OneWay}" Style="{StaticResource SubtitleText}"
                      VerticalAlignment="Bottom" Margin="0,0,0,2" />
         </StackPanel>
 
@@ -300,7 +295,7 @@
           </Border>
 
           <StackPanel Grid.Column="1" Spacing="14" Padding="4,6">
-            <TextBlock Text="{x:Bind ViewModel.BayOpsHeading, Mode=OneWay}" Style="{StaticResource BodyStrongText}" FontSize="13.5" />
+            <TextBlock Text="{x:Bind ViewModel.BayOpsHeading, Mode=OneWay}" Style="{StaticResource BodyStrongLargeText}" />
             <Grid ColumnSpacing="16">
               <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -311,24 +306,22 @@
                      Stretch="Uniform" VerticalAlignment="Top" />
               <StackPanel Grid.Column="1" Spacing="4">
                 <TextBlock Text="Unloaded" Style="{StaticResource CaptionText}" Foreground="{StaticResource SeaGreenInvariantBrush}" />
-                <TextBlock Text="{x:Bind ViewModel.BayUnloaded, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}"
-                           FontSize="22" Foreground="{StaticResource SeaGreenInvariantBrush}" />
+                <TextBlock Text="{x:Bind ViewModel.BayUnloaded, Mode=OneWay}" Style="{StaticResource TypeStrong20}" Foreground="{StaticResource SeaGreenInvariantBrush}" />
               </StackPanel>
               <StackPanel Grid.Column="2" Spacing="4">
                 <TextBlock Text="Remaining" Style="{StaticResource CaptionText}" />
-                <TextBlock Text="{x:Bind ViewModel.BayLeft, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}"
-                           FontSize="22" Foreground="{StaticResource AccentInvariantBrush}" />
+                <TextBlock Text="{x:Bind ViewModel.BayLeft, Mode=OneWay}" Style="{StaticResource TypeStrong20}" Foreground="{StaticResource AccentInvariantBrush}" />
               </StackPanel>
             </Grid>
             <StackPanel Spacing="2">
-              <TextBlock Text="Next move" Style="{StaticResource CaptionText}" FontSize="12" />
-              <TextBlock Text="{x:Bind ViewModel.BayNextMove, Mode=OneWay}" Style="{StaticResource BodyStrongText}" FontSize="14" />
-              <TextBlock Text="{x:Bind ViewModel.BayNextEta, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12" />
+              <TextBlock Text="Next move" Style="{StaticResource CaptionText}" />
+              <TextBlock Text="{x:Bind ViewModel.BayNextMove, Mode=OneWay}" Style="{StaticResource BodyStrongLargeText}" />
+              <TextBlock Text="{x:Bind ViewModel.BayNextEta, Mode=OneWay}" Style="{StaticResource CaptionText}" />
             </StackPanel>
           </StackPanel>
 
           <StackPanel Grid.Column="2" Spacing="12" Padding="4,6">
-            <TextBlock Text="{x:Bind ViewModel.BayCompositionHeading, Mode=OneWay}" Style="{StaticResource BodyStrongText}" FontSize="13.5" />
+            <TextBlock Text="{x:Bind ViewModel.BayCompositionHeading, Mode=OneWay}" Style="{StaticResource BodyStrongLargeText}" />
             <Grid ColumnSpacing="12">
               <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="92" />
@@ -345,9 +338,9 @@
                       <StackPanel Orientation="Horizontal" Spacing="7">
                         <Rectangle Width="9" Height="9" RadiusX="2" RadiusY="2" Fill="{x:Bind Fill}"
                                    VerticalAlignment="Center" />
-                        <TextBlock Text="{x:Bind Label}" Style="{StaticResource BodyText}" FontSize="12" />
+                        <TextBlock Text="{x:Bind Label}" Style="{StaticResource BodySmallText}" />
                       </StackPanel>
-                      <TextBlock Text="{x:Bind Count}" Style="{StaticResource CaptionText}" FontSize="12"
+                      <TextBlock Text="{x:Bind Count}" Style="{StaticResource CaptionText}"
                                  HorizontalAlignment="Right" />
                     </Grid>
                   </DataTemplate>
@@ -365,8 +358,8 @@
             <Image Source="{x:Bind ViewModel.BayContainerImage, Mode=OneWay}" Width="110" Height="80" Stretch="Uniform"
                    VerticalAlignment="Top" Margin="0,6,0,0" />
             <StackPanel Grid.Column="1" Spacing="4">
-              <TextBlock Text="{x:Bind ViewModel.BayContainerId, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}" FontSize="14" />
-              <TextBlock Text="{x:Bind ViewModel.BayContainerType, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12"
+              <TextBlock Text="{x:Bind ViewModel.BayContainerId, Mode=OneWay}" Style="{StaticResource TypeMonoMedium14}" />
+              <TextBlock Text="{x:Bind ViewModel.BayContainerType, Mode=OneWay}" Style="{StaticResource CaptionText}"
                          TextWrapping="Wrap" />
               <Grid ColumnSpacing="14" RowSpacing="6" Margin="0,8,0,0">
                 <Grid.ColumnDefinitions>
@@ -379,10 +372,10 @@
                 </Grid.RowDefinitions>
                 <TextBlock Text="Weight" Style="{StaticResource MicroText}" />
                 <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.BayContainerWeight, Mode=OneWay}"
-                           Style="{StaticResource BodyStrongText}" FontSize="12" HorizontalAlignment="Right" />
+                           Style="{StaticResource BodyStrongSmallText}" HorizontalAlignment="Right" />
                 <TextBlock Grid.Row="1" Text="Status" Style="{StaticResource MicroText}" />
                 <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind ViewModel.BayContainerStatus, Mode=OneWay}"
-                           Style="{StaticResource BodyStrongText}" FontSize="12" HorizontalAlignment="Right"
+                           Style="{StaticResource BodyStrongSmallText}" HorizontalAlignment="Right"
                            Foreground="{StaticResource AccentInvariantBrush}" />
               </Grid>
             </StackPanel>

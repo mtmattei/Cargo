@@ -31,7 +31,7 @@
               <!-- xaml-lint: allow card - a filter pill, not a card; half-height radius (99 draws an oval on Skia) -->
               <Border Background="{x:Bind Background}" BorderBrush="{x:Bind Border}" BorderThickness="1"
                       CornerRadius="15" Padding="13,7">
-                <TextBlock Text="{x:Bind Label}" FontFamily="{StaticResource BodyMediumFont}" FontSize="12"
+                <TextBlock Text="{x:Bind Label}" Style="{StaticResource TypeMedium12}"
                            Foreground="{x:Bind Foreground}" />
               </Border>
             </Button>
@@ -71,20 +71,20 @@
                     <!-- xaml-lint: allow card - container id tag over the image -->
                     <Border Background="{StaticResource SurfaceInvariantBrush}" CornerRadius="4" Padding="7,2"
                             HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10">
-                      <TextBlock Text="{x:Bind IdPretty}" FontFamily="{StaticResource MonoMediumFont}" FontSize="12" />
+                      <TextBlock Text="{x:Bind IdPretty}" Style="{StaticResource TypeMonoMedium12}" />
                     </Border>
                     <!-- xaml-lint: allow card - size and carrier tag over the image -->
                     <Border Background="{StaticResource SurfaceInvariantBrush}" CornerRadius="4" Padding="6,2"
                             HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,0,10,8">
-                      <TextBlock Text="{x:Bind Meta}" FontFamily="{StaticResource MonoMediumFont}" FontSize="10"
+                      <TextBlock Text="{x:Bind Meta}" Style="{StaticResource TypeMonoMedium11}"
                                  Foreground="{StaticResource TextMutedInvariantBrush}" />
                     </Border>
                   </Grid>
-                  <TextBlock Text="{x:Bind Route}" Style="{StaticResource BodyStrongText}" FontSize="13"
+                  <TextBlock Text="{x:Bind Route}" Style="{StaticResource BodyStrongText}"
                              TextWrapping="Wrap" Margin="0,4,0,0" />
                   <StackPanel Orientation="Horizontal" Spacing="7">
                     <Ellipse Width="7" Height="7" Fill="{x:Bind StateTone}" VerticalAlignment="Center" />
-                    <TextBlock Text="{x:Bind State}" Style="{StaticResource BodyText}" FontSize="12"
+                    <TextBlock Text="{x:Bind State}" Style="{StaticResource BodySmallText}"
                                Foreground="{x:Bind StateTone}" />
                   </StackPanel>
                 </StackPanel>
@@ -98,15 +98,15 @@
       <utu:CardContentControl Style="{StaticResource PanelCard}" Grid.Column="1" Padding="22,20" VerticalAlignment="Top">
         <StackPanel Spacing="16">
           <StackPanel Spacing="5">
-            <TextBlock Text="{x:Bind ViewModel.SelectedId, Mode=OneWay}" FontFamily="{StaticResource MonoMediumFont}" FontSize="20" />
-            <TextBlock Text="{x:Bind ViewModel.SelectedMeta, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12.5"
+            <TextBlock Text="{x:Bind ViewModel.SelectedId, Mode=OneWay}" Style="{StaticResource TypeMonoMedium20}" />
+            <TextBlock Text="{x:Bind ViewModel.SelectedMeta, Mode=OneWay}" Style="{StaticResource SubtitleText}"
                        TextWrapping="Wrap" />
           </StackPanel>
 
           <Image Source="{x:Bind ViewModel.SelectedIso, Mode=OneWay}" Height="150" Stretch="Uniform" />
 
           <StackPanel Spacing="10">
-            <TextBlock Text="JOURNEY" FontFamily="{StaticResource BodyStrongFont}" FontSize="12"
+            <TextBlock Text="JOURNEY" Style="{StaticResource TypeStrong12}"
                        Foreground="{StaticResource TextMutedInvariantBrush}" />
             <ItemsControl ItemsSource="{x:Bind ViewModel.Journey, Mode=OneWay}">
               <ItemsControl.ItemsPanel>
@@ -126,7 +126,7 @@
                         <shapes:Path Data="{x:Bind Icon}" Stroke="{x:Bind Foreground}" StrokeThickness="1.8"
                                      Width="15" Height="15" Stretch="Uniform" />
                       </Border>
-                      <TextBlock Text="{x:Bind Label}" FontFamily="{StaticResource BodyMediumFont}" FontSize="10.5"
+                      <TextBlock Text="{x:Bind Label}" Style="{StaticResource TypeMedium11}"
                                  Foreground="{x:Bind LabelTone}" HorizontalAlignment="Center" />
                     </StackPanel>
                     <Rectangle Grid.Column="1" Height="1.5" Fill="{x:Bind Connector}" Margin="4,0,4,20"
@@ -146,7 +146,7 @@
               <DataTemplate x:DataType="local:Fact">
                 <StackPanel Spacing="3">
                   <TextBlock Text="{x:Bind Key}" Style="{StaticResource MicroText}" />
-                  <TextBlock Text="{x:Bind Value}" Style="{StaticResource BodyStrongText}" FontSize="13"
+                  <TextBlock Text="{x:Bind Value}" Style="{StaticResource BodyStrongText}"
                              TextWrapping="Wrap" />
                 </StackPanel>
               </DataTemplate>
@@ -158,7 +158,7 @@
               <shapes:Path Data="M4 8V5a1 1 0 011-1h3M16 4h3a1 1 0 011 1v3M20 16v3a1 1 0 01-1 1h-3M8 20H5a1 1 0 01-1-1v-3M3 12h18"
                            Stroke="{StaticResource PaperInvariantBrush}" StrokeThickness="2" Width="14" Height="14"
                            Stretch="Uniform" VerticalAlignment="Center" />
-              <TextBlock Text="Scan container" FontFamily="{StaticResource BodyMediumFont}" FontSize="12.5"
+              <TextBlock Text="Scan container" Style="{StaticResource TypeMedium13}"
                          Foreground="{StaticResource PaperInvariantBrush}" />
             </StackPanel>
           </Button>

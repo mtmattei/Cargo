@@ -31,7 +31,7 @@ public sealed partial class DockingViewModel : ObservableObject
         {
             new LegendItem { Label = "Available", Swatch = Tokens.Brush("AccentColor", 0.35) },
             new LegendItem { Label = "Reserved", Swatch = Tokens.Brush("AccentInvariantBrush") },
-            new LegendItem { Label = "Occupied", Swatch = Tokens.Brush("AccentInvariantBrush") },
+            new LegendItem { Label = "Occupied", Swatch = Tokens.Brush("NavyInvariantBrush") },
             new LegendItem { Label = "Restricted", Swatch = Tokens.Brush("RestrictedInvariantBrush") },
             new LegendItem { Label = "Conflict", Swatch = Tokens.Brush("AlertInvariantBrush") }
         };

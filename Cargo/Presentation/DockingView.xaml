@@ -31,7 +31,7 @@
           <DataTemplate x:DataType="local:LegendItem">
             <StackPanel Orientation="Horizontal" Spacing="5">
               <Rectangle Width="10" Height="10" RadiusX="3" RadiusY="3" Fill="{x:Bind Swatch}" VerticalAlignment="Center" />
-              <TextBlock Text="{x:Bind Label}" Style="{StaticResource CaptionText}" FontSize="12" />
+              <TextBlock Text="{x:Bind Label}" Style="{StaticResource CaptionText}" />
             </StackPanel>
           </DataTemplate>
         </ItemsControl.ItemTemplate>
@@ -49,7 +49,7 @@
 
         <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
           <Button Style="{StaticResource GhostButton}" Content="Now" Padding="12,7"
-                  CornerRadius="8" FontSize="12" Command="{x:Bind ViewModel.NowCommand, Mode=OneWay}"
+                  CornerRadius="8" Command="{x:Bind ViewModel.NowCommand, Mode=OneWay}"
                   Background="{x:Bind ViewModel.NowBackground, Mode=OneWay}"
                   Foreground="{x:Bind ViewModel.NowForeground, Mode=OneWay}" />
           <TextBlock Style="{StaticResource CaptionText}" VerticalAlignment="Center">
@@ -64,21 +64,21 @@
                   StepFrequency="0.25" Margin="0,0,0,14" AutomationProperties.Name="Plan time"
                   Value="{x:Bind ViewModel.Scrub, Mode=TwoWay}" />
           <Grid VerticalAlignment="Bottom" IsHitTestVisible="False">
-            <TextBlock Text="00:00" Style="{StaticResource MicroText}" FontSize="10" HorizontalAlignment="Left" />
-            <TextBlock Text="12:00" Style="{StaticResource MicroText}" FontSize="10" HorizontalAlignment="Center" />
-            <TextBlock Text="Thu 12:00" Style="{StaticResource MicroText}" FontSize="10" HorizontalAlignment="Right" />
+            <TextBlock Text="00:00" Style="{StaticResource MicroText}" HorizontalAlignment="Left" />
+            <TextBlock Text="12:00" Style="{StaticResource MicroText}" HorizontalAlignment="Center" />
+            <TextBlock Text="Thu 12:00" Style="{StaticResource MicroText}" HorizontalAlignment="Right" />
           </Grid>
         </Grid>
 
         <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-          <TextBlock Text="{x:Bind ViewModel.ConflictText, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12"
+          <TextBlock Text="{x:Bind ViewModel.ConflictText, Mode=OneWay}" Style="{StaticResource CaptionText}"
                      Foreground="{x:Bind ViewModel.ConflictTone, Mode=OneWay}" VerticalAlignment="Center"
                      MaxWidth="360" TextWrapping="Wrap" />
           <Button Style="{StaticResource PrimaryButton}" Command="{x:Bind ViewModel.OptimizeCommand, Mode=OneWay}" CornerRadius="9" Padding="14,8">
             <StackPanel Orientation="Horizontal" Spacing="7">
               <shapes:Path Data="M4 17l5-5 4 4 7-8M15 8h5v5" Stroke="{StaticResource PaperInvariantBrush}" StrokeThickness="2"
                            Width="14" Height="14" Stretch="Uniform" VerticalAlignment="Center" />
-              <TextBlock Text="Optimize traffic" FontFamily="{StaticResource BodyMediumFont}" FontSize="12.5"
+              <TextBlock Text="Optimize traffic" Style="{StaticResource TypeMedium13}"
                          Foreground="{StaticResource PaperInvariantBrush}" />
             </StackPanel>
           </Button>
@@ -101,7 +101,7 @@
           </utu:CardContentControl>
           <utu:CardContentControl Style="{StaticResource OutlinedPanel}" HorizontalAlignment="Left" VerticalAlignment="Bottom"
                                   Margin="16,14" Padding="12,8" CornerRadius="{StaticResource RadiusControl}">
-            <TextBlock Text="{x:Bind ViewModel.Hint, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12.5" />
+            <TextBlock Text="{x:Bind ViewModel.Hint, Mode=OneWay}" Style="{StaticResource SubtitleText}" />
           </utu:CardContentControl>
         </Grid>
 
@@ -110,7 +110,7 @@
             <Grid>
               <TextBlock Text="Berth timeline · 36 h" Style="{StaticResource CardTitleText}" />
               <TextBlock Text="Drag a vessel onto a berth · overlaps show in red"
-                         Style="{StaticResource CaptionText}" FontSize="12" HorizontalAlignment="Right" />
+                         Style="{StaticResource CaptionText}" HorizontalAlignment="Right" />
             </Grid>
             <Grid ColumnSpacing="12">
               <Grid.ColumnDefinitions>
@@ -118,9 +118,9 @@
                 <ColumnDefinition Width="*" />
               </Grid.ColumnDefinitions>
               <Grid Grid.Column="1">
-                <TextBlock Text="00:00" Style="{StaticResource MicroText}" FontSize="11" HorizontalAlignment="Left" />
-                <TextBlock Text="12:00" Style="{StaticResource MicroText}" FontSize="11" HorizontalAlignment="Center" />
-                <TextBlock Text="Thu 12:00" Style="{StaticResource MicroText}" FontSize="11" HorizontalAlignment="Right" />
+                <TextBlock Text="00:00" Style="{StaticResource MicroText}" HorizontalAlignment="Left" />
+                <TextBlock Text="12:00" Style="{StaticResource MicroText}" HorizontalAlignment="Center" />
+                <TextBlock Text="Thu 12:00" Style="{StaticResource MicroText}" HorizontalAlignment="Right" />
               </Grid>
             </Grid>
             <ItemsControl ItemsSource="{x:Bind ViewModel.PlanRows, Mode=OneWay}">
@@ -134,7 +134,7 @@
                       <ColumnDefinition Width="34" />
                       <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Text="{x:Bind Berth}" FontFamily="{StaticResource MonoMediumFont}" FontSize="12"
+                    <TextBlock Text="{x:Bind Berth}" Style="{StaticResource TypeMonoMedium12}"
                                Foreground="{StaticResource TextMutedInvariantBrush}" VerticalAlignment="Center" />
                     <!-- xaml-lint: allow card - the track of a timeline bar, not a card -->
                     <Border Grid.Column="1" Height="26" CornerRadius="7" Background="{StaticResource SurfaceSunkInvariantBrush}">
@@ -154,14 +154,11 @@
         <StackPanel Spacing="14">
           <Grid>
             <StackPanel Spacing="3">
-              <TextBlock Text="{x:Bind ViewModel.SelectedName, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}"
-                         FontSize="17" />
+              <TextBlock Text="{x:Bind ViewModel.SelectedName, Mode=OneWay}" Style="{StaticResource TypeStrong18}" />
               <TextBlock Text="{x:Bind ViewModel.SelectedStatus, Mode=OneWay}" Style="{StaticResource CaptionText}" />
             </StackPanel>
-            <Button Style="{StaticResource BareButton}" Content="×" Command="{x:Bind ViewModel.ClearSelectionCommand, Mode=OneWay}"
-                    AutomationProperties.Name="Clear selection"
-                    HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="18"
-                    Foreground="{StaticResource TextFaintInvariantBrush}" />
+            <Button Style="{StaticResource CloseButton}" Content="×" Command="{x:Bind ViewModel.ClearSelectionCommand, Mode=OneWay}"
+                    AutomationProperties.Name="Clear selection" />
           </Grid>
 
           <!-- xaml-lint: allow card - clips the vessel profile image -->
@@ -180,14 +177,14 @@
               <DataTemplate x:DataType="local:Fact">
                 <StackPanel Spacing="3">
                   <TextBlock Text="{x:Bind Key}" Style="{StaticResource MicroText}" />
-                  <TextBlock Text="{x:Bind Value}" Style="{StaticResource BodyStrongText}" FontSize="14" />
+                  <TextBlock Text="{x:Bind Value}" Style="{StaticResource BodyStrongLargeText}" />
                 </StackPanel>
               </DataTemplate>
             </ItemsControl.ItemTemplate>
           </ItemsControl>
 
           <Border Height="1" Background="{StaticResource HairlineInvariantBrush}" />
-          <TextBlock Text="{x:Bind ViewModel.SelectedNote, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12.5"
+          <TextBlock Text="{x:Bind ViewModel.SelectedNote, Mode=OneWay}" Style="{StaticResource SubtitleText}"
                      TextWrapping="Wrap" LineHeight="19" />
 
           <Button Style="{StaticResource GhostButton}" Content="Release berth"

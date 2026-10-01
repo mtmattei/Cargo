@@ -233,13 +233,13 @@
   <SolidColorBrush x:Key="PageDimInvariantBrush" Color="{StaticResource InkDeepColor}" Opacity="0.55" />
 
   <!-- ── Type ─────────────────────────────────────────────────── -->
-  <FontFamily x:Key="DisplayFont">ms-appx:///Assets/Fonts/BricolageGrotesque-SemiBold.ttf#Bricolage Grotesque SemiBold</FontFamily>
-  <FontFamily x:Key="DisplayBoldFont">ms-appx:///Assets/Fonts/BricolageGrotesque-Bold.ttf#Bricolage Grotesque</FontFamily>
-  <FontFamily x:Key="BodyFont">ms-appx:///Assets/Fonts/Archivo-Regular.ttf#Archivo</FontFamily>
-  <FontFamily x:Key="BodyMediumFont">ms-appx:///Assets/Fonts/Archivo-Medium.ttf#Archivo Medium</FontFamily>
-  <FontFamily x:Key="BodyStrongFont">ms-appx:///Assets/Fonts/Archivo-SemiBold.ttf#Archivo SemiBold</FontFamily>
-  <FontFamily x:Key="MonoFont">ms-appx:///Assets/Fonts/IBMPlexMono-Regular.ttf#IBM Plex Mono</FontFamily>
-  <FontFamily x:Key="MonoMediumFont">ms-appx:///Assets/Fonts/IBMPlexMono-Medium.ttf#IBM Plex Mono Medium</FontFamily>
+  <FontFamily x:Key="DisplayFont">ms-appx:///Assets/Fonts/BricolageGrotesque_SemiBold.ttf#Bricolage Grotesque SemiBold</FontFamily>
+  <FontFamily x:Key="DisplayBoldFont">ms-appx:///Assets/Fonts/BricolageGrotesque_Bold.ttf#Bricolage Grotesque</FontFamily>
+  <FontFamily x:Key="BodyFont">ms-appx:///Assets/Fonts/Archivo_Regular.ttf#Archivo</FontFamily>
+  <FontFamily x:Key="BodyMediumFont">ms-appx:///Assets/Fonts/Archivo_Medium.ttf#Archivo Medium</FontFamily>
+  <FontFamily x:Key="BodyStrongFont">ms-appx:///Assets/Fonts/Archivo_SemiBold.ttf#Archivo SemiBold</FontFamily>
+  <FontFamily x:Key="MonoFont">ms-appx:///Assets/Fonts/IBMPlexMono_Regular.ttf#IBM Plex Mono</FontFamily>
+  <FontFamily x:Key="MonoMediumFont">ms-appx:///Assets/Fonts/IBMPlexMono_Medium.ttf#IBM Plex Mono Medium</FontFamily>
 
   <!-- ── Radius ─────────────────────────────────────── -->
   <!-- Three radii. Inner radius = outer radius − padding (concentric). -->

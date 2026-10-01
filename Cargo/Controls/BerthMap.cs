@@ -207,7 +207,7 @@ public sealed partial class BerthMap : SceneHost
 
     private static string StatusToken(string status) => status switch
     {
-        "occupied" => "AccentColor",
+        "occupied" => "NavyColor",
         "reserved" => "AccentColor",
         "restricted" => "RestrictedColor",
         _ => "AccentColor"

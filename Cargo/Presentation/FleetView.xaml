@@ -114,8 +114,7 @@
                         <Ellipse Width="6" Height="6" Fill="{x:Bind Tone}" VerticalAlignment="Center" />
                         <TextBlock Text="{x:Bind Name}" Style="{StaticResource BodyStrongText}" TextTrimming="CharacterEllipsis" />
                       </StackPanel>
-                      <TextBlock Grid.Column="1" Text="{x:Bind Slip}" FontFamily="{StaticResource MonoMediumFont}"
-                                 FontSize="11.5" Foreground="{x:Bind SlipInk}" />
+                      <TextBlock Grid.Column="1" Text="{x:Bind Slip}" Style="{StaticResource TypeMonoMedium12}" Foreground="{x:Bind SlipInk}" />
                       <TextBlock Grid.Row="1" Text="{x:Bind Detail}" Style="{StaticResource CaptionText}"
                                  TextTrimming="CharacterEllipsis" />
                       <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind Eta}" Style="{StaticResource CaptionText}"
@@ -157,7 +156,7 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                   </Grid.ColumnDefinitions>
-                  <TextBlock Text="{x:Bind Time}" FontFamily="{StaticResource MonoMediumFont}" FontSize="12"
+                  <TextBlock Text="{x:Bind Time}" Style="{StaticResource TypeMonoMedium12}"
                              Foreground="{StaticResource TextMutedInvariantBrush}" VerticalAlignment="Center" />
                   <TextBlock Grid.Column="1" Style="{StaticResource BodyText}" VerticalAlignment="Center"
                              TextTrimming="CharacterEllipsis">
@@ -202,8 +201,7 @@
                     <shapes:Path Data="{x:Bind Spark}" Stroke="{StaticResource WaterLineInvariantBrush}" StrokeThickness="1.6"
                                  StrokeLineJoin="Round" />
                   </Grid>
-                  <TextBlock Grid.Column="2" Text="{x:Bind Level}" FontFamily="{StaticResource MonoMediumFont}"
-                             FontSize="12" Foreground="{x:Bind Ink}" VerticalAlignment="Center" TextAlignment="Right" />
+                  <TextBlock Grid.Column="2" Text="{x:Bind Level}" Style="{StaticResource TypeMonoMedium12}" Foreground="{x:Bind Ink}" VerticalAlignment="Center" TextAlignment="Right" />
                 </Grid>
               </DataTemplate>
             </ItemsControl.ItemTemplate>
@@ -274,7 +272,7 @@
                       <TextBlock Text="{x:Bind Text}" Style="{StaticResource BodyText}" Foreground="{x:Bind Foreground}"
                                  TextWrapping="Wrap" LineHeight="18" />
                     </Border>
-                    <TextBlock Text="{x:Bind Meta}" FontFamily="{StaticResource MonoFont}" FontSize="11"
+                    <TextBlock Text="{x:Bind Meta}" Style="{StaticResource TypeMono11}"
                                Foreground="{StaticResource TextMutedInvariantBrush}" HorizontalAlignment="{x:Bind Align}" />
                   </StackPanel>
                 </DataTemplate>
@@ -302,7 +300,7 @@
             </Grid.ColumnDefinitions>
             <!-- Enter sends: CommandExtensions runs the command on Enter for a TextBox -->
             <TextBox PlaceholderText="Message the crew…" CornerRadius="{StaticResource RadiusControl}"
-                     FontSize="12.5" Padding="12,9" AutomationProperties.Name="Message the crew"
+                     Padding="12,9" AutomationProperties.Name="Message the crew"
                      Text="{x:Bind ViewModel.State.ChatDraft, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      utu:CommandExtensions.Command="{x:Bind ViewModel.SendDraftCommand, Mode=OneWay}" />
             <Button Grid.Column="1" Style="{StaticResource PrimaryButton}" Content="Send" Command="{x:Bind ViewModel.SendDraftCommand, Mode=OneWay}"

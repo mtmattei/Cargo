@@ -33,7 +33,7 @@
               <Button Style="{StaticResource BareButton}" uen:Navigation.Request="{x:Bind Route}">
                 <!-- xaml-lint: allow card - the current-tab highlight inside the segmented strip -->
                 <Border Background="{x:Bind Background}" CornerRadius="9" Padding="14,7">
-                  <TextBlock Text="{x:Bind Label}" FontFamily="{StaticResource BodyMediumFont}" FontSize="12.5"
+                  <TextBlock Text="{x:Bind Label}" Style="{StaticResource TypeMedium13}"
                              Foreground="{x:Bind Foreground}" />
                 </Border>
               </Button>
@@ -66,15 +66,15 @@
               <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Right" VerticalAlignment="Center">
                 <StackPanel Orientation="Horizontal" Spacing="5">
                   <Ellipse Width="7" Height="7" Fill="{StaticResource AccentInvariantBrush}" VerticalAlignment="Center" />
-                  <TextBlock Text="clearance" Style="{StaticResource CaptionText}" FontSize="12" />
+                  <TextBlock Text="clearance" Style="{StaticResource CaptionText}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="5">
                   <Ellipse Width="7" Height="7" Fill="{StaticResource OrangeInvariantBrush}" VerticalAlignment="Center" />
-                  <TextBlock Text="hold" Style="{StaticResource CaptionText}" FontSize="12" />
+                  <TextBlock Text="hold" Style="{StaticResource CaptionText}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="5">
                   <Ellipse Width="7" Height="7" Fill="{StaticResource RestrictedInvariantBrush}" VerticalAlignment="Center" />
-                  <TextBlock Text="incident" Style="{StaticResource CaptionText}" FontSize="12" />
+                  <TextBlock Text="incident" Style="{StaticResource CaptionText}" />
                 </StackPanel>
               </StackPanel>
             </Grid>
@@ -87,11 +87,11 @@
         <utu:CardContentControl Style="{StaticResource PanelCard}" Padding="20,18">
           <StackPanel Spacing="8">
             <Grid>
-              <TextBlock Text="MSCU 482193 7" FontFamily="{StaticResource MonoMediumFont}" FontSize="14" />
+              <TextBlock Text="MSCU 482193 7" Style="{StaticResource TypeMonoMedium14}" />
               <!-- xaml-lint: allow card - a status pill, not a card; half-height radius (99 draws an oval on Skia) -->
               <Border Background="{StaticResource SurfaceSunkInvariantBrush}" CornerRadius="10" Padding="8,3"
                       HorizontalAlignment="Right">
-                <TextBlock Text="Cleared" FontFamily="{StaticResource BodyMediumFont}" FontSize="11"
+                <TextBlock Text="Cleared" Style="{StaticResource TypeMedium11}"
                            Foreground="{StaticResource AccentInvariantBrush}" />
               </Border>
             </Grid>
@@ -102,7 +102,7 @@
               <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="local:CheckRow">
                   <StackPanel Orientation="Horizontal" Spacing="8">
-                    <TextBlock Text="{x:Bind Mark}" FontFamily="{StaticResource BodyStrongFont}" FontSize="12.5"
+                    <TextBlock Text="{x:Bind Mark}" Style="{StaticResource TypeStrong13}"
                                Foreground="{x:Bind Tone}" />
                     <TextBlock Text="{x:Bind Label}" Style="{StaticResource BodyText}" TextWrapping="Wrap" />
                   </StackPanel>
@@ -115,11 +115,11 @@
         <utu:CardContentControl Style="{StaticResource PanelCard}" Padding="20,18" BorderBrush="{StaticResource OrangeInvariantBrush}">
           <StackPanel Spacing="8">
             <Grid>
-              <TextBlock Text="CMAU 918204 4" FontFamily="{StaticResource MonoMediumFont}" FontSize="14" />
+              <TextBlock Text="CMAU 918204 4" Style="{StaticResource TypeMonoMedium14}" />
               <!-- xaml-lint: allow card - a status pill, not a card; half-height radius (99 draws an oval on Skia) -->
               <Border Background="{StaticResource SurfaceSunkInvariantBrush}" CornerRadius="10" Padding="8,3"
                       HorizontalAlignment="Right">
-                <TextBlock Text="Hold" FontFamily="{StaticResource BodyMediumFont}" FontSize="11"
+                <TextBlock Text="Hold" Style="{StaticResource TypeMedium11}"
                            Foreground="{StaticResource OrangeInkInvariantBrush}" />
               </Border>
             </Grid>
@@ -130,7 +130,7 @@
               <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="local:CheckRow">
                   <StackPanel Orientation="Horizontal" Spacing="8">
-                    <TextBlock Text="{x:Bind Mark}" FontFamily="{StaticResource BodyStrongFont}" FontSize="12.5"
+                    <TextBlock Text="{x:Bind Mark}" Style="{StaticResource TypeStrong13}"
                                Foreground="{x:Bind Tone}" />
                     <TextBlock Text="{x:Bind Label}" Style="{StaticResource BodyText}" TextWrapping="Wrap" />
                   </StackPanel>
@@ -159,8 +159,7 @@
                     </Grid.ColumnDefinitions>
                     <Ellipse Width="8" Height="8" Fill="{x:Bind Tone}" VerticalAlignment="Center" />
                     <TextBlock Grid.Column="1" Text="{x:Bind Label}" Style="{StaticResource BodyText}" />
-                    <TextBlock Grid.Column="2" Text="{x:Bind Count}" FontFamily="{StaticResource MonoMediumFont}"
-                               FontSize="12" Foreground="{StaticResource TextMutedInvariantBrush}" />
+                    <TextBlock Grid.Column="2" Text="{x:Bind Count}" Style="{StaticResource TypeMonoMedium12}" Foreground="{StaticResource TextMutedInvariantBrush}" />
                   </Grid>
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
@@ -194,14 +193,14 @@
                     </Grid.ColumnDefinitions>
                     <!-- xaml-lint: allow card - avatar swatch -->
                     <Border Width="46" Height="46" CornerRadius="12" Background="{x:Bind Avatar}">
-                      <TextBlock Text="{x:Bind Initials}" FontFamily="{StaticResource BodyStrongFont}" FontSize="14"
+                      <TextBlock Text="{x:Bind Initials}" Style="{StaticResource TypeStrong14}"
                                  Foreground="{StaticResource SurfaceInvariantBrush}"
                                  HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <StackPanel Grid.Column="1" Spacing="2">
-                      <TextBlock Text="{x:Bind Name}" FontFamily="{StaticResource BodyStrongFont}" FontSize="13.5" />
-                      <TextBlock Text="{x:Bind Role}" Style="{StaticResource CaptionText}" FontSize="12" />
-                      <TextBlock Text="{x:Bind Credential}" FontFamily="{StaticResource MonoMediumFont}" FontSize="11"
+                      <TextBlock Text="{x:Bind Name}" Style="{StaticResource TypeStrong14}" />
+                      <TextBlock Text="{x:Bind Role}" Style="{StaticResource CaptionText}" />
+                      <TextBlock Text="{x:Bind Credential}" Style="{StaticResource TypeMonoMedium11}"
                                  Foreground="{StaticResource AccentInvariantBrush}" Margin="0,4,0,0" />
                     </StackPanel>
                   </Grid>
@@ -215,7 +214,7 @@
           <StackPanel Spacing="10">
             <Grid>
               <TextBlock Text="{x:Bind ViewModel.ZoneHeading, Mode=OneWay}" Style="{StaticResource CardTitleText}" />
-              <TextBlock Text="{x:Bind ViewModel.ZoneCount, Mode=OneWay}" Style="{StaticResource CaptionText}" FontSize="12"
+              <TextBlock Text="{x:Bind ViewModel.ZoneCount, Mode=OneWay}" Style="{StaticResource CaptionText}"
                          HorizontalAlignment="Right" VerticalAlignment="Center" />
             </Grid>
             <controls:AccessZoneMap Allowed="{x:Bind ViewModel.AllowedZones, Mode=OneWay}" />
@@ -246,8 +245,8 @@
                     <ItemsControl.ItemTemplate>
                       <DataTemplate x:DataType="local:Fact">
                         <StackPanel Spacing="2">
-                          <TextBlock Text="{x:Bind Key}" Style="{StaticResource MicroText}" FontSize="10.5" />
-                          <TextBlock Text="{x:Bind Value}" Style="{StaticResource BodyStrongText}" FontSize="12.5" />
+                          <TextBlock Text="{x:Bind Key}" Style="{StaticResource MicroText}" />
+                          <TextBlock Text="{x:Bind Value}" Style="{StaticResource BodyStrongText}" />
                         </StackPanel>
                       </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -270,9 +269,9 @@
       <utu:CardContentControl Style="{StaticResource PanelCard}" Padding="26,22,26,18">
         <StackPanel Spacing="6">
           <Grid>
-            <TextBlock Text="CMAU 918204 4" FontFamily="{StaticResource MonoMediumFont}" FontSize="18" />
+            <TextBlock Text="CMAU 918204 4" Style="{StaticResource TypeMonoMedium18}" />
             <TextBlock Text="40 FT HC · CMA CGM · Westhaven → Le Havre · Lane 2"
-                       Style="{StaticResource CaptionText}" FontSize="12.5"
+                       Style="{StaticResource SubtitleText}"
                        HorizontalAlignment="Right" VerticalAlignment="Center" />
           </Grid>
           <controls:InspectionDiagram />
@@ -282,7 +281,7 @@
       <StackPanel Grid.Column="1" Spacing="14">
         <utu:CardContentControl Style="{StaticResource PanelCard}" Padding="20,18" BorderBrush="{StaticResource OrangeInvariantBrush}">
           <StackPanel Spacing="6">
-            <TextBlock Text="⚠ Weight variance" FontFamily="{StaticResource BodyStrongFont}" FontSize="13.5"
+            <TextBlock Text="⚠ Weight variance" Style="{StaticResource TypeStrong14}"
                        Foreground="{StaticResource OrangeInkInvariantBrush}" />
             <TextBlock Style="{StaticResource BodyText}" TextWrapping="Wrap" LineHeight="19"
                        Text="Declared 24,120 kg · measured 25,920 kg (+1.8 t, +7.5%). Exceeds the 5% tolerance — physical inspection scheduled before customs release." />
@@ -303,10 +302,10 @@
                       <ColumnDefinition Width="44" />
                       <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Text="{x:Bind Time}" FontFamily="{StaticResource MonoMediumFont}" FontSize="11.5"
+                    <TextBlock Text="{x:Bind Time}" Style="{StaticResource TypeMonoMedium12}"
                                Foreground="{StaticResource TextFaintInvariantBrush}" />
                     <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="7">
-                      <TextBlock Text="{x:Bind Mark}" FontFamily="{StaticResource BodyStrongFont}" FontSize="12.5"
+                      <TextBlock Text="{x:Bind Mark}" Style="{StaticResource TypeStrong13}"
                                  Foreground="{x:Bind Tone}" />
                       <TextBlock Text="{x:Bind Label}" Style="{StaticResource BodyText}" TextWrapping="Wrap"
                                  LineHeight="18" MaxWidth="220" />

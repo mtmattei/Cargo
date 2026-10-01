@@ -171,15 +171,15 @@
               <TextBlock Text="1.1 kn flood" Style="{StaticResource BodyStrongText}" VerticalAlignment="Bottom" />
             </StackPanel>
 
-            <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="7">
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="7">
               <TextBlock Text="Visibility" Style="{StaticResource MicroText}" VerticalAlignment="Bottom" />
               <TextBlock Text="10 km · no fog" Style="{StaticResource BodyStrongText}" VerticalAlignment="Bottom" />
             </StackPanel>
-            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="7">
+            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="7">
               <TextBlock Text="Channel depth" Style="{StaticResource MicroText}" VerticalAlignment="Bottom" />
               <TextBlock Text="16.9 m at HW" Style="{StaticResource BodyStrongText}" VerticalAlignment="Bottom" />
             </StackPanel>
-            <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" Spacing="7">
+            <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" Spacing="7">
               <TextBlock Text="Pilotage" Style="{StaticResource MicroText}" VerticalAlignment="Bottom" />
               <TextBlock Text="Open · no restrictions" Style="{StaticResource BodyStrongText}"
                          Foreground="{StaticResource SeaGreenInvariantBrush}" VerticalAlignment="Bottom" />

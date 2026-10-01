@@ -461,7 +461,7 @@ public sealed class HarbourScene : SKCanvasElement
         _typefaceRequested = true;
         try
         {
-            var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Fonts/IBMPlexMono-Medium.ttf"));
+            var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Fonts/IBMPlexMono_Medium.ttf"));
             using var stream = await file.OpenStreamForReadAsync();
             using var memory = new MemoryStream();
             await stream.CopyToAsync(memory);
