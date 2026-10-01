@@ -10,6 +10,9 @@ Overview: masthead figures + duty ID card; a 340/491 harbour band with the desig
 (`PortState.Decisions`); Next 6 h with to-scale ship glyphs; Activity in two columns with NEEDS ACTION chips;
 responsive bands at 1280/1040; linked hover from chart dots and Next 6 h rows; card entrance/hover motion.
 Container volume / Cargo flow moved to Cargo, Sea & weather to Waterways. Then an uno-audit pass.
+Follow-up: Expand/Collapse no longer resizes the scene (it renders once at 491; the band clips it and slides
+it 110 px via negative margins), the duty ID card sits level (entrance is fade + drop, hover lifts 2 px), and a
+dead-code pass removed 47 usings, 7 members, 12 motion tokens, a font and 10 unused sprites.
 
 ## Last verified state
 - Build: pass, 0 warnings / 0 errors, `net10.0-desktop` (full `--no-incremental`) and `net10.0-android`.
@@ -17,7 +20,7 @@ Container volume / Cargo flow moved to Cargo, Sea & weather to Waterways. Then a
   340↔491; camera MenuFlyout (Placement Top works); layer pill; Chart↔Table; Confirm berth from the queue
   (row leaves, count 4→3, Berths dot clears, tag turns light); account flyout + reduced-motion switch; 1100 band.
   Overview idle CPU 17-25% of one core (Debug; baseline was 48-53%).
-- Git: `main` pushed to origin (see the push commit in `git log`). Liveline: `C:\Users\Platform006\Uno-Builds-net10`,
+- Git: `main` at `cff9944`, 2 commits ahead of origin (not pushed). Liveline: `C:\Users\Platform006\Uno-Builds-net10`,
   branch `liveline-window` at `15ecf9f`, **local only**.
 - Lint: CARD 0 · HEX 0 · TOKENTHEME 0 · BACKBAR 0 · CODEBEHIND 0 · OVERLAY 0 · RESPONSIVE 0 · BUILTIN 0 · ICON 0 · WORKAROUND 1 (gotcha recorded).
 
@@ -26,7 +29,7 @@ Container volume / Cargo flow moved to Cargo, Sea & weather to Waterways. Then a
 |---|---|
 | skiasharp-uno: snapshot state, reuse paints, bake alpha | Controls/TimelineLanes.cs:234; Controls/CanvasFonts.cs:20 |
 | xaml-design-polish: reduced motion jumps to the end | Controls/SegmentIndicator.cs:106; Presentation/TimelineViewModel.cs:199 |
-| gotcha G60: FillBehavior Stop over local values | Controls/Harbour/HarbourView.xaml.cs:194; Controls/IdCardMotion.cs:98 |
+| gotcha G60: FillBehavior Stop over local values | Controls/Harbour/HarbourView.xaml.cs:210; Controls/IdCardMotion.cs:97 |
 | uno-toolkit / gotcha G36: ShadowContainer shadows inline | Presentation/OverviewMasthead.xaml:81 |
 | uno-scaffolding Breakpoints: `{utu:Responsive}` incl. structure | Presentation/OverviewView.xaml:35 |
 | gotcha BrushTransition: alpha in the colour (`Tokens.Tint`) | Presentation/NextSixHoursViewModel.cs:56 |
