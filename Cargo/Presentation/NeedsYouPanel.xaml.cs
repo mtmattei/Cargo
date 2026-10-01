@@ -62,13 +62,16 @@ public sealed partial class NeedsYouPanel : UserControl
         _ => $"Needs you, {count} items"
     };
 
-    public static Style Icon(DecisionKind kind) => (Style)Application.Current.Resources[kind switch
+    public static Style Icon(DecisionKind kind) => (Style)Application.Current.Resources[IconKey(kind)];
+
+    /// <summary>The icon style for a decision kind in Themes/Icons.xaml; the shift log uses it too.</summary>
+    public static string IconKey(DecisionKind kind) => kind switch
     {
         DecisionKind.InspectionHold => "LockIcon",
         DecisionKind.DriverCheck => "IdCardIcon",
         DecisionKind.LateOrders => "ClockIcon",
         _ => "AnchorIcon"
-    }];
+    };
 
     public static Style Action(bool primary) =>
         (Style)Application.Current.Resources[primary ? "QueuePrimaryButton" : "QueueSecondaryButton"];

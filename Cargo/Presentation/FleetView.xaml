@@ -11,6 +11,7 @@
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
     <!-- ── Masthead ─────────────────────────────────────────────── -->
@@ -309,5 +310,8 @@
         </StackPanel>
       </Border>
     </Grid>
+
+    <!-- ── Sea & weather and the night's tide ─────────────────────── -->
+    <local:SeaWeatherPanel Grid.Row="3" DataContext="{x:Bind ViewModel.State}" />
   </Grid>
 </Page>

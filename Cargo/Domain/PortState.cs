@@ -542,7 +542,7 @@ public sealed partial class PortState : ObservableObject
             {
                 Id = $"hold-{held.Id}", Kind = DecisionKind.InspectionHold,
                 Title = $"Hold on {held.DisplayId}", Sub = $"Inspection due {Clock(InspectionDue)}",
-                ActionLabel = "Open inspection", IsPrimary = true, Command = OpenInspectionCommand
+                ActionLabel = "Open inspection", IsPrimary = true, Command = OpenInspectionCommand, Subject = held.DisplayId
             });
         }
 
@@ -552,7 +552,7 @@ public sealed partial class PortState : ObservableObject
             {
                 Id = $"driver-{truck.Id}", Kind = DecisionKind.DriverCheck,
                 Title = $"Driver ID pending at {truck.Gate.Split(" · ")[0]}", Sub = $"{truck.Id} at the barrier",
-                ActionLabel = "Verify driver", IsPrimary = false, Command = OpenAccessCommand
+                ActionLabel = "Verify driver", IsPrimary = false, Command = OpenAccessCommand, Subject = truck.Id
             });
         }
 

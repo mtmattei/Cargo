@@ -11,7 +11,6 @@
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
-      <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
     <!-- ── Row 0: the day's timeline (span 8) + the aside (span 4) on the design's 12-column grid ── -->
@@ -179,155 +178,93 @@
           <local:NeedsYouPanel x:Name="NeedsYou" DataContext="{x:Bind ViewModel.State}" />
           <Rectangle Height="1" Fill="{StaticResource HairlineStrongInvariantBrush}" />
           <StackPanel Spacing="14" Padding="24">
-          <TextBlock Text="Next up" Style="{StaticResource PanelHeadingText}" />
-          <ItemsControl ItemsSource="{x:Bind ViewModel.NextUp, Mode=OneWay}">
-            <ItemsControl.ItemsPanel>
-              <ItemsPanelTemplate><StackPanel Spacing="14" /></ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-              <DataTemplate x:DataType="local:NextUpItem">
-                <Button Style="{StaticResource RowButton}" Command="{x:Bind Open}" CommandParameter="{x:Bind Id}">
-                  <Grid ColumnSpacing="12">
+          <!-- Next 6 h: from 15 minutes back to six hours ahead, the NOW row between what has
+               happened and what is to come, each ship drawn to scale -->
+          <StackPanel Spacing="4">
+            <TextBlock Text="Next 6 h" Style="{StaticResource PanelHeadingText}" AutomationProperties.HeadingLevel="Level2" />
+            <TextBlock Text="{x:Bind ViewModel.NextSix.Sub, Mode=OneWay}" Style="{StaticResource SubtitleText}" />
+          </StackPanel>
+          <TextBlock Text="No movements in the next 6 h" Style="{StaticResource SubtitleText}"
+                     Visibility="{x:Bind ViewModel.NextSix.EmptyVisibility, Mode=OneWay}" />
+          <Grid>
+            <!-- The rail through the dots (x 60: the 44 time column, a 12 gap, half the 10 dot) -->
+            <Rectangle Width="1" HorizontalAlignment="Left" Margin="60,0,0,0" Fill="{StaticResource HairlineStrongInvariantBrush}" />
+            <StackPanel>
+              <ItemsControl ItemsSource="{x:Bind ViewModel.NextSix.Past, Mode=OneWay}" IsTabStop="False">
+                <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="local:NextSixRow">
+                  <Grid ColumnSpacing="12" Padding="0,10">
                     <Grid.ColumnDefinitions>
-                      <ColumnDefinition Width="92" />
+                      <ColumnDefinition Width="44" />
+                      <ColumnDefinition Width="10" />
                       <ColumnDefinition Width="*" />
+                      <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <Image Source="{x:Bind Silhouette}" Width="92" Height="28" Stretch="Uniform"
-                           VerticalAlignment="Center" />
-                    <StackPanel Grid.Column="1" Spacing="3">
-                      <Grid ColumnSpacing="8">
-                        <Grid.ColumnDefinitions>
-                          <ColumnDefinition Width="*" />
-                          <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Orientation="Horizontal" Spacing="7">
-                          <Ellipse Width="6" Height="6" Fill="{x:Bind Tone}" VerticalAlignment="Center" />
-                          <TextBlock Text="{x:Bind Name}" Style="{StaticResource BodyStrongText}"
-                                     TextTrimming="CharacterEllipsis" />
-                        </StackPanel>
-                        <TextBlock Grid.Column="1" Text="{x:Bind Countdown, Mode=OneWay}"
-                                   FontFamily="{StaticResource MonoMediumFont}" FontSize="11.5"
-                                   Foreground="{x:Bind Tone}" />
-                      </Grid>
-                      <TextBlock Text="{x:Bind Detail}" Style="{StaticResource CaptionText}" />
+                    <TextBlock Text="{x:Bind Time}" Style="{StaticResource TypeMonoMedium13}" Foreground="{StaticResource InkInvariantBrush}" />
+                    <Ellipse Grid.Column="1" Width="10" Height="10" VerticalAlignment="Top" Margin="0,5,0,0"
+                             Fill="{x:Bind DotFill, Mode=OneWay}" Stroke="{x:Bind DotRing, Mode=OneWay}" StrokeThickness="{x:Bind DotRingWidth, Mode=OneWay}" />
+                    <StackPanel Grid.Column="2" Spacing="2">
+                      <TextBlock Text="{x:Bind Name}" Style="{StaticResource TitleText}" />
+                      <TextBlock Text="{x:Bind Sub}" Style="{StaticResource SubtitleText}" TextWrapping="Wrap" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="3" Spacing="6" HorizontalAlignment="Right">
+                      <TextBlock Text="{x:Bind Countdown, Mode=OneWay}" Style="{StaticResource TypeMonoMedium13}" HorizontalAlignment="Right"
+                                 Foreground="{x:Bind CountdownInk, Mode=OneWay}" />
+                      <controls:ShipGlyph Length="{x:Bind Length}" Seed="{x:Bind Id}" Departing="{x:Bind Departing, Mode=OneWay}"
+                                          HorizontalAlignment="Right" />
                     </StackPanel>
                   </Grid>
-                </Button>
-              </DataTemplate>
-            </ItemsControl.ItemTemplate>
-          </ItemsControl>
+                </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <!-- NOW: the pill over the time column, a 1.25 ink line across -->
+              <Grid Height="14" ColumnSpacing="12" AutomationProperties.Name="Now">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="44" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <!-- xaml-lint: allow card - the NOW pill, a 14 px ink capsule -->
+                <Border Background="{StaticResource InkInvariantBrush}" CornerRadius="7">
+                  <TextBlock Text="NOW" Style="{StaticResource TypeMonoMedium11}" Foreground="{StaticResource PaperInvariantBrush}"
+                             HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <Rectangle Grid.Column="1" Height="1.25" Fill="{StaticResource InkInvariantBrush}" VerticalAlignment="Center" />
+              </Grid>
+              <ItemsControl ItemsSource="{x:Bind ViewModel.NextSix.Upcoming, Mode=OneWay}" IsTabStop="False">
+                <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="local:NextSixRow">
+                  <Grid ColumnSpacing="12" Padding="0,10">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="44" />
+                      <ColumnDefinition Width="10" />
+                      <ColumnDefinition Width="*" />
+                      <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{x:Bind Time}" Style="{StaticResource TypeMonoMedium13}" Foreground="{StaticResource InkInvariantBrush}" />
+                    <Ellipse Grid.Column="1" Width="10" Height="10" VerticalAlignment="Top" Margin="0,5,0,0"
+                             Fill="{x:Bind DotFill, Mode=OneWay}" Stroke="{x:Bind DotRing, Mode=OneWay}" StrokeThickness="{x:Bind DotRingWidth, Mode=OneWay}" />
+                    <StackPanel Grid.Column="2" Spacing="2">
+                      <TextBlock Text="{x:Bind Name}" Style="{StaticResource TitleText}" />
+                      <TextBlock Text="{x:Bind Sub}" Style="{StaticResource SubtitleText}" TextWrapping="Wrap" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="3" Spacing="6" HorizontalAlignment="Right">
+                      <TextBlock Text="{x:Bind Countdown, Mode=OneWay}" Style="{StaticResource TypeMonoMedium13}" HorizontalAlignment="Right"
+                                 Foreground="{x:Bind CountdownInk, Mode=OneWay}" />
+                      <controls:ShipGlyph Length="{x:Bind Length}" Seed="{x:Bind Id}" Departing="{x:Bind Departing, Mode=OneWay}"
+                                          HorizontalAlignment="Right" />
+                    </StackPanel>
+                  </Grid>
+                </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </Grid>
           </StackPanel>
         </StackPanel>
       </utu:CardContentControl>
     </Grid>
 
-    <!-- ── Row 1: throughput, flow, weather ─────────────────────── -->
-    <Grid Grid.Row="1" ColumnSpacing="40">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*" />
-        <ColumnDefinition Width="*" />
-        <ColumnDefinition Width="*" />
-        <ColumnDefinition Width="*" />
-      </Grid.ColumnDefinitions>
-
-      <Border Style="{StaticResource RuledPanel}" Padding="0,18,20,14">
-        <StackPanel>
-          <TextBlock Text="Container volume" Style="{StaticResource CardTitleText}" />
-          <TextBlock Text="Moves this hour · one block = 20" Style="{StaticResource CaptionText}" Margin="0,8,0,0" />
-          <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4,0,0">
-            <TextBlock Text="{x:Bind ViewModel.MovesNow, Mode=OneWay}" FontFamily="{StaticResource BodyStrongFont}" FontSize="26" />
-            <TextBlock Text="↑ 12% vs yesterday" FontFamily="{StaticResource BodyMediumFont}" FontSize="12"
-                       Foreground="{StaticResource SeaGreenInvariantBrush}" VerticalAlignment="Bottom" Margin="0,0,0,4" />
-          </StackPanel>
-          <controls:VolumeChart Now="{x:Bind ViewModel.NowHours, Mode=OneWay}" Margin="0,8,0,0" />
-        </StackPanel>
-      </Border>
-
-      <Border Grid.Column="1" Style="{StaticResource RuledPanel}" Padding="0,18,20,14">
-        <StackPanel>
-          <Grid>
-            <TextBlock Text="Cargo flow" Style="{StaticResource CardTitleText}" />
-            <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Right" VerticalAlignment="Center">
-              <StackPanel Orientation="Horizontal" Spacing="5">
-                <Ellipse Width="6" Height="6" Fill="{StaticResource AccentInvariantBrush}" VerticalAlignment="Center" />
-                <TextBlock Text="Entering" Style="{StaticResource CaptionText}" />
-              </StackPanel>
-              <StackPanel Orientation="Horizontal" Spacing="5">
-                <Ellipse Width="6" Height="6" Fill="{StaticResource AmberInvariantBrush}" VerticalAlignment="Center" />
-                <TextBlock Text="Leaving" Style="{StaticResource CaptionText}" />
-              </StackPanel>
-            </StackPanel>
-          </Grid>
-          <controls:FlowChart Margin="0,14,0,0" />
-        </StackPanel>
-      </Border>
-
-      <Border Grid.Column="2" Grid.ColumnSpan="2" Style="{StaticResource RuledPanel}" Padding="0,18,20,14">
-        <StackPanel>
-          <Grid>
-            <TextBlock Text="Sea &amp; weather" Style="{StaticResource CardTitleText}" />
-            <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource CaptionText}"
-                       Foreground="{StaticResource TextFaintInvariantBrush}">
-              <Run Text="Outer harbour · " /><Run Text="{x:Bind ViewModel.State.Now, Mode=OneWay}" />
-            </TextBlock>
-          </Grid>
-
-          <Grid Margin="0,12,0,0" ColumnSpacing="22" RowSpacing="8">
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="Auto" />
-              <ColumnDefinition Width="Auto" />
-              <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-              <RowDefinition Height="Auto" />
-              <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-
-            <StackPanel Orientation="Horizontal" Spacing="7">
-              <TextBlock Text="Wind" Style="{StaticResource MicroText}" VerticalAlignment="Bottom" />
-              <TextBlock Text="14 kn SW · gusts 21" Style="{StaticResource BodyStrongText}" VerticalAlignment="Bottom" />
-            </StackPanel>
-            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="7">
-              <TextBlock Text="Swell" Style="{StaticResource MicroText}" VerticalAlignment="Bottom" />
-              <TextBlock Text="0.6 m · 7 s · W" Style="{StaticResource BodyStrongText}" VerticalAlignment="Bottom" />
-            </StackPanel>
-            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="7">
-              <TextBlock Text="Current" Style="{StaticResource MicroText}" VerticalAlignment="Bottom" />
-              <TextBlock Text="1.1 kn flood" Style="{StaticResource BodyStrongText}" VerticalAlignment="Bottom" />
-            </StackPanel>
-
-            <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="7">
-              <TextBlock Text="Visibility" Style="{StaticResource MicroText}" VerticalAlignment="Bottom" />
-              <TextBlock Text="10 km · no fog" Style="{StaticResource BodyStrongText}" VerticalAlignment="Bottom" />
-            </StackPanel>
-            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="7">
-              <TextBlock Text="Channel depth" Style="{StaticResource MicroText}" VerticalAlignment="Bottom" />
-              <TextBlock Text="16.9 m at HW" Style="{StaticResource BodyStrongText}" VerticalAlignment="Bottom" />
-            </StackPanel>
-            <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" Spacing="7">
-              <TextBlock Text="Pilotage" Style="{StaticResource MicroText}" VerticalAlignment="Bottom" />
-              <TextBlock Text="Open · no restrictions" Style="{StaticResource BodyStrongText}"
-                         Foreground="{StaticResource SeaGreenInvariantBrush}" VerticalAlignment="Bottom" />
-            </StackPanel>
-          </Grid>
-
-          <Grid Margin="0,14,0,0">
-            <TextBlock Text="Tide · Westhaven Sound" Style="{StaticResource CaptionText}" />
-            <TextBlock Text="HW 23:10 · +2.1 m" Style="{StaticResource CaptionText}" HorizontalAlignment="Right" />
-          </Grid>
-          <controls:TideChart Height="78" Margin="0,6,0,0" />
-          <Grid Margin="0,2,0,0">
-            <TextBlock Text="18:00" Style="{StaticResource MicroText}" HorizontalAlignment="Left" />
-            <TextBlock Text="00:00" Style="{StaticResource MicroText}" HorizontalAlignment="Center" />
-            <TextBlock Text="06:00" Style="{StaticResource MicroText}" HorizontalAlignment="Right" />
-          </Grid>
-        </StackPanel>
-      </Border>
-    </Grid>
-
-    <!-- ── Row 2: the shift log ─────────────────────────────────── -->
-    <Border Grid.Row="2" Style="{StaticResource SectionRule}">
-      <local:ActivityView />
-    </Border>
+    <!-- ── Row 1: the shift log ─────────────────────────────────── -->
+    <local:ActivityView Grid.Row="1" DataContext="{x:Bind ViewModel.Activity, Mode=OneWay}" />
   </Grid>
 </Page>

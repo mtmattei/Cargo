@@ -45,6 +45,9 @@
   <Style x:Key="TypeMedium14" TargetType="TextBlock" BasedOn="{StaticResource TypeMedium11}">
     <Setter Property="FontSize" Value="14" />
   </Style>
+  <Style x:Key="TypeMedium15" TargetType="TextBlock" BasedOn="{StaticResource TypeMedium11}">
+    <Setter Property="FontSize" Value="15" />
+  </Style>
 
   <Style x:Key="TypeStrong11" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource BodyStrongFont}" />

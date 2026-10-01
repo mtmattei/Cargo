@@ -68,6 +68,15 @@
   <Color x:Key="CargoOversizeColor">#FFC9A311</Color>
   <Color x:Key="CargoEmptyColor">#FFD8D4CA</Color>
 
+  <!-- ── Ship glyphs (Next 6 h, to scale) ───────────────────────── -->
+  <!-- Container greys for the glyphs' deck stacks; accent and water join them (EXTRACTION §1) -->
+  <Color x:Key="GlyphBoxPaleColor">#FFD3D8DA</Color>
+  <Color x:Key="GlyphBoxLightColor">#FFC4CBCE</Color>
+  <Color x:Key="GlyphBoxSlateColor">#FF8A9399</Color>
+  <Color x:Key="GlyphBoxMistColor">#FFB9C0C4</Color>
+  <Color x:Key="GlyphBoxStoneColor">#FFA3AFB6</Color>
+  <Color x:Key="GlyphBridgeColor">#FFE7EAEB</Color>
+
   <!-- ── Hulls & harbour plant ────────────────────────────────── -->
   <Color x:Key="HullColor">#FF243442</Color>
   <Color x:Key="BootToppingColor">#FFA94E3F</Color>
@@ -234,6 +243,8 @@
   <SolidColorBrush x:Key="TideFillBottomInvariantBrush" Color="{StaticResource WaterColor}" Opacity="0.04" />
   <!-- Ahead of now: the timeline's future shade and its legend swatch -->
   <SolidColorBrush x:Key="AheadShadeInvariantBrush" Color="{StaticResource InkColor}" Opacity="0.03" />
+  <!-- The NEEDS ACTION chip's ground: alert at 12% -->
+  <SolidColorBrush x:Key="AlertChipInvariantBrush" Color="{StaticResource AlertColor}" Opacity="0.12" />
   <!-- The header tab's hover underline -->
   <SolidColorBrush x:Key="TabHoverInvariantBrush" Color="{StaticResource InkColor}" Opacity="0.16" />
   <SolidColorBrush x:Key="HairlineOnDarkBrush" Color="#FFFFFFFF" Opacity="0.10" />

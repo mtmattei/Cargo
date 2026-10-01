@@ -9,6 +9,7 @@
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
     <Grid Style="{StaticResource Masthead}">
@@ -49,5 +50,8 @@
     <Border Grid.Row="2" Style="{StaticResource SectionRule}">
       <local:YardView DataContext="{x:Bind ViewModel.Yard, Mode=OneWay}" />
     </Border>
+
+    <!-- ── Throughput: moves this hour and cargo entering against leaving ── -->
+    <local:CargoFlowPanels Grid.Row="3" DataContext="{x:Bind ViewModel.State}" />
   </Grid>
 </Page>

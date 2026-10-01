@@ -32,6 +32,9 @@ public sealed partial class Decision : ObservableObject
     public required ICommand Command { get; init; }
     public object? CommandParameter { get; init; }
 
+    /// <summary>What the shift log calls it ("CMAU 918204 4", "TRK 8834"), so a log entry can show it needs action.</summary>
+    public string? Subject { get; init; }
+
     /// <summary>The vessel the row is about, for hover linking; null for cargo and gate rows.</summary>
     public string? VesselId { get; init; }
 
