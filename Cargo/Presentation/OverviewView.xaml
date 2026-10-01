@@ -6,6 +6,12 @@
              xmlns:utu="using:Uno.Toolkit.UI"
              xmlns:liveline="using:Liveline">
 
+  <Page.Resources>
+    <!-- Overview bands (spec): from 1280 the design's 8 + 4; 1040-1279 the aside drops below the
+         timeline; below 1040 Activity is one column too -->
+    <utu:ResponsiveLayout x:Key="OverviewBreakpoints" Narrowest="0" Narrow="0" Normal="1040" Wide="1280" Widest="100000" />
+  </Page.Resources>
+
   <!-- Main: max 1440 with 32/40/56 padding (the design's frame, not PageFrame's) -->
   <Grid Style="{StaticResource PageFrame}" Padding="40,32,40,56" MaxWidth="1440" RowSpacing="24">
     <Grid.RowDefinitions>
@@ -14,7 +20,11 @@
     </Grid.RowDefinitions>
 
     <!-- ── Row 0: the day's timeline (span 8) + the aside (span 4) on the design's 12-column grid ── -->
-    <Grid Grid.Row="0" ColumnSpacing="24">
+    <Grid Grid.Row="0" ColumnSpacing="24" RowSpacing="24">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" />
         <ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" />
@@ -22,7 +32,8 @@
       </Grid.ColumnDefinitions>
 
       <!-- Today at North Quay: four lanes on one time axis, or the same hours as a table -->
-      <utu:CardContentControl Grid.ColumnSpan="8" Style="{StaticResource OutlinedPanel}" Padding="24" VerticalAlignment="Top">
+      <utu:CardContentControl Grid.ColumnSpan="{utu:Responsive Layout={StaticResource OverviewBreakpoints}, Normal=12, Wide=8}"
+                              Style="{StaticResource OutlinedPanel}" Padding="24" VerticalAlignment="Top">
         <StackPanel Spacing="16">
           <Grid ColumnSpacing="16">
             <Grid.ColumnDefinitions>
@@ -59,6 +70,8 @@
           <!-- Chart: the lanes canvas, the tide lane over its band, the summary column over x 0-168 -->
           <Grid Height="580" Visibility="{x:Bind ViewModel.Timeline.ChartVisibility, Mode=OneWay}">
             <controls:TimelineLanes Frame="{x:Bind ViewModel.Timeline.Frame, Mode=OneWay}"
+                                    HoverCommand="{x:Bind ViewModel.State.HoverCommand}"
+                                    Lit="{x:Bind ViewModel.State.HoveredVessel, Mode=OneWay}"
                                     AutomationProperties.Name="{x:Bind ViewModel.Timeline.Summary, Mode=OneWay}"
                                     AutomationProperties.LiveSetting="Polite" />
             <!-- Tide: y = 284 - 35 m in the design, so the band 164-300 holds 0 to 3.43 m over 16 px of floor -->
@@ -172,7 +185,10 @@
       </utu:CardContentControl>
 
       <!-- Aside: the Needs-you queue bleeding to the card's edges, a full-bleed rule, then what's next -->
-      <utu:CardContentControl Grid.Column="8" Grid.ColumnSpan="4" Style="{StaticResource OutlinedPanel}" Padding="0"
+      <utu:CardContentControl Grid.Row="{utu:Responsive Layout={StaticResource OverviewBreakpoints}, Normal=1, Wide=0}"
+                              Grid.Column="{utu:Responsive Layout={StaticResource OverviewBreakpoints}, Normal=0, Wide=8}"
+                              Grid.ColumnSpan="{utu:Responsive Layout={StaticResource OverviewBreakpoints}, Normal=12, Wide=4}"
+                              Style="{StaticResource OutlinedPanel}" Padding="0"
                               VerticalAlignment="Top">
         <StackPanel>
           <local:NeedsYouPanel x:Name="NeedsYou" DataContext="{x:Bind ViewModel.State}" />
@@ -193,7 +209,13 @@
               <ItemsControl ItemsSource="{x:Bind ViewModel.NextSix.Past, Mode=OneWay}" IsTabStop="False">
                 <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="local:NextSixRow">
-                  <Grid ColumnSpacing="12" Padding="0,10">
+                  <!-- The row opens the vessel; hover or keyboard focus lights it on the map and the chart.
+                       The tint bleeds 12 px past the column. -->
+                  <Button Style="{StaticResource RowButton}" Command="{x:Bind Open}" CommandParameter="{x:Bind Id}"
+                          Margin="-12,0" Padding="0" CornerRadius="8"
+                          controls:HoverLink.Command="{x:Bind Hover}" controls:HoverLink.Key="{x:Bind Id}"
+                          AutomationProperties.Name="{x:Bind local:OverviewView.SixName(Name, Sub, Countdown), Mode=OneWay}">
+                  <Grid ColumnSpacing="12" Padding="12,10" CornerRadius="8" Background="{x:Bind Ground, Mode=OneWay}">
                     <Grid.ColumnDefinitions>
                       <ColumnDefinition Width="44" />
                       <ColumnDefinition Width="10" />
@@ -214,6 +236,7 @@
                                           HorizontalAlignment="Right" />
                     </StackPanel>
                   </Grid>
+                  </Button>
                 </DataTemplate>
                 </ItemsControl.ItemTemplate>
               </ItemsControl>
@@ -233,7 +256,13 @@
               <ItemsControl ItemsSource="{x:Bind ViewModel.NextSix.Upcoming, Mode=OneWay}" IsTabStop="False">
                 <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="local:NextSixRow">
-                  <Grid ColumnSpacing="12" Padding="0,10">
+                  <!-- The row opens the vessel; hover or keyboard focus lights it on the map and the chart.
+                       The tint bleeds 12 px past the column. -->
+                  <Button Style="{StaticResource RowButton}" Command="{x:Bind Open}" CommandParameter="{x:Bind Id}"
+                          Margin="-12,0" Padding="0" CornerRadius="8"
+                          controls:HoverLink.Command="{x:Bind Hover}" controls:HoverLink.Key="{x:Bind Id}"
+                          AutomationProperties.Name="{x:Bind local:OverviewView.SixName(Name, Sub, Countdown), Mode=OneWay}">
+                  <Grid ColumnSpacing="12" Padding="12,10" CornerRadius="8" Background="{x:Bind Ground, Mode=OneWay}">
                     <Grid.ColumnDefinitions>
                       <ColumnDefinition Width="44" />
                       <ColumnDefinition Width="10" />
@@ -254,6 +283,7 @@
                                           HorizontalAlignment="Right" />
                     </StackPanel>
                   </Grid>
+                  </Button>
                 </DataTemplate>
                 </ItemsControl.ItemTemplate>
               </ItemsControl>

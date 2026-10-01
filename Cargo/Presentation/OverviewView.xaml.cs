@@ -10,6 +10,9 @@ public sealed partial class OverviewView : Page
 
     public OverviewViewModel? ViewModel => DataContext as OverviewViewModel;
 
+    /// <summary>A Next 6 h row's spoken name: "Nordic Star, arrives Berth 07, in 42 min".</summary>
+    public static string SixName(string name, string sub, string countdown) => $"{name}, {sub}, {countdown}";
+
     // The timeline table's rows: future hours on the ahead-of-now shade, the NOW row between two ink rules
 
     public static Microsoft.UI.Xaml.Media.Brush RowGround(bool future) =>

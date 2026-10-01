@@ -10,8 +10,10 @@
       Background="{StaticResource PaperInvariantBrush}">
 
   <Page.Resources>
-    <!-- Harbour HUD breakpoint: below 1040 the layer switcher stacks above the camera presets -->
-    <utu:ResponsiveLayout x:Key="HudBreakpoints" Narrowest="0" Narrow="0" Normal="1040" Wide="100000" Widest="100000" />
+    <!-- Harbour HUD breakpoint: below 1200 the centred layer switcher (370 px) would run into the
+         Key + scale/zoom group on the right (~360 px from a 40 px gutter), so it stacks above the
+         camera menu instead -->
+    <utu:ResponsiveLayout x:Key="HudBreakpoints" Narrowest="0" Narrow="0" Normal="1200" Wide="100000" Widest="100000" />
   </Page.Resources>
 
   <!-- Two layers: the page, and the inspection over the whole window. The overlay stays out of the
@@ -115,13 +117,15 @@
            the section elsewhere -->
       <harbour:HarbourView x:Name="Harbour" Grid.Row="1" Compact="{x:Bind ViewModel.State.StageCompact, Mode=OneWay}"
                            StageHeight="{x:Bind ViewModel.State.StageHeight, Mode=OneWay}" />
-      <!-- Layer switcher: centred on the HUD row; below Normal (1040) the row cannot hold the camera menu,
-           layers and the Key/scale/zoom group (~115 + 370 + 370 px plus 40 px gutters), so it stacks above
-           the camera menu (16 + 44 + 4 px up) -->
-      <utu:ShadowContainer Grid.Row="1" Background="{StaticResource SurfaceInvariantBrush}" VerticalAlignment="Bottom"
-                           HorizontalAlignment="{utu:Responsive Layout={StaticResource HudBreakpoints}, Narrow=Left, Normal=Center}"
-                           Margin="{utu:Responsive Layout={StaticResource HudBreakpoints}, Narrow='24,0,0,64', Normal='0,0,0,16'}"
-                           Visibility="{x:Bind ViewModel.State.StageFull, Mode=OneWay}">
+      <!-- Layer switcher: centred on the HUD row; below Normal (1200) it stacks above the camera menu
+           (16 + 44 + 4 px up), clear of the Key and scale/zoom group -->
+      <!-- WORKAROUND(ShadowContainer keeps its paint when only its offset changes): the responsive
+           alignment and margin live on this wrapper, so the ShadowContainer never moves within its parent -->
+      <Grid Grid.Row="1" VerticalAlignment="Bottom"
+            HorizontalAlignment="{utu:Responsive Layout={StaticResource HudBreakpoints}, Narrow=Left, Normal=Center}"
+            Margin="{utu:Responsive Layout={StaticResource HudBreakpoints}, Narrow='40,0,0,64', Normal='0,0,0,16'}"
+            Visibility="{x:Bind ViewModel.State.StageFull, Mode=OneWay}">
+      <utu:ShadowContainer Background="{StaticResource SurfaceInvariantBrush}">
         <!-- The HUD float shadow. Inline: a Style-supplied collection never applies (Toolkit gotcha G36). -->
         <utu:ShadowContainer.Shadows>
           <utu:ShadowCollection>
@@ -157,6 +161,7 @@
           </ItemsControl>
         </Grid>
       </utu:ShadowContainer>
+      </Grid>
 
       <!-- Expand / Collapse: Overview's band grows to 491; elsewhere the strip opens to the full stage -->
       <utu:ShadowContainer Grid.Row="1" Background="{StaticResource SurfaceInvariantBrush}"

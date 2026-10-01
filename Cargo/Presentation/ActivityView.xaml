@@ -6,6 +6,9 @@
              xmlns:shapes="using:Microsoft.UI.Xaml.Shapes">
 
   <UserControl.Resources>
+    <!-- Below 1040 the two columns stack (the Overview's narrow band) -->
+    <utu:ResponsiveLayout x:Key="ActivityBreakpoints" Narrowest="0" Narrow="0" Normal="1040" Wide="100000" Widest="100000" />
+
     <!-- One log entry: time, icon, what happened; an entry about an open decision carries NEEDS ACTION -->
     <DataTemplate x:Key="FeedRowTemplate" x:DataType="local:FeedEntry">
       <Grid ColumnSpacing="12" Padding="0,12" BorderBrush="{StaticResource HairlineInvariantBrush}" BorderThickness="0,1,0,0">
@@ -43,13 +46,19 @@
         <TextBlock Text="{x:Bind ViewModel.Sub, Mode=OneWay}" Style="{StaticResource SubtitleText}" />
       </StackPanel>
       <TextBlock Text="No activity yet today" Style="{StaticResource SubtitleText}" Visibility="{x:Bind ViewModel.EmptyVisibility, Mode=OneWay}" />
-      <Grid ColumnSpacing="24">
+      <Grid ColumnSpacing="{utu:Responsive Layout={StaticResource ActivityBreakpoints}, Narrow=0, Normal=24}">
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="*" />
-          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="{utu:Responsive Layout={StaticResource ActivityBreakpoints}, Narrow=0, Normal=*}" />
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
         <ItemsControl ItemsSource="{x:Bind ViewModel.Left, Mode=OneWay}" ItemTemplate="{StaticResource FeedRowTemplate}" IsTabStop="False" />
-        <ItemsControl Grid.Column="1" ItemsSource="{x:Bind ViewModel.Right, Mode=OneWay}" ItemTemplate="{StaticResource FeedRowTemplate}" IsTabStop="False" />
+        <ItemsControl Grid.Row="{utu:Responsive Layout={StaticResource ActivityBreakpoints}, Narrow=1, Normal=0}"
+                      Grid.Column="{utu:Responsive Layout={StaticResource ActivityBreakpoints}, Narrow=0, Normal=1}"
+                      ItemsSource="{x:Bind ViewModel.Right, Mode=OneWay}" ItemTemplate="{StaticResource FeedRowTemplate}" IsTabStop="False" />
       </Grid>
     </StackPanel>
   </utu:CardContentControl>

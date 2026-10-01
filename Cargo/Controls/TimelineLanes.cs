@@ -1,4 +1,7 @@
+using System.Windows.Input;
 using Cargo.Presentation;
+using Microsoft.UI.Input;
+using Microsoft.UI.Xaml.Input;
 using SkiaSharp;
 using Uno.WinUI.Graphics2DSK;
 using Windows.Foundation;
@@ -33,10 +36,70 @@ public sealed partial class TimelineLanes : SKCanvasElement
     private readonly SKColor _ink = Sk("InkColor"), _muted = Sk("TextMutedColor"), _surface = Sk("SurfaceColor"),
         _navy = Sk("NavyColor"), _water = Sk("WaterColor"), _accent = Sk("AccentColor"), _ground = Sk("PaperColor");
 
+    // The vessel dots as drawn, for hit-testing (r12 around each); swapped whole on each render
+    private (string Id, SKPoint At)[] _targets = Array.Empty<(string, SKPoint)>();
+    private string? _pointerOver;
+
     public TimelineLanes()
     {
         Height = DesignHeight;
+        PointerMoved += OnPointerMoved;
+        PointerExited += OnPointerExited;
         LoadFonts();
+    }
+
+    public static readonly DependencyProperty HoverCommandProperty = DependencyProperty.Register(
+        nameof(HoverCommand), typeof(ICommand), typeof(TimelineLanes), new PropertyMetadata(null));
+
+    /// <summary>Runs with a vessel id when the pointer is over its dot, and with "-id" when it leaves (as HoverLink does).</summary>
+    public ICommand? HoverCommand
+    {
+        get => (ICommand?)GetValue(HoverCommandProperty);
+        set => SetValue(HoverCommandProperty, value);
+    }
+
+    public static readonly DependencyProperty LitProperty = DependencyProperty.Register(
+        nameof(Lit), typeof(string), typeof(TimelineLanes), new PropertyMetadata(null, (d, _) => ((TimelineLanes)d).Invalidate()));
+
+    /// <summary>The vessel lit anywhere on screen: its dot grows from 5 to 7 and its label inks.</summary>
+    public string? Lit
+    {
+        get => (string?)GetValue(LitProperty);
+        set => SetValue(LitProperty, value);
+    }
+
+    // xaml-lint: allow codebehind - hit-testing dots drawn on a Skia canvas; the canvas has no XAML elements to hover
+    private void OnPointerMoved(object sender, PointerRoutedEventArgs e)
+    {
+        if (e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
+        {
+            return;
+        }
+
+        var p = e.GetCurrentPoint(this).Position;
+        var hit = _targets.FirstOrDefault(t => Math.Abs(t.At.X - p.X) <= 12 && Math.Abs(t.At.Y - p.Y) <= 12).Id;
+        if (hit != _pointerOver)
+        {
+            if (_pointerOver is not null)
+            {
+                HoverCommand?.Execute("-" + _pointerOver);
+            }
+
+            _pointerOver = hit;
+            if (hit is not null)
+            {
+                HoverCommand?.Execute(hit);
+            }
+        }
+    }
+
+    private void OnPointerExited(object sender, PointerRoutedEventArgs e)
+    {
+        if (_pointerOver is not null)
+        {
+            HoverCommand?.Execute("-" + _pointerOver);
+            _pointerOver = null;
+        }
     }
 
     public static readonly DependencyProperty FrameProperty = DependencyProperty.Register(
@@ -124,6 +187,8 @@ public sealed partial class TimelineLanes : SKCanvasElement
         canvas.DrawLine(PlotLeft, Baseline, right, Baseline, _stroke);
 
         // Labels stack into tiers away from the baseline so neighbours never collide
+        var targets = new List<(string, SKPoint)>();
+        var lit = Lit;
         var arrivalTiers = new List<float>();
         var departureTiers = new List<float>();
         foreach (var e in frame.Events)
@@ -152,16 +217,21 @@ public sealed partial class TimelineLanes : SKCanvasElement
             _stroke.Color = Alpha(_ink, .18);
             canvas.DrawLine(cx, cy, cx, e.Arrival ? labelY + 4 : labelY - 12, _stroke);
 
-            // Happened: filled navy with a surface ring; planned: hollow navy ring
+            // Happened: filled navy with a surface ring; planned: hollow navy ring. Lit: 7 rather than 5.
+            var on = e.Id == lit;
+            var r = on ? 7f : 5f;
             _fill.Color = happened ? _navy : _surface;
-            canvas.DrawCircle(cx, cy, 5, _fill);
+            canvas.DrawCircle(cx, cy, r, _fill);
             _stroke.StrokeWidth = happened ? 2 : 1.6f;
             _stroke.Color = happened ? _surface : _navy;
-            canvas.DrawCircle(cx, cy, happened ? 5 : 4.2f, _stroke);
+            canvas.DrawCircle(cx, cy, happened ? r : r - .8f, _stroke);
+            targets.Add((e.Id, new SKPoint(cx, cy)));
 
-            Text(canvas, e.Name, left, labelY, _label, happened ? _ink : _muted);
+            Text(canvas, e.Name, left, labelY, _label, happened || on ? _ink : _muted);
             Text(canvas, time, left + nameWidth + 6, labelY, _mono, _muted);
         }
+
+        _targets = targets.ToArray();
     }
 
     private void DrawMoves(SKCanvas canvas, TimelineFrame frame, Func<double, float> x, float nowX)

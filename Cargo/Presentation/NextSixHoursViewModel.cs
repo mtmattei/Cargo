@@ -13,6 +13,13 @@ public sealed partial class NextSixRow : ObservableObject
     public required bool Arrival { get; init; }
     public required double Length { get; init; }
 
+    /// <summary>Opens the vessel; hovering or focusing the row lights it on the map and the chart.</summary>
+    public required System.Windows.Input.ICommand Open { get; init; }
+    public required System.Windows.Input.ICommand Hover { get; init; }
+
+    /// <summary>The linked-hover tint (accent at 7%) while this vessel is lit anywhere.</summary>
+    [ObservableProperty] private Brush? _ground;
+
     [ObservableProperty] private bool _happened;
     [ObservableProperty] private string _countdown = string.Empty;
     [ObservableProperty] private Brush? _countdownInk;
@@ -38,7 +45,16 @@ public sealed partial class NextSixHoursViewModel : ObservableObject
     {
         _state = state;
         _events = events;
+        state.HoverChanged += (_, _) => PaintHover();
         Refresh();
+    }
+
+    private void PaintHover()
+    {
+        foreach (var row in Past.Concat(Upcoming))
+        {
+            row.Ground = Tokens.Tint("AccentInvariantBrush", row.Id == _state.HoveredVessel ? .07 : 0);
+        }
     }
 
     /// <summary>Movements that have happened inside the window, above the NOW row.</summary>
@@ -64,6 +80,8 @@ public sealed partial class NextSixHoursViewModel : ObservableObject
             {
                 (e.Hour <= now ? Past : Upcoming).Add(Row(e));
             }
+
+            PaintHover();
         }
 
         foreach (var row in Past.Concat(Upcoming))
@@ -76,7 +94,7 @@ public sealed partial class NextSixHoursViewModel : ObservableObject
         EmptyVisibility = count == 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    private static NextSixRow Row(TimelineEvent e)
+    private NextSixRow Row(TimelineEvent e)
     {
         var vessel = PortData.Vessels.FirstOrDefault(v => v.Id == e.Id);
         var berth = vessel?.HomeBerth;
@@ -94,7 +112,9 @@ public sealed partial class NextSixHoursViewModel : ObservableObject
             Name = e.Name,
             Sub = sub,
             Arrival = e.Arrival,
-            Length = vessel?.Length ?? 250
+            Length = vessel?.Length ?? 250,
+            Open = _state.OpenVesselCommand,
+            Hover = _state.HoverCommand
         };
     }
 

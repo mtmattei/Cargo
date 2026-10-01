@@ -74,7 +74,6 @@ public sealed partial class HarbourView : UserControl
         if (SKCanvasElement.IsSupportedOnCurrentPlatform())
         {
             _scene = new HarbourScene();
-            _scene.Camera.TopInset = TopInset;
             _scene.PoseChanged += (_, _) => PlaceOverlays();
             _scene.Interacted += (_, _) => MarkView(null);
             SceneHost.Child = _scene;
@@ -156,21 +155,6 @@ public sealed partial class HarbourView : UserControl
         set => SetValue(CompactProperty, value);
     }
 
-    public static readonly DependencyProperty TopInsetProperty = DependencyProperty.Register(
-        nameof(TopInset), typeof(double), typeof(HarbourView),
-        new PropertyMetadata(0d, (d, e) => ((HarbourView)d).OnTopInsetChanged((double)e.NewValue)));
-
-    /// <summary>
-    /// Height of an overlay laid over the top of the stage (the Overview greeting). The stage grows
-    /// by it and the scene is framed below it, so the overlay sits on the stage without covering
-    /// the harbour, its tags or its HUD.
-    /// </summary>
-    public double TopInset
-    {
-        get => (double)GetValue(TopInsetProperty);
-        set => SetValue(TopInsetProperty, value);
-    }
-
     public static readonly DependencyProperty StageHeightProperty = DependencyProperty.Register(
         nameof(StageHeight), typeof(double), typeof(HarbourView),
         new PropertyMetadata(double.NaN, (d, e) => ((HarbourView)d).OnStageHeightChanged((double)e.OldValue, (double)e.NewValue)));
@@ -223,18 +207,6 @@ public sealed partial class HarbourView : UserControl
         _heightBoard.Begin();
     }
 
-    private void OnTopInsetChanged(double inset)
-    {
-        if (_scene is not null)
-        {
-            _scene.Camera.TopInset = inset;
-            _scene.RefreshStill();
-        }
-
-        InvalidateMeasure();
-        PlaceOverlays();
-    }
-
     public static readonly DependencyProperty HudVisibilityProperty = DependencyProperty.Register(
         nameof(HudVisibility), typeof(Visibility), typeof(HarbourView), new PropertyMetadata(Visibility.Visible));
 
@@ -245,15 +217,15 @@ public sealed partial class HarbourView : UserControl
     }
 
     /// <summary>
-    /// The stage keeps a landscape proportion, bounded so it never swallows the page: at most 58% of
-    /// the window's height (the charts below keep ~40% to scroll in), never less than 300 px of harbour
-    /// under the greeting. The strip is fixed.
+    /// The full stage (a section's opened strip) keeps a landscape proportion, bounded so it never
+    /// swallows the page: at most 58% of the window's height, never less than 300 px. Overview's band
+    /// sets its own height (<see cref="StageHeight"/>); the strip is fixed.
     /// </summary>
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) || availableSize.Width <= 0 ? 1328 : availableSize.Width;
-        var byWidth = Math.Clamp(width * .42, 380, 640) + TopInset;
-        var byWindow = XamlRoot is { } root ? Math.Max(TopInset + 300, root.Size.Height * .58) : byWidth;
+        var byWidth = Math.Clamp(width * .42, 380, 640);
+        var byWindow = XamlRoot is { } root ? Math.Max(300, root.Size.Height * .58) : byWidth;
         // A band height (Overview), possibly mid-animation, wins over the proportional stage: measuring
         // taller than it lays the HUD and the camera frame out below the visible band
         var size = new Size(width, Compact ? 210 : !double.IsNaN(Height) ? Height : Math.Min(byWidth, byWindow));
@@ -518,7 +490,7 @@ public sealed partial class HarbourView : UserControl
 
             // A vessel out of frame loses its tag rather than pinning it to an edge it is not near.
             // xaml-lint: allow responsive - per-frame projection culling, not a breakpoint
-            var inFrame = x > 0 && x < ActualWidth && y > (Compact ? 16 : 40 + TopInset) && y < ActualHeight - (Compact ? 8 : 56);
+            var inFrame = x > 0 && x < ActualWidth && y > (Compact ? 16 : 40) && y < ActualHeight - (Compact ? 8 : 56);
             // xaml-lint: allow codebehind - per-frame projection culling; there is no XAML surface for the camera
             host.Visibility = inFrame ? Visibility.Visible : Visibility.Collapsed;
             if (!inFrame)
