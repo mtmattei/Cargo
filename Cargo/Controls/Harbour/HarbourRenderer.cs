@@ -54,6 +54,7 @@ public sealed class HarbourRenderer : IDisposable
     private SKShader? _maskShader;
     private SKShader? _hazeShader;
     private readonly SKShader?[] _fadeShaders = new SKShader?[4];
+    private (float Top, float Bottom) _fadeWindow = (-1, -1);
 
     public HarbourRenderer(HarbourWorld world, HarbourPalette palette, HarbourCamera camera)
     {
@@ -73,6 +74,12 @@ public sealed class HarbourRenderer : IDisposable
         _paintFont.Embolden = false;
         Invalidate();
     }
+
+    /// <summary>
+    /// The slice of the frame on screen, in frame coordinates, when a view crops the scene (the
+    /// Overview band); null when the whole frame shows. The top and bottom fades sit on its edges.
+    /// </summary>
+    public (float Top, float Bottom)? Window { get; set; }
 
     /// <summary>Forces the still scene to be recorded again on the next frame.</summary>
     public void Invalidate()
@@ -191,21 +198,36 @@ public sealed class HarbourRenderer : IDisposable
         _hazeShader = SKShader.CreateLinearGradient(new SKPoint(0, 0), new SKPoint(0, height * .62f),
             new[] { stage.WithAlpha(hazeAlpha), stage.WithAlpha(0) }, null, SKShaderTileMode.Clamp);
 
-        var top = (float)Math.Clamp(_camera.TopInset, 0, height * .5);
-        // The world has no edge: it dissolves into the stage at the frame.
-        var fades = new (SKPoint From, SKPoint To)[]
+        // The world has no edge: it dissolves into the stage at the frame. Sides here; the top
+        // and bottom follow the visible slice (EdgeFades), which can change while the still holds.
+        SetFade(2, new(0, 0), new(width * .05f, 0));
+        SetFade(3, new(width, 0), new(width * .95f, 0));
+        _fadeWindow = (-1, -1);
+    }
+
+    /// <summary>
+    /// The top and bottom fades for the slice on screen: 14% of its height each way, so a cropped
+    /// band dissolves into the page above and below it. Rebuilt only when the slice moves.
+    /// </summary>
+    private (float Top, float Bottom) EdgeFades(float height)
+    {
+        var (top, bottom) = Window ?? ((float)Math.Clamp(_camera.TopInset, 0, height * .5), height);
+        if ((top, bottom) != _fadeWindow)
         {
-            (new(0, top), new(0, top + (height - top) * .14f)),
-            (new(0, height), new(0, height * .92f)),
-            (new(0, 0), new(width * .05f, 0)),
-            (new(width, 0), new(width * .95f, 0))
-        };
-        for (var i = 0; i < 4; i++)
-        {
-            _fadeShaders[i]?.Dispose();
-            _fadeShaders[i] = SKShader.CreateLinearGradient(fades[i].From, fades[i].To,
-                new[] { stage, stage.WithAlpha(0) }, null, SKShaderTileMode.Clamp);
+            var reach = (bottom - top) * .14f;
+            SetFade(0, new(0, top), new(0, top + reach));
+            SetFade(1, new(0, bottom), new(0, bottom - reach));
+            _fadeWindow = (top, bottom);
         }
+
+        return (top, bottom);
+    }
+
+    private void SetFade(int index, SKPoint from, SKPoint to)
+    {
+        var stage = _pal["HarbourStageColor"];
+        _fadeShaders[index]?.Dispose();
+        _fadeShaders[index] = SKShader.CreateLinearGradient(from, to, new[] { stage, stage.WithAlpha(0) }, null, SKShaderTileMode.Clamp);
     }
 
     private void DrawGround(SKCanvas canvas, HarbourFrameState state)
@@ -790,10 +812,13 @@ public sealed class HarbourRenderer : IDisposable
             canvas.DrawRect(0, 0, width, height * .62f, _fill);
         }
 
+        // Everything outside the slice fills solid too, so nothing shows past a fade mid-animation
+        var (top, bottom) = EdgeFades(height);
+        var reach = (bottom - top) * .14f;
         var rects = new[]
         {
-            new SKRect(0, 0, width, (float)_camera.TopInset + (height - (float)_camera.TopInset) * .14f),
-            new SKRect(0, height * .92f, width, height),
+            new SKRect(0, 0, width, top + reach),
+            new SKRect(0, bottom - reach, width, height),
             new SKRect(0, 0, width * .05f, height),
             new SKRect(width * .95f, 0, width, height)
         };

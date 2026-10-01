@@ -143,6 +143,13 @@ public sealed class HarbourScene : SKCanvasElement
         }
     }
 
+    /// <summary>The slice of the scene a cropping view shows (frame coordinates), or null for all of it.</summary>
+    public void SetWindow(double top, double bottom)
+    {
+        _renderer.Window = double.IsNaN(top) ? null : ((float)top, (float)bottom);
+        Invalidate();
+    }
+
     /// <summary>Brings the camera to the view's current size, for projections made off the render path.</summary>
     public void SyncCamera() => _camera.Update(ActualWidth, ActualHeight);
 

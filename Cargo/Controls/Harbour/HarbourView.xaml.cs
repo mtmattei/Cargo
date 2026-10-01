@@ -237,6 +237,7 @@ public sealed partial class HarbourView : UserControl
         // clips it in its own coordinates, before any offset, which left the band's bottom empty
         var below = double.IsNaN(StageHeight) ? 0 : Math.Max(0, BandFull - ActualHeight - _bandOffset);
         SceneHost.Margin = TagLayer.Margin = new Thickness(0, -_bandOffset, 0, -below);
+        _scene?.SetWindow(double.IsNaN(StageHeight) ? double.NaN : _bandOffset, _bandOffset + ActualHeight);
     }
 
     public static readonly DependencyProperty HudVisibilityProperty = DependencyProperty.Register(
