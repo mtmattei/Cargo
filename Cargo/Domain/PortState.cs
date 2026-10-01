@@ -168,6 +168,7 @@ public sealed partial class PortState : ObservableObject
         OnPropertyChanged(nameof(StageFull));
         OnPropertyChanged(nameof(StageCompact));
         OnPropertyChanged(nameof(ShowStageToggle));
+        OnStageToggleChanged();
         NotifyStructureChanged();
     }
 
@@ -231,17 +232,51 @@ public sealed partial class PortState : ObservableObject
     {
         OnPropertyChanged(nameof(StageFull));
         OnPropertyChanged(nameof(StageCompact));
-        OnPropertyChanged(nameof(StageToggleLabel));
+        OnStageToggleChanged();
         NotifyStructureChanged();
     }
 
-    public string StageToggleLabel => StageOpen ? "Collapse harbour" : "Expand harbour";
+    /// <summary>Overview's harbour band at its expanded height (491 rather than 340).</summary>
+    [ObservableProperty]
+    private bool _overviewExpanded;
 
-    /// <summary>Overview always shows the harbour in full; the other two can fold it away.</summary>
-    public bool ShowStageToggle => ShowStage && Section != "overview";
+    partial void OnOverviewExpandedChanged(bool value) => OnStageToggleChanged();
 
+    /// <summary>Overview's harbour band: 340, or 491 expanded (the design). NaN elsewhere: the stage sizes itself.</summary>
+    public double StageHeight => Section == "overview" ? (OverviewExpanded ? 491 : 340) : double.NaN;
+
+    /// <summary>Whether the toggle would collapse: Overview's band is expanded, or another section's strip is open.</summary>
+    public bool StageExpanded => Section == "overview" ? OverviewExpanded : StageOpen;
+
+    public bool StageCollapsed => !StageExpanded;
+
+    public string StageToggleLabel => Section == "overview"
+        ? (OverviewExpanded ? "Collapse" : "Expand")
+        : (StageOpen ? "Collapse harbour" : "Expand harbour");
+
+    public bool ShowStageToggle => ShowStage;
+
+    /// <summary>Overview grows its band; the other harbour sections open their strip to the full stage.</summary>
     [RelayCommand]
-    private void ToggleStage() => StageOpen = !StageOpen;
+    private void ToggleStage()
+    {
+        if (Section == "overview")
+        {
+            OverviewExpanded = !OverviewExpanded;
+        }
+        else
+        {
+            StageOpen = !StageOpen;
+        }
+    }
+
+    private void OnStageToggleChanged()
+    {
+        OnPropertyChanged(nameof(StageHeight));
+        OnPropertyChanged(nameof(StageExpanded));
+        OnPropertyChanged(nameof(StageCollapsed));
+        OnPropertyChanged(nameof(StageToggleLabel));
+    }
 
     [ObservableProperty]
     private string _harbourLayer = "port";

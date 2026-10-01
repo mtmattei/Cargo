@@ -13,10 +13,6 @@ public sealed partial class MainPage : Page
 
         DataContextChanged += (_, _) => Attach();
 
-        // xaml-lint: allow codebehind - the harbour frames itself below the greeting's measured height; a
-        // measured size has no binding surface (collapsed off Overview, so the inset returns to 0)
-        Masthead.SizeChanged += (_, e) =>
-            Harbour.TopInset = Masthead.Visibility == Visibility.Visible ? Masthead.Margin.Top + e.NewSize.Height + 12 : 0;
         Loaded += (_, _) =>
         {
             ScrollToStartOffset();

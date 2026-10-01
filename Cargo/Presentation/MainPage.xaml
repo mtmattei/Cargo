@@ -103,19 +103,22 @@
     </Grid>
 
     <!-- ══ SHARED HARBOUR STAGE ════════════════════════════════════════ -->
-    <Grid x:Name="StageHost" Grid.Row="1" Background="{StaticResource HarbourStageInvariantBrush}"
-          Visibility="{x:Bind ViewModel.State.ShowStage, Mode=OneWay}">
-      <!-- One harbour for every harbour page: the wide stage on Overview, a strip framed by the section elsewhere -->
-      <harbour:HarbourView x:Name="Harbour" Compact="{x:Bind ViewModel.State.StageCompact, Mode=OneWay}" />
-      <!-- Overview greeting, laid over the top of the stage on its light field. The harbour frames itself
-           below the greeting's height (HarbourView.TopInset), so it covers no ship, tag or HUD. -->
+    <Grid x:Name="StageHost" Grid.Row="1" Visibility="{x:Bind ViewModel.State.ShowStage, Mode=OneWay}">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+      <!-- Overview: the greeting, figures and duty card on the page ground, above the harbour band -->
       <local:OverviewMasthead x:Name="Masthead" DataContext="{x:Bind ViewModel.Overview, Mode=OneWay}"
-                              Visibility="{x:Bind ViewModel.IsOverview, Mode=OneWay}"
-                              VerticalAlignment="Top" Margin="40,20,40,0" />
+                              Visibility="{x:Bind ViewModel.IsOverview, Mode=OneWay}" Margin="40,20,40,20" />
+      <!-- One harbour for every harbour page: Overview's 340 px band (491 expanded), a strip framed by
+           the section elsewhere -->
+      <harbour:HarbourView x:Name="Harbour" Grid.Row="1" Compact="{x:Bind ViewModel.State.StageCompact, Mode=OneWay}"
+                           StageHeight="{x:Bind ViewModel.State.StageHeight, Mode=OneWay}" />
       <!-- Layer switcher: centred on the HUD row; below Normal (1040) the row cannot hold the camera menu,
            layers and the Key/scale/zoom group (~115 + 370 + 370 px plus 40 px gutters), so it stacks above
            the camera menu (16 + 44 + 4 px up) -->
-      <utu:ShadowContainer Background="{StaticResource SurfaceInvariantBrush}" VerticalAlignment="Bottom"
+      <utu:ShadowContainer Grid.Row="1" Background="{StaticResource SurfaceInvariantBrush}" VerticalAlignment="Bottom"
                            HorizontalAlignment="{utu:Responsive Layout={StaticResource HudBreakpoints}, Narrow=Left, Normal=Center}"
                            Margin="{utu:Responsive Layout={StaticResource HudBreakpoints}, Narrow='24,0,0,64', Normal='0,0,0,16'}"
                            Visibility="{x:Bind ViewModel.State.StageFull, Mode=OneWay}">
@@ -155,11 +158,34 @@
         </Grid>
       </utu:ShadowContainer>
 
-      <Button Style="{StaticResource GhostButton}" Command="{x:Bind ViewModel.State.ToggleStageCommand}"
-              Content="{x:Bind ViewModel.State.StageToggleLabel, Mode=OneWay}"
-              Visibility="{x:Bind ViewModel.State.ShowStageToggle, Mode=OneWay}"
-              HorizontalAlignment="Right" VerticalAlignment="Top" Margin="12"
-              Background="{StaticResource SurfaceInvariantBrush}" Padding="11,7" CornerRadius="{StaticResource RadiusControl}" />
+      <!-- Expand / Collapse: Overview's band grows to 491; elsewhere the strip opens to the full stage -->
+      <utu:ShadowContainer Grid.Row="1" Background="{StaticResource SurfaceInvariantBrush}"
+                           HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,16,40,0"
+                           Visibility="{x:Bind ViewModel.State.ShowStageToggle, Mode=OneWay}">
+        <utu:ShadowContainer.Shadows>
+          <utu:ShadowCollection>
+            <utu:Shadow Spread="1" BlurRadius="0" Color="{StaticResource InkColor}" Opacity="0.08" />
+            <utu:Shadow OffsetY="1" BlurRadius="2" Color="{StaticResource InkColor}" Opacity="0.06" />
+            <utu:Shadow OffsetY="6" BlurRadius="20" Color="{StaticResource InkColor}" Opacity="0.07" />
+          </utu:ShadowCollection>
+        </utu:ShadowContainer.Shadows>
+        <Button Style="{StaticResource HudSummaryButton}" Height="40" Padding="12,0,14,0"
+                Command="{x:Bind ViewModel.State.ToggleStageCommand}"
+                AutomationProperties.Name="{x:Bind ViewModel.State.StageToggleLabel, Mode=OneWay}">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Viewbox Width="18" Height="18" VerticalAlignment="Center">
+              <Grid Width="24" Height="24">
+                <shapes:Path Style="{StaticResource ExpandIcon}" Stroke="{StaticResource InkInvariantBrush}"
+                             Visibility="{x:Bind ViewModel.State.StageCollapsed, Mode=OneWay}" />
+                <shapes:Path Style="{StaticResource CollapseIcon}" Stroke="{StaticResource InkInvariantBrush}"
+                             Visibility="{x:Bind ViewModel.State.StageExpanded, Mode=OneWay}" />
+              </Grid>
+            </Viewbox>
+            <TextBlock Text="{x:Bind ViewModel.State.StageToggleLabel, Mode=OneWay}" Style="{StaticResource TypeMedium13}"
+                       VerticalAlignment="Center" />
+          </StackPanel>
+        </Button>
+      </utu:ShadowContainer>
     </Grid>
 
     <!-- ══ SECTION ═════════════════════════════════════════════════════ -->

@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Animation;
 using SkiaSharp;
 using Uno.WinUI.Graphics2DSK;
 using Windows.Foundation;
@@ -170,6 +171,58 @@ public sealed partial class HarbourView : UserControl
         set => SetValue(TopInsetProperty, value);
     }
 
+    public static readonly DependencyProperty StageHeightProperty = DependencyProperty.Register(
+        nameof(StageHeight), typeof(double), typeof(HarbourView),
+        new PropertyMetadata(double.NaN, (d, e) => ((HarbourView)d).OnStageHeightChanged((double)e.OldValue, (double)e.NewValue)));
+
+    /// <summary>
+    /// A fixed band height (Overview: 340, or 491 expanded). NaN keeps the proportional stage of
+    /// <see cref="MeasureOverride"/>.
+    /// </summary>
+    public double StageHeight
+    {
+        get => (double)GetValue(StageHeightProperty);
+        set => SetValue(StageHeightProperty, value);
+    }
+
+    private Storyboard? _heightBoard;
+
+    /// <summary>
+    /// Between two band heights the stage grows over 320 ms on EaseSmooth; to or from the
+    /// proportional stage (a section change) it jumps. The local value is the target and the
+    /// animation runs From the current height with FillBehavior Stop, so a finished board never
+    /// holds a stale value (gotcha G60).
+    /// </summary>
+    private void OnStageHeightChanged(double from, double to)
+    {
+        _heightBoard?.Stop();
+        _heightBoard = null;
+        var current = ActualHeight;
+        Height = to;
+        if (double.IsNaN(from) || double.IsNaN(to) || current <= 0 || Motion.Reduced)
+        {
+            return;
+        }
+
+        var animation = new DoubleAnimationUsingKeyFrames
+        {
+            EnableDependentAnimation = true,
+            FillBehavior = FillBehavior.Stop
+        };
+        animation.KeyFrames.Add(new DiscreteDoubleKeyFrame { KeyTime = TimeSpan.Zero, Value = current });
+        animation.KeyFrames.Add(new SplineDoubleKeyFrame
+        {
+            KeyTime = Motion.Duration("DurationExpandMs"),
+            Value = to,
+            KeySpline = (KeySpline)Application.Current.Resources["EaseSmooth"]
+        });
+        Storyboard.SetTarget(animation, this);
+        Storyboard.SetTargetProperty(animation, "Height");
+        _heightBoard = new Storyboard();
+        _heightBoard.Children.Add(animation);
+        _heightBoard.Begin();
+    }
+
     private void OnTopInsetChanged(double inset)
     {
         if (_scene is not null)
@@ -201,7 +254,9 @@ public sealed partial class HarbourView : UserControl
         var width = double.IsInfinity(availableSize.Width) || availableSize.Width <= 0 ? 1328 : availableSize.Width;
         var byWidth = Math.Clamp(width * .42, 380, 640) + TopInset;
         var byWindow = XamlRoot is { } root ? Math.Max(TopInset + 300, root.Size.Height * .58) : byWidth;
-        var size = new Size(width, Compact ? 210 : Math.Min(byWidth, byWindow));
+        // A band height (Overview), possibly mid-animation, wins over the proportional stage: measuring
+        // taller than it lays the HUD and the camera frame out below the visible band
+        var size = new Size(width, Compact ? 210 : !double.IsNaN(Height) ? Height : Math.Min(byWidth, byWindow));
         base.MeasureOverride(size);
         return size;
     }
