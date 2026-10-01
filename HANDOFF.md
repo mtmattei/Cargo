@@ -1,8 +1,22 @@
-# HANDOFF — Cargo: needs-you build, steps 1-7 done; Overview context panel next
+# HANDOFF — Cargo: Overview one-timeline build, steps 0-1 done; tokens + type next
 Updated: 2026-09-30
 
 ## Where we are
-2026-09-30, third session: the spec's six questions are answered (amber; Confirm writes a real
+**Active plan: `SPEC-OVERVIEW-TIMELINE.md`** (supersedes the needs-you spec's steps 8-9 below).
+- Step 0 done: the uno-audit pass is `3ae27bb`.
+- Step 1 done: Liveline extended in `C:\Users\Platform006\Uno-Builds-net10` (sparse clone, `Liveline/`
+  only), branch `liveline-window`, commit `15ecf9f`, **not pushed**. Uno.Sdk 6.7.30 + android/ios;
+  window mode (`WindowStart/End`, `NowTime`, `Forecast`, `ForecastOpacity`), `Markers`
+  (`LivelineMarker`), brush colours (`LineBrush`, `FillTop/BottomBrush`, `ChartBackground`,
+  `LabelHaloBrush`), `PlotPadding`, `ValueMin/Max`, `Typeface` (SKTypeface), `ShowTrackingLine`,
+  `IsAnimating`. Spec deviation: no `ShowAxisLabels` (`ShowGrid` already draws only the labels; the
+  always-on piece was the tracking line).
+  Verified (Release desktop, PrintWindow captures, no MCP): solid past / 50% forecast / HW + now
+  markers / transparent ground / NOW advancing / HW marker drops after the last high water; settled
+  CPU 0-3% of one core vs ~57% with the live feed on. Library 0 warnings on desktop, wasm, android, ios.
+- Next: step 2 (tokens + type, app-wide). Cargo does not reference Liveline yet (lands in step 7).
+
+Previous (needs-you spec), 2026-09-30, third session: the spec's six questions are answered (amber; Confirm writes a real
 assignment; full bar on Berths plus a panel mode on Overview; minutes-only clock roll; Nordic Star
 only; Activity as a Map panel mode), recorded under *Decisions* in `SPEC-BERTHS-NEEDS-YOU.md`.
 Plan steps 1-7 are built, runtime-verified and committed: motion tokens + `RollingText` clock;
@@ -33,12 +47,15 @@ critique) remain.
 Read, not applied: none.
 
 ## Next actions (in order)
-1. Plan step 8, Overview context panel (spec section *Overview context panel*): `OverviewContextViewModel` with the mode priority (needs-you, selection, berth hover after a 300 ms dwell, layer); one view per mode in a Visibility region or VSM (no code-behind toggling); reuse `NeedsYouBar`; move Container volume and Cargo flow to Cargo, Sea & weather and tide to Waterways; Activity becomes a Map panel mode. Verify each mode at 1680 x 1020 and 1100 x 900, no vertical scroll at 1020 high.
+0. `SPEC-OVERVIEW-TIMELINE.md` step 2 (tokens + type), then 3-9. Items 1-2 below are superseded by it.
+1. (superseded) Plan step 8, Overview context panel (spec section *Overview context panel*): `OverviewContextViewModel` with the mode priority (needs-you, selection, berth hover after a 300 ms dwell, layer); one view per mode in a Visibility region or VSM (no code-behind toggling); reuse `NeedsYouBar`; move Container volume and Cargo flow to Cargo, Sea & weather and tide to Waterways; Activity becomes a Map panel mode. Verify each mode at 1680 x 1020 and 1100 x 900, no vertical scroll at 1020 high.
 2. Plan step 9: reduced-motion pass over every new motion, lint, `ui-craft` self-critique, HANDOFF.
 3. Push `main` once step 8 lands (8 commits local).
 4. Then the queued items: `GLCanvasElement` harbour trial (uno-build-options), MainPage design pass (gold-standard-pass).
 
 ## Open questions
+- uno-app MCP rejects `uno_app_select_solution` for a solution outside the session root (Liveline); the demo was verified by exe + PrintWindow + Get-Process instead.
+- One Liveline demo instance exited with no event-log entry after a synthetic click near the Feed switch; not reproduced. UIA `TogglePattern.Toggle()` on that ToggleSwitch reported Off without raising `Toggled` (one observation).
 - Row 07 recolours through the row's 150 ms hover transition; the spec's 400 ms for the confirm recolour is not separate.
 - The row ground `BrushTransition` (150 ms) is not gated by reduced motion (colour only, no movement).
 - Berths is clipped below ~1200 px wide on `main` too: `VesselsView` has fixed columns (240 + min 560 + 290). Pre-existing, not in this spec.
