@@ -144,9 +144,10 @@ public sealed class HarbourScene : SKCanvasElement
     }
 
     /// <summary>The slice of the scene a cropping view shows (frame coordinates), or null for all of it.</summary>
-    public void SetWindow(double top, double bottom)
+    public void SetWindow(double top, double bottom, double overlayFade = 0)
     {
         _renderer.Window = double.IsNaN(top) ? null : ((float)top, (float)bottom);
+        _renderer.OverlayFade = (float)overlayFade;
         Invalidate();
     }
 

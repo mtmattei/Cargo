@@ -54,7 +54,7 @@ public sealed class HarbourRenderer : IDisposable
     private SKShader? _maskShader;
     private SKShader? _hazeShader;
     private readonly SKShader?[] _fadeShaders = new SKShader?[4];
-    private (float Top, float Bottom) _fadeWindow = (-1, -1);
+    private (float Top, float Bottom, float TopReach) _fadeWindow = (-1, -1, -1);
 
     public HarbourRenderer(HarbourWorld world, HarbourPalette palette, HarbourCamera camera)
     {
@@ -80,6 +80,12 @@ public sealed class HarbourRenderer : IDisposable
     /// Overview band); null when the whole frame shows. The top and bottom fades sit on its edges.
     /// </summary>
     public (float Top, float Bottom)? Window { get; set; }
+
+    /// <summary>
+    /// How far the top fade reaches down the slice when an overlay sits over its top (the Overview greeting,
+    /// figures and duty card): the scene dissolves under it so its text stays legible. 0 uses the 14% default.
+    /// </summary>
+    public float OverlayFade { get; set; }
 
     /// <summary>Forces the still scene to be recorded again on the next frame.</summary>
     public void Invalidate()
@@ -202,25 +208,26 @@ public sealed class HarbourRenderer : IDisposable
         // and bottom follow the visible slice (EdgeFades), which can change while the still holds.
         SetFade(2, new(0, 0), new(width * .05f, 0));
         SetFade(3, new(width, 0), new(width * .95f, 0));
-        _fadeWindow = (-1, -1);
+        _fadeWindow = (-1, -1, -1);
     }
 
     /// <summary>
     /// The top and bottom fades for the slice on screen: 14% of its height each way, so a cropped
     /// band dissolves into the page above and below it. Rebuilt only when the slice moves.
     /// </summary>
-    private (float Top, float Bottom) EdgeFades(float height)
+    private (float Top, float Bottom, float TopReach, float BottomReach) EdgeFades(float height)
     {
         var (top, bottom) = Window ?? ((float)Math.Clamp(_camera.TopInset, 0, height * .5), height);
-        if ((top, bottom) != _fadeWindow)
+        var reach = (bottom - top) * .14f;
+        var topReach = Math.Max(reach, OverlayFade);
+        if ((top, bottom, topReach) != _fadeWindow)
         {
-            var reach = (bottom - top) * .14f;
-            SetFade(0, new(0, top), new(0, top + reach));
+            SetFade(0, new(0, top), new(0, top + topReach));
             SetFade(1, new(0, bottom), new(0, bottom - reach));
-            _fadeWindow = (top, bottom);
+            _fadeWindow = (top, bottom, topReach);
         }
 
-        return (top, bottom);
+        return (top, bottom, topReach, reach);
     }
 
     private void SetFade(int index, SKPoint from, SKPoint to)
@@ -813,11 +820,10 @@ public sealed class HarbourRenderer : IDisposable
         }
 
         // Everything outside the slice fills solid too, so nothing shows past a fade mid-animation
-        var (top, bottom) = EdgeFades(height);
-        var reach = (bottom - top) * .14f;
+        var (top, bottom, topReach, reach) = EdgeFades(height);
         var rects = new[]
         {
-            new SKRect(0, 0, width, top + reach),
+            new SKRect(0, 0, width, top + topReach),
             new SKRect(0, bottom - reach, width, height),
             new SKRect(0, 0, width * .05f, height),
             new SKRect(width * .95f, 0, width, height)

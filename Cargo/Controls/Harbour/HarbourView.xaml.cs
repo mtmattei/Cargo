@@ -186,41 +186,76 @@ public sealed partial class HarbourView : UserControl
     /// <summary>A short frame (the strip elsewhere, the mini band here): tight tag insets, no facts card.</summary>
     private bool Tight => Compact || Mini;
 
-    /// <summary>How far the scene sits above the view's top edge right now, in band mode.</summary>
+    /// <summary>How far the view's top edge sits into the rendered scene right now, in band mode.</summary>
     private double _bandOffset;
 
-    // The band's grow, stepped per frame (see OnStageHeightChanged)
-    private double _bandFrom, _bandTo;
+    public static readonly DependencyProperty OverlayHeightProperty = DependencyProperty.Register(
+        nameof(OverlayHeight), typeof(double), typeof(HarbourView),
+        new PropertyMetadata(0d, (d, _) => ((HarbourView)d).Retarget(animate: false)));
+
+    /// <summary>
+    /// The height of what overlays the band's top on Overview (the greeting, figures and duty card). The band
+    /// reaches that far up behind it: the scene renders this much taller and frames the ships below it
+    /// (camera TopInset), so the overlay sits on the far quay and never on a vessel.
+    /// </summary>
+    public double OverlayHeight
+    {
+        get => (double)GetValue(OverlayHeightProperty);
+        set => SetValue(OverlayHeightProperty, value);
+    }
+
+    public static readonly DependencyProperty OverlayShownProperty = DependencyProperty.Register(
+        nameof(OverlayShown), typeof(bool), typeof(HarbourView),
+        new PropertyMetadata(false, (d, _) => ((HarbourView)d).Retarget(animate: true)));
+
+    /// <summary>Whether the overlay is up (Overview at its top); folding it away takes the band's reach with it.</summary>
+    public bool OverlayShown
+    {
+        get => (bool)GetValue(OverlayShownProperty);
+        set => SetValue(OverlayShownProperty, value);
+    }
+
+    // The band right now: its height below the overlay and how far it reaches up behind the overlay
+    private double _h = double.NaN, _inset;
+
+    // One tween for both, stepped per frame (see Retarget)
+    private double _hFrom, _hTo, _insetFrom, _insetTo;
     private DateTimeOffset _bandStart;
     private bool _bandTicking;
 
+    private void OnStageHeightChanged(double from, double to) =>
+        Retarget(animate: !double.IsNaN(from) && !double.IsNaN(to));
+
     /// <summary>
-    /// Between two band heights the stage grows over 320 ms on EaseSmooth; to or from the
-    /// proportional stage (a section change) it jumps. The grow is stepped per frame and each step
-    /// sets the height, the scene's slide, the clip and the edge fades together. Animating Height
-    /// and following it from SizeChanged put those one frame behind the height, which shimmered at
-    /// the band's edges while it moved.
+    /// Moves the band to its target: the height below the overlay (340, 491 expanded, 180 condensed) and the
+    /// reach up behind the overlay (its height while shown, 0 folded). Between two band states it eases over
+    /// 320 ms on EaseSmooth, stepped per frame, and each step sets the height, the reach, the scene's slide,
+    /// the clip and the edge fades together (driving Height and following it from SizeChanged put those a
+    /// frame behind and shimmered). The scene renders once at full height plus the overlay and is only clipped
+    /// and slid, so no step re-bakes or re-frames it.
     /// </summary>
-    private void OnStageHeightChanged(double from, double to)
+    private void Retarget(bool animate)
     {
-        // Band mode renders the scene once at full height; the view clips it and slides it, so
-        // growing or shrinking the band never re-bakes or re-frames the scene
-        var band = !double.IsNaN(to);
+        var band = !double.IsNaN(StageHeight);
+        var insetTo = band && OverlayShown ? OverlayHeight : 0;
         HudVisibility = Tight ? Visibility.Collapsed : Visibility.Visible;
         PaintTags();
-        SceneHost.Height = TagLayer.Height = band ? BandFull : double.NaN;
+        SceneHost.Height = TagLayer.Height = band ? BandFull + OverlayHeight : double.NaN;
         SceneHost.VerticalAlignment = TagLayer.VerticalAlignment = band ? VerticalAlignment.Top : VerticalAlignment.Stretch;
-
-        var current = _bandTicking ? Height : ActualHeight;
-        StopBand();
-        if (double.IsNaN(from) || !band || current <= 0 || Motion.Reduced)
+        if (_scene is not null && _scene.Camera.TopInset != (band ? OverlayHeight : 0))
         {
-            SetBand(to);
+            _scene.Camera.TopInset = band ? OverlayHeight : 0;
+            _scene.RefreshStill();
+        }
+
+        StopBand();
+        if (!animate || !band || double.IsNaN(_h) || Motion.Reduced)
+        {
+            SetBand(StageHeight, insetTo);
             return;
         }
 
-        (_bandFrom, _bandTo, _bandStart) = (current, to, DateTimeOffset.Now);
-        SetBand(current);
+        (_hFrom, _hTo, _insetFrom, _insetTo, _bandStart) = (_h, StageHeight, _inset, insetTo, DateTimeOffset.Now);
         CompositionTarget.Rendering += OnBandFrame;
         _bandTicking = true;
 
@@ -233,7 +268,7 @@ public sealed partial class HarbourView : UserControl
         {
             if (_bandTicking && _bandStart == start)
             {
-                SetBand(_bandTo);
+                SetBand(_hTo, _insetTo);
                 StopBand();
             }
         };
@@ -244,7 +279,8 @@ public sealed partial class HarbourView : UserControl
     private void OnBandFrame(object? sender, object e)
     {
         var k = (DateTimeOffset.Now - _bandStart).TotalMilliseconds / Motion.Duration("DurationExpandMs").TotalMilliseconds;
-        SetBand(k >= 1 ? _bandTo : _bandFrom + (_bandTo - _bandFrom) * Motion.Curve(k));
+        var eased = Motion.Curve(Math.Min(1, k));
+        SetBand(_hFrom + (_hTo - _hFrom) * eased, _insetFrom + (_insetTo - _insetFrom) * eased);
         if (k >= 1)
         {
             StopBand();
@@ -260,10 +296,12 @@ public sealed partial class HarbourView : UserControl
         }
     }
 
-    /// <summary>One band step: the height, then everything that follows it, in the same frame.</summary>
-    private void SetBand(double height)
+    /// <summary>One band step: the height and the reach, then everything that follows them, in the same frame.</summary>
+    private void SetBand(double height, double inset)
     {
-        Height = height;
+        (_h, _inset) = (height, double.IsNaN(height) ? 0 : inset);
+        Height = double.IsNaN(height) ? double.NaN : height + _inset;
+        Margin = new Thickness(0, -_inset, 0, 0);
         SlideBand();
         PlaceOverlays();
     }
@@ -272,24 +310,27 @@ public sealed partial class HarbourView : UserControl
     private double VisibleHeight => !double.IsNaN(StageHeight) && !double.IsNaN(Height) ? Height : ActualHeight;
 
     /// <summary>
-    /// Slides the full-height scene up as the band shrinks: flush at 491, the design's 110 px up at 340, 180 up
-    /// at the mini band. Called per band step, and on SizeChanged for width changes.
+    /// Slides the scene within the view. Below the overlay it maps as before: flush at 491, the design's 110 px
+    /// up at 340, 180 up at the mini band. The overlay's full height sits above all of that in the rendered
+    /// scene, and the view reaches up into it by the current reach. Called per band step, and on SizeChanged.
     /// </summary>
     // xaml-lint: allow responsive - follows the band's height animation frame by frame; no size class or threshold
     private void SlideBand()
     {
+        var band = !double.IsNaN(StageHeight);
         var visible = VisibleHeight;
-        // Three points, linear between: flush at 491, 110 up at 340, 180 up at the 180 mini band
-        _bandOffset = double.IsNaN(StageHeight) || visible <= 0
+        var below = Math.Max(0, visible - _inset);
+        var rise = !band || visible <= 0
             ? 0
-            : visible >= BandCollapsed
-                ? Math.Clamp((BandFull - visible) * BandRise / (BandFull - BandCollapsed), 0, BandRise)
-                : Math.Clamp(BandRise + (BandCollapsed - visible) * (BandMiniRise - BandRise) / (BandCollapsed - BandMini), BandRise, BandMiniRise);
+            : below >= BandCollapsed
+                ? Math.Clamp((BandFull - below) * BandRise / (BandFull - BandCollapsed), 0, BandRise)
+                : Math.Clamp(BandRise + (BandCollapsed - below) * (BandMiniRise - BandRise) / (BandCollapsed - BandMini), BandRise, BandMiniRise);
+        _bandOffset = band ? rise + OverlayHeight - _inset : 0;
         // Negative margins keep each layer's slot at its full height: a slot shorter than the layer
         // clips it in its own coordinates, before any offset, which left the band's bottom empty
-        var below = double.IsNaN(StageHeight) ? 0 : Math.Max(0, BandFull - visible - _bandOffset);
-        SceneHost.Margin = TagLayer.Margin = new Thickness(0, -_bandOffset, 0, -below);
-        _scene?.SetWindow(double.IsNaN(StageHeight) ? double.NaN : _bandOffset, _bandOffset + visible);
+        var rest = band ? Math.Max(0, BandFull + OverlayHeight - visible - _bandOffset) : 0;
+        SceneHost.Margin = TagLayer.Margin = new Thickness(0, -_bandOffset, 0, -rest);
+        _scene?.SetWindow(band ? _bandOffset : double.NaN, _bandOffset + visible, _inset);
     }
 
     public static readonly DependencyProperty HudVisibilityProperty = DependencyProperty.Register(
@@ -579,7 +620,7 @@ public sealed partial class HarbourView : UserControl
 
             // A vessel out of frame loses its tag rather than pinning it to an edge it is not near.
             // xaml-lint: allow responsive - per-frame projection culling, not a breakpoint
-            var inFrame = x > 0 && x < ActualWidth && y - _bandOffset > (Tight ? 16 : 40) && y - _bandOffset < visible - (Tight ? 8 : 56);
+            var inFrame = x > 0 && x < ActualWidth && y - _bandOffset > _inset + (Tight ? 16 : 40) && y - _bandOffset < visible - (Tight ? 8 : 56);
             // xaml-lint: allow codebehind - per-frame projection culling; there is no XAML surface for the camera
             host.Visibility = inFrame ? Visibility.Visible : Visibility.Collapsed;
             if (!inFrame)
@@ -594,7 +635,8 @@ public sealed partial class HarbourView : UserControl
             // The strip keeps its top-right corner clear for the Expand harbour button.
             var right = Compact ? 150 : 10;
             var left = Math.Clamp(x - width / 2, 10, Math.Max(10, ActualWidth - width - right));
-            var minTop = (Tight ? 6 : 52) + _bandOffset;
+            // Below the overlay (the greeting and figures), clear of the top-right float
+            var minTop = (Tight ? 6 : 52) + _inset + _bandOffset;
             var top = Math.Max(minTop, y - Lead - height);
             (left, top) = AvoidOverlap(placed, left, top, width, height, minTop, ActualWidth - right);
             placed.Add(new Rect(left, top, width, height));

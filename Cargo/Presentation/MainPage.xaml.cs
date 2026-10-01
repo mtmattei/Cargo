@@ -39,6 +39,14 @@ public sealed partial class MainPage : Page
         _attached = true;
         Harbour.State = vm.State;
         SectionScroll.ViewChanged += OnSectionScrolled;
+        // The harbour reaches up behind the masthead by its natural height (not while it folds)
+        MastheadFrame.SizeChanged += (_, _) =>
+        {
+            if (double.IsNaN(MastheadFrame.Height) && MastheadFrame.ActualHeight > 0)
+            {
+                Harbour.OverlayHeight = MastheadFrame.ActualHeight;
+            }
+        };
         // Each section opens at its top: one ScrollViewer hosts them all, and a carried offset opened
         // Berths halfway down and brought Overview back scrolled under its full chrome
         vm.State.PropertyChanged += (_, e) =>

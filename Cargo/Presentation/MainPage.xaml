@@ -111,9 +111,10 @@
         <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
       <!-- Overview: the greeting, figures and duty card on the page ground, above the harbour band -->
-      <!-- Folds away when Overview scrolls (SPEC-OVERVIEW-SCROLL), in step with the band's snap to its mini.
-           The padding lives on this wrapper so the fold takes it too -->
-      <Border Padding="40,14,40,14" Visibility="Collapsed" Opacity="0"
+      <!-- Overlays the harbour, which reaches up behind it (HarbourView.OverlayHeight); folds away when Overview
+           scrolls (SPEC-OVERVIEW-SCROLL), in step with the band's snap to its mini. Drawn above the harbour
+           (ZIndex). The padding lives on this wrapper so the fold takes it too -->
+      <Border x:Name="MastheadFrame" Canvas.ZIndex="1" Padding="40,14,40,14" Visibility="Collapsed" Opacity="0"
               controls:Reveal.IsOn="{x:Bind ViewModel.State.MastheadShown, Mode=OneWay}" controls:Reveal.Grow="True"
               controls:Reveal.DurationKey="DurationExpandMs">
         <local:OverviewMasthead x:Name="Masthead" DataContext="{x:Bind ViewModel.Overview, Mode=OneWay}" />
@@ -121,6 +122,7 @@
       <!-- One harbour for every harbour page: Overview's 340 px band (491 expanded), a strip framed by
            the section elsewhere -->
       <harbour:HarbourView x:Name="Harbour" Grid.Row="1" Compact="{x:Bind ViewModel.State.StageCompact, Mode=OneWay}"
+                           OverlayShown="{x:Bind ViewModel.State.MastheadShown, Mode=OneWay}"
                            StageHeight="{x:Bind ViewModel.State.StageHeight, Mode=OneWay}" />
       <!-- Layer switcher: centred on the HUD row; below Normal (1200) it stacks above the camera menu
            (16 + 44 + 4 px up), clear of the Key and scale/zoom group -->
