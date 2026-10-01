@@ -1,10 +1,8 @@
-using System.IO;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml.Input;
 using SkiaSharp;
 using Uno.WinUI.Graphics2DSK;
 using Windows.Foundation;
-using Windows.Storage;
 
 namespace Cargo.Controls.Harbour;
 
@@ -459,22 +457,10 @@ public sealed class HarbourScene : SKCanvasElement
         }
 
         _typefaceRequested = true;
-        try
+        if (await CanvasFonts.Load(CanvasFonts.MonoMedium) is { } typeface)
         {
-            var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Fonts/IBMPlexMono_Medium.ttf"));
-            using var stream = await file.OpenStreamForReadAsync();
-            using var memory = new MemoryStream();
-            await stream.CopyToAsync(memory);
-            var typeface = SKTypeface.FromData(SKData.CreateCopy(memory.ToArray()));
-            if (typeface is not null)
-            {
-                _renderer.SetTypeface(typeface);
-                Invalidate();
-            }
-        }
-        catch (Exception)
-        {
-            // The default typeface is an acceptable fallback for chart text.
+            _renderer.SetTypeface(typeface);
+            Invalidate();
         }
     }
 }

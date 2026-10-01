@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:Cargo.Presentation"
              xmlns:controls="using:Cargo.Controls"
-             xmlns:utu="using:Uno.Toolkit.UI">
+             xmlns:utu="using:Uno.Toolkit.UI"
+             xmlns:liveline="using:Liveline">
 
   <!-- Main: max 1440 with 32/40/56 padding (the design's frame, not PageFrame's) -->
   <Grid Style="{StaticResource PageFrame}" Padding="40,32,40,56" MaxWidth="1440" RowSpacing="24">
@@ -21,40 +22,155 @@
         <ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" />
       </Grid.ColumnDefinitions>
 
-      <Border Grid.ColumnSpan="8" Style="{StaticResource RuledPanel}">
-        <StackPanel Spacing="4">
-          <Grid ColumnSpacing="18">
+      <!-- Today at North Quay: four lanes on one time axis, or the same hours as a table -->
+      <utu:CardContentControl Grid.ColumnSpan="8" Style="{StaticResource OutlinedPanel}" Padding="24" VerticalAlignment="Top">
+        <StackPanel Spacing="16">
+          <Grid ColumnSpacing="16">
             <Grid.ColumnDefinitions>
               <ColumnDefinition Width="*" />
               <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <StackPanel Orientation="Horizontal" Spacing="18" VerticalAlignment="Center">
-              <TextBlock Text="Vessel movements" Style="{StaticResource CardTitleText}" />
-              <StackPanel Orientation="Horizontal" Spacing="14">
-                <StackPanel Orientation="Horizontal" Spacing="6">
-                  <Ellipse Width="7" Height="7" Fill="{StaticResource AccentInvariantBrush}" VerticalAlignment="Center" />
-                  <TextBlock Text="Arrivals" Style="{StaticResource CaptionText}" />
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Spacing="6">
-                  <Ellipse Width="7" Height="7" Fill="{StaticResource SeaGreenInvariantBrush}" VerticalAlignment="Center" />
-                  <TextBlock Text="Departures" Style="{StaticResource CaptionText}" />
-                </StackPanel>
-              </StackPanel>
+            <StackPanel Spacing="4">
+              <TextBlock Text="Today at North Quay" Style="{StaticResource PanelHeadingText}" AutomationProperties.HeadingLevel="Level2" />
+              <TextBlock Text="Wed 06:00 → Thu 06:00 · live" Style="{StaticResource SubtitleText}" />
             </StackPanel>
-            <StackPanel Grid.Column="1" HorizontalAlignment="Right">
-              <TextBlock Text="Arrivals above the line · Departures below" Style="{StaticResource CaptionText}"
-                         Foreground="{StaticResource TextFaintInvariantBrush}" TextAlignment="Right" />
-              <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right" Margin="0,2,0,0">
-                <Ellipse Width="6" Height="6" Fill="{StaticResource AlertInvariantBrush}" VerticalAlignment="Center" />
-                <TextBlock Style="{StaticResource CaptionText}" Foreground="{StaticResource TextFaintInvariantBrush}">
-                  <Run Text="Live · " /><Run Text="{x:Bind ViewModel.State.Now, Mode=OneWay}" />
-                </TextBlock>
-              </StackPanel>
-            </StackPanel>
+            <!-- Chart / Table: an ink pill slides between the two (SegmentIndicator) -->
+            <!-- xaml-lint: allow card - the toggle's ring, a 1px inset outline around two segments -->
+            <Border Grid.Column="1" Padding="2" CornerRadius="10" BorderThickness="1" VerticalAlignment="Top"
+                    BorderBrush="{StaticResource HairlineStrongInvariantBrush}">
+              <Grid>
+                <controls:SegmentIndicator Host="{x:Bind ViewToggle}" SelectedIndex="{x:Bind ViewModel.Timeline.ViewIndex, Mode=OneWay}"
+                                           Height="40" CornerRadius="8" Background="{StaticResource InkInvariantBrush}" />
+                <StackPanel x:Name="ViewToggle" Orientation="Horizontal">
+                  <Button Content="Chart" Style="{StaticResource ToggleSegmentButton}" Command="{x:Bind ViewModel.Timeline.ShowChartCommand, Mode=OneWay}"
+                          Foreground="{x:Bind ViewModel.Timeline.ChartLabel, Mode=OneWay}" />
+                  <Button Content="Table" Style="{StaticResource ToggleSegmentButton}" Command="{x:Bind ViewModel.Timeline.ShowTableCommand, Mode=OneWay}"
+                          Foreground="{x:Bind ViewModel.Timeline.TableLabel, Mode=OneWay}" />
+                </StackPanel>
+              </Grid>
+            </Border>
           </Grid>
-          <controls:MovementsChart Now="{x:Bind ViewModel.NowHours, Mode=OneWay}" Margin="0,6,0,0" />
+
+          <StackPanel Orientation="Horizontal" Spacing="20">
+            <StackPanel Orientation="Horizontal" Spacing="8"><Ellipse Width="10" Height="10" Fill="{StaticResource NavyInvariantBrush}" VerticalAlignment="Center" /><TextBlock Text="Happened" Style="{StaticResource SubtitleText}" /></StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="8"><Ellipse Width="10" Height="10" Stroke="{StaticResource NavyInvariantBrush}" StrokeThickness="1.6" VerticalAlignment="Center" /><TextBlock Text="Planned" Style="{StaticResource SubtitleText}" /></StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="8"><Rectangle Width="16" Height="12" Fill="{StaticResource HairlineInvariantBrush}" VerticalAlignment="Center" /><TextBlock Text="Ahead of now" Style="{StaticResource SubtitleText}" /></StackPanel>
+          </StackPanel>
+
+          <!-- Chart: the lanes canvas, the tide lane over its band, the summary column over x 0-168 -->
+          <Grid Height="580" Visibility="{x:Bind ViewModel.Timeline.ChartVisibility, Mode=OneWay}">
+            <controls:TimelineLanes Frame="{x:Bind ViewModel.Timeline.Frame, Mode=OneWay}"
+                                    AutomationProperties.Name="{x:Bind ViewModel.Timeline.Summary, Mode=OneWay}"
+                                    AutomationProperties.LiveSetting="Polite" />
+            <!-- Tide: y = 284 - 35 m in the design, so the band 164-300 holds 0 to 3.43 m over 16 px of floor -->
+            <liveline:LivelineChart Margin="168,164,12,0" Height="136" VerticalAlignment="Top"
+                                    WindowStart="{x:Bind ViewModel.Timeline.WindowStart, Mode=OneWay}"
+                                    WindowEnd="{x:Bind ViewModel.Timeline.WindowEnd, Mode=OneWay}"
+                                    NowTime="{x:Bind ViewModel.Timeline.NowTime, Mode=OneWay}"
+                                    Data="{x:Bind ViewModel.Timeline.TidePast, Mode=OneWay}"
+                                    Forecast="{x:Bind ViewModel.Timeline.TideAhead, Mode=OneWay}"
+                                    Markers="{x:Bind ViewModel.Timeline.TideMarkers, Mode=OneWay}"
+                                    Typeface="{x:Bind ViewModel.Timeline.TideTypeface, Mode=OneWay}"
+                                    LerpSpeed="{x:Bind ViewModel.Timeline.TideLerp, Mode=OneWay}"
+                                    ChartBackground="Transparent" LineBrush="{StaticResource WaterInvariantBrush}"
+                                    FillTopBrush="{StaticResource TideFillTopInvariantBrush}" FillBottomBrush="{StaticResource TideFillBottomInvariantBrush}"
+                                    LabelHaloBrush="{StaticResource SurfaceInvariantBrush}"
+                                    ForecastOpacity="0.5" StrokeThickness="2" PlotPadding="0,0,0,16" ValueMin="0" ValueMax="3.4286"
+                                    ShowGrid="False" ShowBadge="False" ShowTrackingLine="False" Momentum="False"
+                                    IsHitTestVisible="False" AutomationProperties.AccessibilityView="Raw" />
+            <Grid Width="160" HorizontalAlignment="Left" IsHitTestVisible="False" AutomationProperties.AccessibilityView="Raw">
+              <Grid.RowDefinitions>
+                <RowDefinition Height="28" />
+                <RowDefinition Height="136" />
+                <RowDefinition Height="136" />
+                <RowDefinition Height="128" />
+                <RowDefinition Height="112" />
+              </Grid.RowDefinitions>
+            <StackPanel Grid.Row="1" Spacing="2" Padding="0,4,0,0">
+              <StackPanel Orientation="Horizontal" Spacing="4"><Rectangle Width="12" Height="3" RadiusX="1.5" RadiusY="1.5" Fill="{StaticResource NavyInvariantBrush}" VerticalAlignment="Center" />
+                <TextBlock Text="VESSELS" Style="{StaticResource CapsLabelText}" Margin="0,0,0,0" />
+              </StackPanel>
+              <TextBlock Text="{x:Bind ViewModel.Timeline.VesselsValue, Mode=OneWay}" Style="{StaticResource TypeStrong20}" Foreground="{StaticResource InkInvariantBrush}" Margin="0,8,0,2" />
+              <TextBlock Text="{x:Bind ViewModel.Timeline.VesselsSub, Mode=OneWay}" Style="{StaticResource CaptionText}" />
+              <TextBlock Text="arrivals ↑ departures ↓" Style="{StaticResource CaptionText}" />
+            </StackPanel>
+            <StackPanel Grid.Row="2" Spacing="2" Padding="0,4,0,0">
+              <StackPanel Orientation="Horizontal" Spacing="4"><Rectangle Width="12" Height="3" RadiusX="1.5" RadiusY="1.5" Fill="{StaticResource WaterInvariantBrush}" VerticalAlignment="Center" />
+                <TextBlock Text="TIDE" Style="{StaticResource CapsLabelText}" Margin="0,0,0,0" />
+              </StackPanel>
+              <TextBlock Text="{x:Bind ViewModel.Timeline.TideValue, Mode=OneWay}" Style="{StaticResource TypeStrong20}" Foreground="{StaticResource InkInvariantBrush}" Margin="0,8,0,2" />
+              <TextBlock Text="{x:Bind ViewModel.Timeline.TideSub, Mode=OneWay}" Style="{StaticResource CaptionText}" />
+              <TextBlock Text="wind 14 kn SW" Style="{StaticResource CaptionText}" />
+            </StackPanel>
+            <StackPanel Grid.Row="3" Spacing="2" Padding="0,4,0,0">
+              <StackPanel Orientation="Horizontal" Spacing="4"><Rectangle Width="12" Height="3" RadiusX="1.5" RadiusY="1.5" Fill="{StaticResource AccentInvariantBrush}" VerticalAlignment="Center" />
+                <TextBlock Text="MOVES" Style="{StaticResource CapsLabelText}" Margin="0,0,0,0" />
+              </StackPanel>
+              <TextBlock Text="{x:Bind ViewModel.Timeline.MovesValue, Mode=OneWay}" Style="{StaticResource TypeStrong20}" Foreground="{StaticResource InkInvariantBrush}" Margin="0,8,0,2" />
+              <TextBlock Text="per hour, 06:00 → now" Style="{StaticResource CaptionText}" />
+              <TextBlock Text="{x:Bind ViewModel.Timeline.MovesPeak, Mode=OneWay}" Style="{StaticResource CaptionText}" />
+            </StackPanel>
+            <StackPanel Grid.Row="4" Spacing="2" Padding="0,4,0,0">
+              <StackPanel Orientation="Horizontal" Spacing="4"><Rectangle Width="12" Height="3" RadiusX="1.5" RadiusY="1.5" Fill="{StaticResource NavyInvariantBrush}" VerticalAlignment="Center" /><Rectangle Width="12" Height="3" RadiusX="1.5" RadiusY="1.5" Fill="{StaticResource WaterInvariantBrush}" VerticalAlignment="Center" />
+                <TextBlock Text="CARGO" Style="{StaticResource CapsLabelText}" Margin="0,0,0,0" />
+              </StackPanel>
+              <TextBlock Text="{x:Bind ViewModel.Timeline.CargoValue, Mode=OneWay}" Style="{StaticResource TypeStrong20}" Foreground="{StaticResource InkInvariantBrush}" Margin="0,8,0,2" />
+              <TextBlock Text="{x:Bind ViewModel.Timeline.CargoSub, Mode=OneWay}" Style="{StaticResource CaptionText}" />
+              <TextBlock Text="{x:Bind ViewModel.Timeline.CargoSince, Mode=OneWay}" Style="{StaticResource CaptionText}" />
+            </StackPanel>
+            </Grid>
+          </Grid>
+
+          <!-- Table: the same day hour by hour, the chart's full non-visual alternative -->
+          <StackPanel Visibility="{x:Bind ViewModel.Timeline.TableVisibility, Mode=OneWay}">
+            <Grid ColumnSpacing="12" Padding="8,0" Height="32">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="72" /><ColumnDefinition Width="*" /><ColumnDefinition Width="96" />
+                <ColumnDefinition Width="92" /><ColumnDefinition Width="76" /><ColumnDefinition Width="76" /><ColumnDefinition Width="72" />
+              </Grid.ColumnDefinitions>
+              <TextBlock Text="TIME" Style="{StaticResource CapsLabelText}" VerticalAlignment="Center" />
+              <Grid Grid.Column="1" VerticalAlignment="Center"><StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Left"><Rectangle Width="12" Height="3" RadiusX="1.5" RadiusY="1.5" Fill="{StaticResource NavyInvariantBrush}" VerticalAlignment="Center" /><TextBlock Text="VESSELS" Style="{StaticResource CapsLabelText}" /></StackPanel></Grid>
+              <Grid Grid.Column="2" VerticalAlignment="Center"><StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right"><Rectangle Width="12" Height="3" RadiusX="1.5" RadiusY="1.5" Fill="{StaticResource WaterInvariantBrush}" VerticalAlignment="Center" /><TextBlock Text="TIDE M" Style="{StaticResource CapsLabelText}" /></StackPanel></Grid>
+              <Grid Grid.Column="3" VerticalAlignment="Center"><StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right"><Rectangle Width="12" Height="3" RadiusX="1.5" RadiusY="1.5" Fill="{StaticResource AccentInvariantBrush}" VerticalAlignment="Center" /><TextBlock Text="MOVES / H" Style="{StaticResource CapsLabelText}" /></StackPanel></Grid>
+              <Grid Grid.Column="4" VerticalAlignment="Center"><StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right"><Rectangle Width="12" Height="3" RadiusX="1.5" RadiusY="1.5" Fill="{StaticResource NavyInvariantBrush}" VerticalAlignment="Center" /><TextBlock Text="IN / H" Style="{StaticResource CapsLabelText}" /></StackPanel></Grid>
+              <Grid Grid.Column="5" VerticalAlignment="Center"><StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right"><Rectangle Width="12" Height="3" RadiusX="1.5" RadiusY="1.5" Fill="{StaticResource WaterInvariantBrush}" VerticalAlignment="Center" /><TextBlock Text="OUT / H" Style="{StaticResource CapsLabelText}" /></StackPanel></Grid>
+              <Grid Grid.Column="6" VerticalAlignment="Center"><StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right"><TextBlock Text="NET / H" Style="{StaticResource CapsLabelText}" /></StackPanel></Grid>
+            </Grid>
+            <ItemsControl ItemsSource="{x:Bind ViewModel.Timeline.Rows, Mode=OneWay}" IsTabStop="False">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="local:TimelineRow">
+                  <Grid ColumnSpacing="12" Padding="8,0" MinHeight="28"
+                        Background="{x:Bind local:OverviewView.RowGround(IsFuture), Mode=OneWay}"
+                        BorderBrush="{x:Bind local:OverviewView.RowRule(IsNow), Mode=OneWay}"
+                        BorderThickness="{x:Bind local:OverviewView.RowRuleWidth(IsNow), Mode=OneWay}">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="72" /><ColumnDefinition Width="*" /><ColumnDefinition Width="96" />
+                      <ColumnDefinition Width="92" /><ColumnDefinition Width="76" /><ColumnDefinition Width="76" /><ColumnDefinition Width="72" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{x:Bind Time}" Style="{StaticResource TypeMono13}" Foreground="{StaticResource TextMutedInvariantBrush}" VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="1" Text="{x:Bind Vessels}" Style="{StaticResource TypeBody13}" Foreground="{StaticResource InkInvariantBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                    <TextBlock Grid.Column="2" Text="{x:Bind Tide}" Style="{StaticResource TypeMono13}" Foreground="{StaticResource InkInvariantBrush}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="3" Text="{x:Bind Moves, Mode=OneWay}" Style="{StaticResource TypeMono13}" Foreground="{StaticResource InkInvariantBrush}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="4" Text="{x:Bind In, Mode=OneWay}" Style="{StaticResource TypeMono13}" Foreground="{StaticResource InkInvariantBrush}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="5" Text="{x:Bind Out, Mode=OneWay}" Style="{StaticResource TypeMono13}" Foreground="{StaticResource InkInvariantBrush}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="6" Text="{x:Bind Net, Mode=OneWay}" Style="{StaticResource TypeMono13}" Foreground="{StaticResource InkInvariantBrush}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                  </Grid>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Grid Padding="8,12,8,0" ColumnSpacing="16">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <TextBlock Text="Hourly values; the NOW row is live. Ahead of now: tide is the tide-table forecast, moves and cargo have no forecast."
+                         Style="{StaticResource CaptionText}" TextWrapping="Wrap" />
+              <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.Timeline.MovesTotal, Mode=OneWay}" Style="{StaticResource TypeMono12}"
+                         Foreground="{StaticResource TextMutedInvariantBrush}" />
+            </Grid>
+          </StackPanel>
         </StackPanel>
-      </Border>
+      </utu:CardContentControl>
 
       <!-- Aside: the Needs-you queue bleeding to the card's edges, a full-bleed rule, then what's next -->
       <utu:CardContentControl Grid.Column="8" Grid.ColumnSpan="4" Style="{StaticResource OutlinedPanel}" Padding="0"

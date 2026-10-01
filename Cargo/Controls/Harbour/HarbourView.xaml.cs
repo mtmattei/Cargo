@@ -379,7 +379,7 @@ public sealed partial class HarbourView : UserControl
                 Name = vessel.Name,
                 Sub = TagLine(vessel),
                 PendingSub = $"B{vessel.HomeBerth} · pilot aboard",
-                EtaHours = ClockHours(vessel.Eta),
+                EtaHours = PortState.ClockHours(vessel.Eta),
                 AccessibleName = $"{vessel.Name}, {vessel.StatusLine}",
                 Facts = new[]
                 {
@@ -413,10 +413,6 @@ public sealed partial class HarbourView : UserControl
     };
 
     private static string Clock(string when) => when[^5..];
-
-    /// <summary>"Today 21:40" is 21.67; another day's time ("Thu 02:30") is past midnight, 26.5.</summary>
-    private static double ClockHours(string when) =>
-        TimeSpan.TryParse(when[^5..], out var t) ? t.TotalHours + (when.StartsWith("Today") ? 0 : 24) : 0;
 
     /// <summary>"in 41 min", "in 1 h 55": minutes only, so the dark tag changes once a minute.</summary>
     private static string Until(double hours)

@@ -121,6 +121,20 @@ public sealed partial class PortState : ObservableObject
         return Math.Max(0, moves);
     }
 
+    /// <summary>
+    /// A schedule time on the app clock: "Today 21:40" is 21.67, the next day's "Thu 02:30" is 26.5,
+    /// the previous day's "Tue 23:05" is -0.92. NaN when it cannot be read.
+    /// </summary>
+    public static double ClockHours(string when)
+    {
+        if (when.Length < 5 || !TimeSpan.TryParse(when[^5..], out var t))
+        {
+            return double.NaN;
+        }
+
+        return t.TotalHours + (when.StartsWith("Today") ? 0 : when.StartsWith("Tue") ? -24 : 24);
+    }
+
     public static string Format(double hours)
     {
         var s = (int)Math.Round(hours * 3600) % 86400;

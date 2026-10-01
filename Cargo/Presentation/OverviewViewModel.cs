@@ -36,6 +36,7 @@ public sealed partial class OverviewViewModel : ObservableObject
         // which must be created on it.
         dispatcher.TryEnqueue(() =>
         {
+            Timeline = new TimelineViewModel(state);
             BuildNextUp();
             Refresh();
             state.Ticked += (_, _) => Refresh();
@@ -51,6 +52,10 @@ public sealed partial class OverviewViewModel : ObservableObject
     }
 
     public PortState State { get; }
+
+    /// <summary>"Today at North Quay": the shared-axis lanes, the tide lane and the hourly table.</summary>
+    [ObservableProperty]
+    private TimelineViewModel? _timeline;
 
     public string Subtitle => $"{PortData.Today} · Westhaven · the harbour as it is right now.";
 
@@ -85,6 +90,7 @@ public sealed partial class OverviewViewModel : ObservableObject
     {
         NowHours = State.NowHours;
         MovesNow = PortState.MovesAt(NowHours).ToString();
+        Timeline?.Refresh();
         ShiftProgress = Math.Clamp((NowHours - Operator.ClockedIn) / (Operator.ShiftEnd - Operator.ClockedIn), 0, 1);
 
         foreach (var row in NextUp)

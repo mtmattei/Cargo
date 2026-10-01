@@ -33,4 +33,10 @@
     </UnoFeatures>
   </PropertyGroup>
 
+  <ItemGroup>
+    <!-- The Overview tide lane. Liveline lives in the Uno-Builds-net10 clone (branch liveline-window,
+         outside OneDrive); both repositories pin Uno.Sdk 6.7.30 in global.json. -->
+    <ProjectReference Include="..\..\Uno-Builds-net10\Liveline\src\Liveline\Liveline.csproj" />
+  </ItemGroup>
+
 </Project>

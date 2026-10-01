@@ -77,6 +77,10 @@
     <Setter Property="FontSize" Value="12" />
   </Style>
 
+  <Style x:Key="TypeMono13" TargetType="TextBlock" BasedOn="{StaticResource TypeMono11}">
+    <Setter Property="FontSize" Value="13" />
+  </Style>
+
   <Style x:Key="TypeMonoMedium11" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource MonoMediumFont}" />
     <Setter Property="FontSize" Value="11" />
@@ -649,6 +653,16 @@
     <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />
     <Setter Property="BorderBrush" Value="{StaticResource HairlineStrongInvariantBrush}" />
     <Setter Property="BorderThickness" Value="1" />
+  </Style>
+
+  <!-- A segment of a two-way toggle (Chart / Table): 72x40, 13 px, over a SegmentIndicator -->
+  <Style x:Key="ToggleSegmentButton" TargetType="Button" BasedOn="{StaticResource BareButton}">
+    <Setter Property="Width" Value="72" />
+    <Setter Property="Height" Value="40" />
+    <Setter Property="FontFamily" Value="{StaticResource BodyMediumFont}" />
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
   </Style>
 
   <!-- The × that closes a detail panel, top-right of its header -->
