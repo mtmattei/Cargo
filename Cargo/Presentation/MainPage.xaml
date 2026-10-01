@@ -10,9 +10,8 @@
       Background="{StaticResource PaperInvariantBrush}">
 
   <Page.Resources>
-    <!-- Header breakpoints: below 1040 only the section chips; from 1040 the current section's name
-         and the ISPS badge; from 1280 every name plus weather and tide -->
-    <utu:ResponsiveLayout x:Key="HeaderBreakpoints" Narrowest="0" Narrow="0" Normal="1040" Wide="1280" Widest="100000" />
+    <!-- Harbour HUD breakpoint: below 1040 the layer switcher stacks above the camera presets -->
+    <utu:ResponsiveLayout x:Key="HudBreakpoints" Narrowest="0" Narrow="0" Normal="1040" Wide="100000" Widest="100000" />
   </Page.Resources>
 
   <!-- Two layers: the page, and the inspection over the whole window. The overlay stays out of the
@@ -26,26 +25,18 @@
     </Grid.RowDefinitions>
 
     <!-- ══ HEADER ══════════════════════════════════════════════════════ -->
-    <Grid Grid.Row="0" Background="{StaticResource InkDeepInvariantBrush}" Padding="24,0" ColumnSpacing="32">
+    <Grid Grid.Row="0" Background="{StaticResource SurfaceInvariantBrush}"
+          BorderBrush="{StaticResource HairlineInvariantBrush}" BorderThickness="0,0,0,1"
+          Padding="40,0,28,0" ColumnSpacing="28">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="*" />
         <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
 
-      <!-- Wordmark -->
-      <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-        <shapes:Path Data="M5 13c4-5 8-5 12 0s8 5 12 0M5 21c4-5 8-5 12 0s8 5 12 0"
-                     Stroke="{StaticResource AccentBrightInvariantBrush}" StrokeThickness="2.6"
-                     StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                     Width="26" Height="26" Stretch="Uniform" VerticalAlignment="Center" />
-        <TextBlock Text="Westhaven" FontFamily="{StaticResource DisplayBoldFont}" FontSize="15"
-                   Foreground="{StaticResource PaperInvariantBrush}" VerticalAlignment="Center" />
-        <TextBlock Text="SHIPPING · DISPATCH" FontFamily="{StaticResource MonoMediumFont}" FontSize="10"
-                   Foreground="{StaticResource AccentBrightInvariantBrush}" VerticalAlignment="Center" Margin="2,1,0,0" />
-      </StackPanel>
+      <TextBlock Text="Westhaven" Style="{StaticResource WordmarkText}" VerticalAlignment="Center" />
 
-      <!-- Sections -->
+      <!-- Sections: text tabs; a section with something waiting on you carries an alert dot -->
       <ItemsControl Grid.Column="1" ItemsSource="{x:Bind ViewModel.NavItems, Mode=OneWay}" VerticalAlignment="Stretch">
         <ItemsControl.ItemsPanel>
           <ItemsPanelTemplate>
@@ -54,106 +45,28 @@
         </ItemsControl.ItemsPanel>
         <ItemsControl.ItemTemplate>
           <DataTemplate x:DataType="local:NavItem">
-            <Button Style="{StaticResource BareButton}" uen:Navigation.Request="{x:Bind Route}"
-                    ToolTipService.ToolTip="{x:Bind Tooltip, Mode=OneWay}" Height="56">
-              <Grid Padding="12,0">
-                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                  <Grid VerticalAlignment="Center">
-                    <!-- xaml-lint: allow card - the section number chip in the header -->
-                    <Border Background="{x:Bind ChipBackground, Mode=OneWay}" CornerRadius="4" MinWidth="22" Height="18"
-                            Padding="4,0">
-                      <TextBlock Text="{x:Bind Index}" FontFamily="{StaticResource MonoMediumFont}" FontSize="10.5"
-                                 Foreground="{x:Bind ChipForeground, Mode=OneWay}"
-                                 HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-                    <!-- Attention: a dot on the chip's corner, ringed in the header's ink so it reads on any chip -->
-                    <Ellipse Width="8" Height="8" Fill="{x:Bind BadgeBrush, Mode=OneWay}" Stroke="{StaticResource InkDeepInvariantBrush}"
-                             StrokeThickness="1.5" Opacity="{x:Bind BadgeOpacity, Mode=OneWay}"
-                             HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-3,-3,0" />
-                  </Grid>
-                  <!-- The current section keeps its name from Normal; the others only at Wide -->
-                  <Grid VerticalAlignment="Center" Visibility="{utu:Responsive Layout={StaticResource HeaderBreakpoints}, Narrow=Collapsed, Normal=Visible}">
-                    <TextBlock Text="{x:Bind Label}" FontFamily="{StaticResource BodyMediumFont}" FontSize="13"
-                               Foreground="{x:Bind LabelForeground, Mode=OneWay}"
-                               Visibility="{x:Bind CurrentVisibility, Mode=OneWay}" />
-                    <Grid Visibility="{x:Bind OtherVisibility, Mode=OneWay}">
-                      <TextBlock Text="{x:Bind Label}" FontFamily="{StaticResource BodyMediumFont}" FontSize="13"
-                                 Foreground="{x:Bind LabelForeground, Mode=OneWay}"
-                                 Visibility="{utu:Responsive Layout={StaticResource HeaderBreakpoints}, Narrow=Collapsed, Wide=Visible}" />
-                    </Grid>
-                  </Grid>
+            <Button Style="{StaticResource NavTabButton}" uen:Navigation.Request="{x:Bind Route}"
+                    Foreground="{x:Bind LabelForeground, Mode=OneWay}"
+                    AutomationProperties.Name="{x:Bind AutomationName, Mode=OneWay}"
+                    ToolTipService.ToolTip="{x:Bind Tooltip, Mode=OneWay}">
+              <Grid>
+                <StackPanel Orientation="Horizontal" Spacing="5" Margin="12,0" VerticalAlignment="Center">
+                  <TextBlock Text="{x:Bind Label}" Style="{StaticResource TypeStrong14}"
+                             Visibility="{x:Bind CurrentVisibility, Mode=OneWay}" />
+                  <TextBlock Text="{x:Bind Label}" Style="{StaticResource TypeMedium14}"
+                             Visibility="{x:Bind OtherVisibility, Mode=OneWay}" />
+                  <Ellipse Width="6" Height="6" Fill="{StaticResource AlertInvariantBrush}" VerticalAlignment="Top"
+                           Margin="0,1,0,0" Visibility="{x:Bind NeedsVisibility, Mode=OneWay}" />
                 </StackPanel>
-                <Rectangle Height="2" Margin="12,0,12,0" VerticalAlignment="Bottom"
-                           Fill="{StaticResource AccentBrightInvariantBrush}" Opacity="{x:Bind UnderlineOpacity, Mode=OneWay}" />
+                <Rectangle Height="2" VerticalAlignment="Bottom" Fill="{StaticResource AccentInvariantBrush}"
+                           Opacity="{x:Bind UnderlineOpacity, Mode=OneWay}" />
               </Grid>
             </Button>
           </DataTemplate>
         </ItemsControl.ItemTemplate>
       </ItemsControl>
 
-      <!-- Status cluster -->
-      <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="20" VerticalAlignment="Center">
-        <StackPanel x:Name="IspsBadge" Orientation="Horizontal" Spacing="7" VerticalAlignment="Center"
-                    Visibility="{utu:Responsive Layout={StaticResource HeaderBreakpoints}, Narrow=Collapsed, Normal=Visible}">
-          <Ellipse Width="6" Height="6" Fill="{StaticResource SeaGreenInvariantBrush}" VerticalAlignment="Center" />
-          <TextBlock Text="ISPS 1" Style="{StaticResource CaptionText}" Foreground="{StaticResource TextOnDarkMutedBrush}" />
-        </StackPanel>
-
-        <StackPanel x:Name="WeatherBadge" Orientation="Horizontal" Spacing="7" VerticalAlignment="Center"
-                    Visibility="{utu:Responsive Layout={StaticResource HeaderBreakpoints}, Narrow=Collapsed, Wide=Visible}"
-                    ToolTipService.ToolTip="Partly cloudy · sea 15 °C">
-          <shapes:Path Data="M14 46h32a10 10 0 0 0 1-20 14 14 0 0 0-27 4 8 8 0 0 0-6 16z"
-                       Fill="{StaticResource TextOnDarkMutedBrush}" Width="18" Height="15" Stretch="Uniform"
-                       VerticalAlignment="Center" />
-          <TextBlock Text="18 °C" FontFamily="{StaticResource BodyMediumFont}" FontSize="12.5"
-                     Foreground="{StaticResource PaperInvariantBrush}" VerticalAlignment="Center" />
-          <TextBlock Text="· sea 15 °C" Style="{StaticResource CaptionText}"
-                     Foreground="{StaticResource TextOnDarkMutedBrush}" VerticalAlignment="Center" />
-        </StackPanel>
-
-        <StackPanel x:Name="TideBadge" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center"
-                    Visibility="{utu:Responsive Layout={StaticResource HeaderBreakpoints}, Narrow=Collapsed, Wide=Visible}"
-                    ToolTipService.ToolTip="{x:Bind ViewModel.Tide.Tooltip, Mode=OneWay}">
-          <Grid Width="34" Height="16">
-            <shapes:Path Data="{x:Bind ViewModel.Tide.Spark, Mode=OneWay}" Stroke="{StaticResource AccentBrightInvariantBrush}"
-                         StrokeThickness="3" Stretch="Uniform" />
-          </Grid>
-          <TextBlock Text="{x:Bind ViewModel.Tide.Label, Mode=OneWay}" Style="{StaticResource CaptionText}"
-                     Foreground="{StaticResource TextOnDarkMutedBrush}" VerticalAlignment="Center" />
-        </StackPanel>
-
-        <!-- Reduced motion: Skia desktop always reports animations enabled, so the app keeps its own
-             setting. The rest colours are local (the style's setters resolve the keys at app level);
-             the lightweight keys cover the hover, pressed and checked states. -->
-        <ToggleButton IsChecked="{x:Bind ViewModel.ReduceMotion, Mode=TwoWay}"
-                      Content="{x:Bind ViewModel.MotionLabel, Mode=OneWay}"
-                      FontFamily="{StaticResource BodyFont}" FontSize="11.5"
-                      AutomationProperties.Name="Reduce motion"
-                      ToolTipService.ToolTip="Reduce motion: hold the cranes, trucks and camera moves still"
-                      Padding="10,4" MinHeight="0" CornerRadius="12" BorderThickness="1" VerticalAlignment="Center"
-                      Background="Transparent" Foreground="{StaticResource TextOnDarkMutedBrush}"
-                      BorderBrush="{StaticResource HairlineOnDarkBrush}">
-          <ToggleButton.Resources>
-            <StaticResource x:Key="ToggleButtonBackgroundPointerOver" ResourceKey="HairlineOnDarkBrush" />
-            <StaticResource x:Key="ToggleButtonBackgroundPressed" ResourceKey="HairlineOnDarkBrush" />
-            <StaticResource x:Key="ToggleButtonBackgroundChecked" ResourceKey="AccentDarkInvariantBrush" />
-            <StaticResource x:Key="ToggleButtonBackgroundCheckedPointerOver" ResourceKey="AccentDarkInvariantBrush" />
-            <StaticResource x:Key="ToggleButtonBackgroundCheckedPressed" ResourceKey="AccentDarkInvariantBrush" />
-            <StaticResource x:Key="ToggleButtonForegroundPointerOver" ResourceKey="PaperInvariantBrush" />
-            <StaticResource x:Key="ToggleButtonForegroundPressed" ResourceKey="PaperInvariantBrush" />
-            <StaticResource x:Key="ToggleButtonForegroundChecked" ResourceKey="PaperInvariantBrush" />
-            <StaticResource x:Key="ToggleButtonForegroundCheckedPointerOver" ResourceKey="PaperInvariantBrush" />
-            <StaticResource x:Key="ToggleButtonForegroundCheckedPressed" ResourceKey="PaperInvariantBrush" />
-            <StaticResource x:Key="ToggleButtonBorderBrushPointerOver" ResourceKey="HairlineOnDarkBrush" />
-            <StaticResource x:Key="ToggleButtonBorderBrushPressed" ResourceKey="HairlineOnDarkBrush" />
-            <StaticResource x:Key="ToggleButtonBorderBrushChecked" ResourceKey="AccentDarkInvariantBrush" />
-            <StaticResource x:Key="ToggleButtonBorderBrushCheckedPointerOver" ResourceKey="AccentDarkInvariantBrush" />
-            <StaticResource x:Key="ToggleButtonBorderBrushCheckedPressed" ResourceKey="AccentDarkInvariantBrush" />
-          </ToggleButton.Resources>
-        </ToggleButton>
-
-        <Rectangle Width="1" Height="20" Fill="{StaticResource HairlineOnDarkBrush}" VerticalAlignment="Center" />
-
+      <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
         <!-- Minutes roll; seconds tick plainly -->
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
                     AutomationProperties.Name="{x:Bind ViewModel.State.Now, Mode=OneWay}">
@@ -161,12 +74,31 @@
           <TextBlock Text="{x:Bind ViewModel.State.NowSeconds, Mode=OneWay}" Style="{StaticResource HeaderClockText}" />
         </StackPanel>
 
-        <!-- xaml-lint: allow card - user avatar -->
-        <Border Width="28" Height="28" CornerRadius="14" Background="{StaticResource AccentDarkInvariantBrush}">
-          <TextBlock Text="EL" FontFamily="{StaticResource BodyStrongFont}" FontSize="10.5"
-                     Foreground="{StaticResource SurfaceInvariantBrush}"
-                     HorizontalAlignment="Center" VerticalAlignment="Center" />
-        </Border>
+        <!-- Account: who is on shift, and the reduced-motion setting (Skia desktop always reports
+             animations enabled, so the app keeps its own) -->
+        <Button Style="{StaticResource BareButton}" Width="44" Height="44"
+                AutomationProperties.Name="{x:Bind ViewModel.AccountName}"
+                ToolTipService.ToolTip="{x:Bind ViewModel.AccountName}">
+          <Grid>
+            <Ellipse Width="32" Height="32" Fill="{StaticResource AccentInvariantBrush}" />
+            <TextBlock Text="{x:Bind ViewModel.Operator.Initials}" Style="{StaticResource AvatarInitialsText}" />
+          </Grid>
+          <Button.Flyout>
+            <!-- A Flyout, not a MenuFlyout: the operator's name and shift are information, and a
+                 MenuFlyout can only show them as disabled (unreadable) items -->
+            <Flyout Placement="BottomEdgeAlignedRight">
+              <StackPanel Width="240" Spacing="12">
+                <StackPanel Spacing="3">
+                  <TextBlock Text="{x:Bind ViewModel.Operator.Name}" Style="{StaticResource TitleText}" />
+                  <TextBlock Text="{x:Bind ViewModel.OperatorLine}" Style="{StaticResource SubtitleText}" TextWrapping="Wrap" />
+                </StackPanel>
+                <Rectangle Height="1" Fill="{StaticResource HairlineInvariantBrush}" />
+                <ToggleSwitch Header="Reduce motion" IsOn="{x:Bind ViewModel.ReduceMotion, Mode=TwoWay}"
+                              ToolTipService.ToolTip="Hold the cranes, trucks and camera moves still" />
+              </StackPanel>
+            </Flyout>
+          </Button.Flyout>
+        </Button>
       </StackPanel>
     </Grid>
 
@@ -183,8 +115,8 @@
       <!-- Layer switcher: centred on the HUD row; below Normal (1040) the row cannot hold presets, layers and
            zoom (292 + 330 + 266 px plus gutters), so it stacks above the camera presets (16 + 36 + 8 px up) -->
       <Border Style="{StaticResource HarbourHudPanel}" Padding="3" VerticalAlignment="Bottom"
-              HorizontalAlignment="{utu:Responsive Layout={StaticResource HeaderBreakpoints}, Narrow=Left, Normal=Center}"
-              Margin="{utu:Responsive Layout={StaticResource HeaderBreakpoints}, Narrow='24,0,0,60', Normal='0,0,0,16'}"
+              HorizontalAlignment="{utu:Responsive Layout={StaticResource HudBreakpoints}, Narrow=Left, Normal=Center}"
+              Margin="{utu:Responsive Layout={StaticResource HudBreakpoints}, Narrow='24,0,0,60', Normal='0,0,0,16'}"
               Visibility="{x:Bind ViewModel.State.StageFull, Mode=OneWay}">
         <ItemsControl ItemsSource="{x:Bind ViewModel.Layers, Mode=OneWay}">
           <ItemsControl.ItemsPanel>

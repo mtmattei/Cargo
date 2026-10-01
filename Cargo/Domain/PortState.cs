@@ -453,6 +453,18 @@ public sealed partial class PortState : ObservableObject
 
     public bool NeedsDecision => PendingDecision is not null;
 
+    /// <summary>
+    /// Whether a section holds something waiting on the dispatcher, for the header's needs-you
+    /// dots: Berths the unconfirmed arrival, Cargo the late orders, Security the inspection hold.
+    /// </summary>
+    public bool SectionNeedsYou(string section) => section switch
+    {
+        "berths" => NeedsDecision,
+        "cargo" => PortData.RiverFleet.Any(v => v.SlipMinutes > 0),
+        "security" => PortData.Containers.Any(c => c.Security == "Hold"),
+        _ => false
+    };
+
     public bool IsConfirmed(string vesselId) => _confirmed.Contains(vesselId);
 
     /// <summary>

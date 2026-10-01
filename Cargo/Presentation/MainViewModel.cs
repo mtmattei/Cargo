@@ -39,10 +39,8 @@ public sealed partial class MainViewModel : ObservableObject
             Scanner = new ScannerViewModel(state);
             BuildNav();
             BuildLayers();
-            RefreshTide();
 
             state.PropertyChanged += OnStateChanged;
-            state.Ticked += (_, _) => RefreshTide();
             routeNotifier.RouteChanged += (_, e) => dispatcher.TryEnqueue(() => OnRouteChanged(e));
         });
     }
@@ -62,9 +60,16 @@ public sealed partial class MainViewModel : ObservableObject
 
     public ObservableCollection<LayerItem> Layers { get; } = new();
 
-    public TideReadout Tide { get; } = new();
+    /// <summary>The operator on shift, behind the header's avatar.</summary>
+    public DutyOperator Operator => PortData.Operator;
 
-    /// <summary>The header's reduced-motion toggle, saved between launches (see <see cref="Motion"/>).</summary>
+    public string AccountName => $"Account and settings: {Operator.ShortName}";
+
+    public string OperatorLine => $"{Operator.Role} · {Operator.Badge} · {Clock(Operator.ClockedIn)} to {Clock(Operator.ShiftEnd)}";
+
+    private static string Clock(double hours) => TimeSpan.FromHours(hours % 24).ToString(@"hh\:mm");
+
+    /// <summary>The account menu's reduced-motion toggle, saved between launches (see <see cref="Motion"/>).</summary>
     public bool ReduceMotion
     {
         get => Motion.Requested;
@@ -74,19 +79,16 @@ public sealed partial class MainViewModel : ObservableObject
             {
                 Motion.Requested = value;
                 OnPropertyChanged();
-                OnPropertyChanged(nameof(MotionLabel));
             }
         }
     }
-
-    public string MotionLabel => Motion.Reduced ? "Motion off" : "Motion on";
 
     /// <summary>The container inspection that covers the whole window while it is open.</summary>
     [ObservableProperty]
     private ScannerViewModel? _scanner;
 
-    // The nav and the layer switcher each depend on one property, so they listen for that one
-    // rather than for every structural change in the app.
+    // The nav and the layer switcher each depend on one or two properties, so they listen for
+    // those rather than for every structural change in the app.
     private void OnStateChanged(object? sender, PropertyChangedEventArgs e)
     {
         switch (e.PropertyName)
@@ -95,6 +97,10 @@ public sealed partial class MainViewModel : ObservableObject
                 OnPropertyChanged(nameof(IsOverview));
                 BuildNav();
                 _ = ShowSectionAsync(State.Section);
+                break;
+            case nameof(PortState.NeedsDecision):
+                // Confirming or undoing the berth adds or clears the Berths dot
+                BuildNav();
                 break;
             case nameof(PortState.HarbourLayer):
                 BuildLayers();
@@ -157,53 +163,36 @@ public sealed partial class MainViewModel : ObservableObject
     {
         // Sub-labels double as the tooltip: what each section is worth looking at for.
         var nordicIn = (int)Math.Floor(Math.Max(0, 21 + 40 / 60d - State.NowHours) * 60);
-        var meta = new Dictionary<string, (string Sub, string? Badge)>
+        var subs = new Dictionary<string, string>
         {
-            ["overview"] = ("3 alongside · 2 inbound · 2,146 moves today", null),
-            ["berths"] = ($"Nordic Star in {nordicIn} min · Berth 06 frees 21:30", "AccentColor"),
-            ["cargo"] = ($"4,812 on site · {State.YardOccupancy}% yard · 1 hold", "OrangeColor"),
-            ["fleet"] = ("6 underway · 2 running late", "OrangeColor"),
-            ["security"] = ("ISPS level 1 · 0 incidents", null)
+            ["overview"] = "3 alongside · 2 inbound · 2,146 moves today",
+            ["berths"] = $"Nordic Star in {nordicIn} min · Berth 06 frees 21:30",
+            ["cargo"] = $"4,812 on site · {State.YardOccupancy}% yard · 1 hold",
+            ["fleet"] = "6 underway · 2 running late",
+            ["security"] = "ISPS level 1 · 0 incidents"
         };
 
         if (NavItems.Count == 0)
         {
-            for (var i = 0; i < PortData.Sections.Count; i++)
+            foreach (var section in PortData.Sections)
             {
-                var section = PortData.Sections[i];
-                NavItems.Add(new NavItem
-                {
-                    Id = section.Id,
-                    Index = (i + 1).ToString("D2"),
-                    Label = section.Label
-                });
+                NavItems.Add(new NavItem { Id = section.Id, Label = section.Label });
             }
         }
 
         foreach (var item in NavItems)
         {
             var current = State.Section == item.Id;
-            var (sub, badge) = meta[item.Id];
+            var needs = State.SectionNeedsYou(item.Id);
 
-            item.Tooltip = $"{item.Label} · {sub}";
-            item.ChipBackground = current ? Tokens.Brush("AccentBrightInvariantBrush") : Tokens.Brush("DeckWhiteColor", 0.08);
-            item.ChipForeground = current ? Tokens.Brush("InkDeepInvariantBrush") : Tokens.Brush("TextOnDarkMutedBrush");
-            item.LabelForeground = current ? Tokens.Brush("SurfaceInvariantBrush") : Tokens.Brush("TextOnDarkBrush");
-            item.BadgeBrush = badge is null ? Tokens.Transparent : Tokens.Brush(badge);
-            item.BadgeOpacity = badge is null ? 0 : 1;
+            item.Tooltip = $"{item.Label} · {subs[item.Id]}";
+            item.AutomationName = needs ? $"{item.Label}, needs you" : item.Label;
+            item.LabelForeground = current ? Tokens.Brush("InkInvariantBrush") : Tokens.Brush("TextMutedInvariantBrush");
+            item.NeedsVisibility = needs ? Visibility.Visible : Visibility.Collapsed;
             item.UnderlineOpacity = current ? 1 : 0;
             item.CurrentVisibility = current ? Visibility.Visible : Visibility.Collapsed;
             item.OtherVisibility = current ? Visibility.Collapsed : Visibility.Visible;
         }
-    }
-
-    private void RefreshTide()
-    {
-        Tide.Spark ??= Geo.MakeSeries(PortData.Tide, 160, 36, 4).Stroke;
-
-        var level = PortData.TideAt(State.NowHours);
-        Tide.Label = $"+{level:0.0} m";
-        Tide.Tooltip = $"Tide · +{level:0.0} m rising";
     }
 
     private void BuildLayers()

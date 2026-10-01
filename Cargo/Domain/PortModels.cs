@@ -120,6 +120,10 @@ public sealed partial record ContainerDef(
 
 public sealed record CargoItem(string Name, string TintToken, bool Flagged = false);
 
+/// <summary>The operator on shift. Times are hours on the app's clock; past 24 is the next morning.</summary>
+public sealed record DutyOperator(string Name, string ShortName, string Initials, string Role, string Badge,
+    double ClockedIn, double ShiftEnd);
+
 public sealed record ChatLine(string Who, string Text, double Hour);
 
 public sealed partial record RiverVessel(

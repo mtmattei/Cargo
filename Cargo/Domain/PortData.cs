@@ -141,6 +141,12 @@ public static class PortData
             ["08"] = new[] { new TimelineSegment("Meridian Sky", 4, 12, "prev") }
         };
 
+    // ── Duty operator ─────────────────────────────────────────────────────────
+
+    /// <summary>The 18:00 to 06:00 shift, so the shift progress means something from the 20:58 start.</summary>
+    public static readonly DutyOperator Operator =
+        new("Elin Lindqvist", "E. Lindqvist", "EL", "Duty operator", "WH 0417", ClockedIn: 18, ShiftEnd: 30);
+
     /// <summary>What each berth is showing on the harbour map, independent of the planner.</summary>
     // ── Containers ────────────────────────────────────────────────────────────
 

@@ -227,6 +227,8 @@
   <!-- Hairlines: the design leans on 8–18% ink rules rather than boxes -->
   <SolidColorBrush x:Key="HairlineInvariantBrush" Color="{StaticResource InkColor}" Opacity="0.08" />
   <SolidColorBrush x:Key="HairlineStrongInvariantBrush" Color="{StaticResource InkColor}" Opacity="0.18" />
+  <!-- The header tab's hover underline -->
+  <SolidColorBrush x:Key="TabHoverInvariantBrush" Color="{StaticResource InkColor}" Opacity="0.16" />
   <SolidColorBrush x:Key="HairlineOnDarkBrush" Color="#FFFFFFFF" Opacity="0.10" />
   <SolidColorBrush x:Key="ScrimInvariantBrush" Color="{StaticResource InkDeepColor}" Opacity="0.86" />
   <!-- Dims the page behind a floating panel (the container scanner) without hiding where you were -->

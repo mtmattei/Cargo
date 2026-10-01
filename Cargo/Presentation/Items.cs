@@ -14,7 +14,6 @@ namespace Cargo.Presentation;
 public sealed partial class NavItem : ObservableObject
 {
     public required string Id { get; init; }
-    public required string Index { get; init; }
     public required string Label { get; init; }
 
     /// <summary>The section's route inside Main's region ("./berths").</summary>
@@ -23,48 +22,27 @@ public sealed partial class NavItem : ObservableObject
     [ObservableProperty]
     private string _tooltip = string.Empty;
 
+    /// <summary>The tab's spoken name: the label, plus ", needs you" when the dot shows.</summary>
     [ObservableProperty]
-    private Brush? _chipBackground;
+    private string _automationName = string.Empty;
 
-    [ObservableProperty]
-    private Brush? _chipForeground;
-
+    /// <summary>Muted, or ink on the section you are on (the tab's hover inks it too).</summary>
     [ObservableProperty]
     private Brush? _labelForeground;
 
     [ObservableProperty]
-    private Brush? _badgeBrush;
-
-    [ObservableProperty]
-    private double _badgeOpacity;
+    private Microsoft.UI.Xaml.Visibility _needsVisibility;
 
     [ObservableProperty]
     private double _underlineOpacity;
 
-    /// <summary>Visible on the section you are on; its name shows from the Normal breakpoint.</summary>
+    /// <summary>The semibold label, on the section you are on.</summary>
     [ObservableProperty]
     private Microsoft.UI.Xaml.Visibility _currentVisibility;
 
-    /// <summary>Visible on the other sections; their names show only at the Wide breakpoint.</summary>
+    /// <summary>The medium-weight label, on the other sections.</summary>
     [ObservableProperty]
     private Microsoft.UI.Xaml.Visibility _otherVisibility;
-}
-
-/// <summary>
-/// The tide badge in the header. It is the only thing on the shell that changes on the
-/// clock, so it notifies for itself rather than having the tick re-evaluate every binding
-/// on the page.
-/// </summary>
-public sealed partial class TideReadout : ObservableObject
-{
-    [ObservableProperty]
-    private Geometry? _spark;
-
-    [ObservableProperty]
-    private string _label = string.Empty;
-
-    [ObservableProperty]
-    private string _tooltip = string.Empty;
 }
 
 public sealed class LayerItem

@@ -258,14 +258,25 @@
   <!-- Header clock: minutes roll, seconds tick plainly -->
   <Style x:Key="HeaderClockFigure" TargetType="controls:RollingText">
     <Setter Property="FontFamily" Value="{StaticResource MonoMediumFont}" />
-    <Setter Property="FontSize" Value="13" />
-    <Setter Property="Foreground" Value="{StaticResource PaperInvariantBrush}" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />
   </Style>
 
-  <Style x:Key="HeaderClockText" TargetType="TextBlock">
-    <Setter Property="FontFamily" Value="{StaticResource MonoMediumFont}" />
-    <Setter Property="FontSize" Value="13" />
-    <Setter Property="Foreground" Value="{StaticResource PaperInvariantBrush}" />
+  <Style x:Key="HeaderClockText" TargetType="TextBlock" BasedOn="{StaticResource TypeMonoMedium14}">
+    <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />
+  </Style>
+
+  <!-- The header wordmark: the design's one size off the ramp -->
+  <Style x:Key="WordmarkText" TargetType="TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+    <Setter Property="FontSize" Value="19" />
+    <Setter Property="Foreground" Value="{StaticResource InkInvariantBrush}" />
+  </Style>
+
+  <Style x:Key="AvatarInitialsText" TargetType="TextBlock" BasedOn="{StaticResource TypeStrong12}">
+    <Setter Property="Foreground" Value="{StaticResource OnAccentInvariantBrush}" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="VerticalAlignment" Value="Center" />
   </Style>
 
   <!-- ============================================================
@@ -515,6 +526,53 @@
 
   <!-- Selectable list rows keep their own chrome, so the bare template
        just needs to not paint anything over it -->
+  <!-- Header tab: the content draws the label and the active 2px accent line; the template adds
+       the hover state, which inks the label and shows the line at 16% ink -->
+  <Style x:Key="NavTabButton" TargetType="Button">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Height" Value="56" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+    <Setter Property="Foreground" Value="{StaticResource TextMutedInvariantBrush}" />
+    <Setter Property="UseSystemFocusVisuals" Value="True" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Button">
+          <Grid Background="{TemplateBinding Background}">
+            <Rectangle x:Name="HoverLine" Height="2" VerticalAlignment="Bottom" Opacity="0"
+                       Fill="{StaticResource TabHoverInvariantBrush}" />
+            <ContentPresenter x:Name="Presenter"
+                              Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              Foreground="{TemplateBinding Foreground}"
+                              Padding="{TemplateBinding Padding}"
+                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+            <VisualStateManager.VisualStateGroups>
+              <VisualStateGroup x:Name="CommonStates">
+                <VisualState x:Name="Normal" />
+                <VisualState x:Name="PointerOver">
+                  <VisualState.Setters>
+                    <Setter Target="HoverLine.Opacity" Value="1" />
+                    <Setter Target="Presenter.Foreground" Value="{StaticResource InkInvariantBrush}" />
+                  </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Pressed">
+                  <VisualState.Setters>
+                    <Setter Target="HoverLine.Opacity" Value="1" />
+                    <Setter Target="Presenter.Foreground" Value="{StaticResource InkInvariantBrush}" />
+                  </VisualState.Setters>
+                </VisualState>
+              </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+          </Grid>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
   <!-- The × that closes a detail panel, top-right of its header -->
   <Style x:Key="CloseButton" TargetType="Button" BasedOn="{StaticResource BareButton}">
     <Setter Property="FontSize" Value="18" />
