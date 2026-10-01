@@ -12,6 +12,8 @@
   <!-- ── Durations (ms) ───────────────────────────────────────── -->
   <x:Double x:Key="DurationFastMs">150</x:Double>
   <x:Double x:Key="DurationSlideMs">200</x:Double>
+  <!-- An activity row opening: lift, blur-back and the detail growing -->
+  <x:Double x:Key="DurationRevealMs">240</x:Double>
   <x:Double x:Key="DurationRollMs">280</x:Double>
   <x:Double x:Key="DurationBarMs">300</x:Double>
   <!-- The Overview harbour band growing 340 to 491 -->

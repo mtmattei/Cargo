@@ -9,4 +9,6 @@ public sealed partial class ActivityView : UserControl
     }
 
     public ActivityViewModel? ViewModel => DataContext as ActivityViewModel;
+
+    public static TextWrapping Wrap(bool open) => open ? TextWrapping.Wrap : TextWrapping.NoWrap;
 }

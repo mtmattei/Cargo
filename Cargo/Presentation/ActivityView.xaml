@@ -3,37 +3,103 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:Cargo.Presentation"
              xmlns:utu="using:Uno.Toolkit.UI"
-             xmlns:shapes="using:Microsoft.UI.Xaml.Shapes">
+             xmlns:shapes="using:Microsoft.UI.Xaml.Shapes"
+             xmlns:media="using:Microsoft.UI.Xaml.Media"
+             xmlns:controls="using:Cargo.Controls">
 
   <UserControl.Resources>
     <!-- Below 1040 the two columns stack (the Overview's narrow band) -->
     <utu:ResponsiveLayout x:Key="ActivityBreakpoints" Narrowest="0" Narrow="0" Normal="1040" Wide="100000" Widest="100000" />
 
-    <!-- One log entry: time, icon, what happened; an entry about an open decision carries NEEDS ACTION -->
+    <!-- One log entry: time, icon, what happened; an entry about an open decision carries NEEDS ACTION.
+         Clicking it opens its detail: the row rises 2 px onto a surface, the detail grows in below,
+         and the other rows in its column blur back (Reveal, 240 ms on EaseSmooth). -->
     <DataTemplate x:Key="FeedRowTemplate" x:DataType="local:FeedEntry">
-      <Grid ColumnSpacing="12" Padding="0,12" BorderBrush="{StaticResource HairlineInvariantBrush}" BorderThickness="0,1,0,0">
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="48" />
-          <ColumnDefinition Width="20" />
-          <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <TextBlock Text="{x:Bind Time}" Style="{StaticResource TypeMono13}" Foreground="{StaticResource TextMutedInvariantBrush}" />
-        <Viewbox Grid.Column="1" Width="18" Height="18" VerticalAlignment="Top" Margin="0,1,0,0" AutomationProperties.AccessibilityView="Raw">
-          <Grid Width="24" Height="24">
-            <shapes:Path Data="{x:Bind Icon}" Stroke="{x:Bind Tone}" Style="{StaticResource StrokeIcon}" />
-          </Grid>
-        </Viewbox>
-        <StackPanel Grid.Column="2" Spacing="2">
-          <StackPanel Orientation="Horizontal" Spacing="8">
-            <TextBlock Text="{x:Bind Title}" Style="{StaticResource TypeMedium15}" Foreground="{StaticResource InkInvariantBrush}" />
-            <!-- xaml-lint: allow card - the NEEDS ACTION chip, a caps label on an alert tint -->
-            <Border Background="{StaticResource AlertChipInvariantBrush}" CornerRadius="4" Padding="6,3" VerticalAlignment="Center"
-                    Visibility="{x:Bind ChipVisibility}">
-              <TextBlock Text="NEEDS ACTION" Style="{StaticResource TypeStrong11}" Foreground="{StaticResource InkInvariantBrush}" />
-            </Border>
+      <Grid BorderBrush="{StaticResource HairlineInvariantBrush}" BorderThickness="0,1,0,0">
+        <Grid controls:Reveal.IsOn="{x:Bind IsExpanded, Mode=OneWay}" controls:Reveal.Rise="2" controls:Reveal.Fade="False">
+          <Grid.RenderTransform>
+            <TranslateTransform />
+          </Grid.RenderTransform>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
+
+          <!-- The lift: a surface on a soft float shadow, bleeding 12 px past the text. Shadows inline (Toolkit gotcha G36) -->
+          <utu:ShadowContainer Grid.RowSpan="2" Margin="-12,4,-12,2" Background="{StaticResource SurfaceInvariantBrush}"
+                               Opacity="0" Visibility="Collapsed" IsHitTestVisible="False"
+                               controls:Reveal.IsOn="{x:Bind IsExpanded, Mode=OneWay}" controls:Reveal.Hides="True">
+            <utu:ShadowContainer.Shadows>
+              <utu:ShadowCollection>
+                <utu:Shadow Spread="1" BlurRadius="0" Color="{StaticResource InkColor}" Opacity="0.06" />
+                <utu:Shadow OffsetY="1" BlurRadius="2" Color="{StaticResource InkColor}" Opacity="0.05" />
+                <utu:Shadow OffsetY="10" BlurRadius="28" Color="{StaticResource InkColor}" Opacity="0.09" />
+              </utu:ShadowCollection>
+            </utu:ShadowContainer.Shadows>
+            <Border CornerRadius="8" />
+          </utu:ShadowContainer>
+
+          <Button Style="{StaticResource BareButton}" Command="{x:Bind Toggle}" CommandParameter="{x:Bind}" Padding="0,12"
+                  AutomationProperties.Name="{x:Bind Title}">
+            <Grid ColumnSpacing="12">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="48" />
+                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+              <TextBlock Text="{x:Bind Time}" Style="{StaticResource TypeMono13}" Foreground="{StaticResource TextMutedInvariantBrush}" />
+              <Viewbox Grid.Column="1" Width="18" Height="18" VerticalAlignment="Top" Margin="0,1,0,0" AutomationProperties.AccessibilityView="Raw">
+                <Grid Width="24" Height="24">
+                  <shapes:Path Data="{x:Bind Icon}" Stroke="{x:Bind Tone}" Style="{StaticResource StrokeIcon}" />
+                </Grid>
+              </Viewbox>
+              <StackPanel Grid.Column="2" Spacing="2">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <TextBlock Text="{x:Bind Title}" Style="{StaticResource TypeMedium15}" Foreground="{StaticResource InkInvariantBrush}" />
+                  <!-- xaml-lint: allow card - the NEEDS ACTION chip, a caps label on an alert tint -->
+                  <Border Background="{StaticResource AlertChipInvariantBrush}" CornerRadius="4" Padding="6,3" VerticalAlignment="Center"
+                          Visibility="{x:Bind ChipVisibility}">
+                    <TextBlock Text="NEEDS ACTION" Style="{StaticResource TypeStrong11}" Foreground="{StaticResource InkInvariantBrush}" />
+                  </Border>
+                </StackPanel>
+                <!-- Open, the line wraps in full -->
+                <TextBlock Text="{x:Bind Detail}" Style="{StaticResource SubtitleText}" TextTrimming="CharacterEllipsis"
+                           TextWrapping="{x:Bind local:ActivityView.Wrap(IsExpanded), Mode=OneWay}" />
+              </StackPanel>
+            </Grid>
+          </Button>
+
+          <!-- The detail: when it was logged and, for an entry about an open decision, that decision and its action -->
+          <StackPanel Grid.Row="1" Margin="92,0,0,14" Spacing="10" Opacity="0" Visibility="Collapsed"
+                      controls:Reveal.IsOn="{x:Bind IsExpanded, Mode=OneWay}" controls:Reveal.Grow="True">
+            <TextBlock Text="{x:Bind Logged, Mode=OneWay}" Style="{StaticResource TypeMono12}" Foreground="{StaticResource TextMutedInvariantBrush}" />
+            <Grid ColumnSpacing="12" Visibility="{x:Bind AboutVisibility}">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <StackPanel Spacing="2" VerticalAlignment="Center">
+                <TextBlock Text="{x:Bind About.Title}" Style="{StaticResource TypeMedium13}" Foreground="{StaticResource InkInvariantBrush}" TextWrapping="Wrap" />
+                <TextBlock Style="{StaticResource SubtitleText}" TextWrapping="Wrap">
+                  <Run Text="{x:Bind About.Sub}" /><Run Text="{x:Bind local:NeedsYouPanel.Separator(About.When), Mode=OneWay}" /><Run Text="{x:Bind About.When, Mode=OneWay}"
+                       Foreground="{x:Bind local:NeedsYouPanel.WhenInk(About.IsLate), Mode=OneWay}" />
+                </TextBlock>
+              </StackPanel>
+              <Button Grid.Column="1" Content="{x:Bind About.ActionLabel}" Style="{x:Bind local:NeedsYouPanel.Action(About.IsPrimary)}"
+                      Command="{x:Bind About.Command}" CommandParameter="{x:Bind About.CommandParameter}" VerticalAlignment="Center" />
+            </Grid>
           </StackPanel>
-          <TextBlock Text="{x:Bind Detail}" Style="{StaticResource SubtitleText}" TextTrimming="CharacterEllipsis" />
-        </StackPanel>
+        </Grid>
+
+        <!-- Blur-back: another row in this column is open. Acrylic's blur is fixed and erases 13-15 px text, so it
+             stops at 75% and the row reads through as soft focus. A childless Border so the Skia path works on Android too -->
+        <Border Opacity="0" Visibility="Collapsed" IsHitTestVisible="False"
+                controls:Reveal.IsOn="{x:Bind IsDimmed, Mode=OneWay}" controls:Reveal.Hides="True" controls:Reveal.OnOpacity="0.75">
+          <Border.Background>
+            <AcrylicBrush AlwaysUseFallback="False" media:AcrylicBrushExtensions.UseCompositionEffectBrush="False"
+                          TintColor="{StaticResource SurfaceColor}" TintOpacity="0.1" FallbackColor="{StaticResource SurfaceColor}" />
+          </Border.Background>
+        </Border>
       </Grid>
     </DataTemplate>
   </UserControl.Resources>
