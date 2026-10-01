@@ -98,3 +98,12 @@ These controls leave the page. Do not click them in the take:
 | The masthead Needs you button only scrolls, so it shows nothing when the queue is already in view | By design | Skip |
 | Page hitches (idle p99 206 ms) | Open (perf) | Pause after each click; retake if a transition stutters |
 | Activity detail opened empty | Fixed in 8e45a3d | Shown working in rehearsal |
+
+## Recorded take (scripted)
+
+`docs/demo/record/take.ps1` records the beats above with real OS input: it starts ffmpeg (`ddagrab`, the client
+rect at 1664x980, 30 fps), launches a fresh toolbar-free app, pins the window top-left and topmost, then drives the
+cursor (eased moves, real hovers, a drag orbit). Tag clicks find the dark Nordic Star tag on screen (`Find-DarkTag`),
+because where the fly-to leaves it depends on the camera. Scrolling uses PageDown and End after clicking the timeline
+heading; the mouse wheel did not scroll the page. Run it with `pwsh -File docs/demo/record/take.ps1`, hands off the
+mouse for about two minutes. Trim the head to the first painted frame (about 4.5 s: startup paints, blanks, then paints again).
